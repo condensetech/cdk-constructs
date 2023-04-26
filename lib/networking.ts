@@ -41,7 +41,7 @@ function buildVpc(scope: Construct, { ipAddresses, vpcName, natGateways }: Conde
 }
 
 function buildBastionHost(scope: Construct, vpc: ec2.Vpc) {
-  return new ec2.BastionHostLinux(scope, 'BastionHost', {
+  const bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
     vpc,
     machineImage: ec2.MachineImage.latestAmazonLinux2(),
     instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
@@ -49,6 +49,8 @@ function buildBastionHost(scope: Construct, vpc: ec2.Vpc) {
       subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
     },
   });
+  cdk.Tags.of(bastionHost.instance).add('Resource', 'Bastion');
+  return bastionHost;
 }
 
 export class Networking extends Construct implements INetworking {

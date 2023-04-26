@@ -33,6 +33,10 @@ function testCreateBastion(stack: cdk.Stack) {
         Key: 'Name',
         Value: 'BastionHost',
       },
+      {
+        Key: 'Resource',
+        Value: 'Bastion',
+      },
     ],
   });
 }
