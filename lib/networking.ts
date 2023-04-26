@@ -15,7 +15,7 @@ export interface NetworkingProps extends CondenseVpcProps {
 
 export type NetworkingStackProps = cdk.StackProps & NetworkingProps;
 
-function buildVpc(scope: Construct, { ipAddresses, vpcName, natGateways }: CondenseVpcProps): ec2.Vpc {
+function buildVpc(scope: Construct, { ipAddresses, vpcName, natGateways }: CondenseVpcProps) {
   return new ec2.Vpc(scope, 'VPC', {
     ipAddresses,
     vpcName,
@@ -34,13 +34,13 @@ function buildVpc(scope: Construct, { ipAddresses, vpcName, natGateways }: Conde
         cidrMask: 24,
         name: 'isolated',
         subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-      }
+      },
     ],
     natGateways,
   });
 }
 
-function buildBastionHost(scope: Construct, vpc: ec2.Vpc): ec2.BastionHostLinux {
+function buildBastionHost(scope: Construct, vpc: ec2.Vpc) {
   return new ec2.BastionHostLinux(scope, 'BastionHost', {
     vpc,
     machineImage: ec2.MachineImage.latestAmazonLinux2(),
