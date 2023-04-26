@@ -67,7 +67,7 @@ export class Networking extends Construct implements INetworking {
   }
 }
 
-export class NetworkingStack extends cdk.Stack implements Networking {
+export class NetworkingStack extends cdk.Stack implements INetworking {
   readonly vpc: ec2.Vpc;
   readonly bastionHost?: ec2.BastionHostLinux;
 
