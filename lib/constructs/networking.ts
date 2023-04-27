@@ -13,26 +13,41 @@ export interface NetworkingProps {
 export class Networking extends Construct implements INetworking {
   readonly vpc: ec2.Vpc;
   readonly bastionHost?: ec2.BastionHostLinux;
+  readonly hasPrivateSubnets: boolean;
 
   constructor(scope: Construct, id: string, props: NetworkingProps) {
     super(scope, id);
 
+    this.hasPrivateSubnets = props.natGateways !== 0;
     this.vpc = this.buildVpc(props);
     if (props.bastionHost) {
       this.bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
         vpc: this.vpc,
         machineImage: ec2.MachineImage.latestAmazonLinux2(),
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
-        subnetSelection: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-        },
+        subnetSelection: this.privateSubnets ?? this.isolatedSubnets,
       });
       cdk.Tags.of(this.bastionHost.instance).add('Resource', 'Bastion');
     }
   }
 
+  get publicSubnets(): ec2.SubnetSelection {
+    return { subnetType: ec2.SubnetType.PUBLIC };
+  }
+
+  get privateSubnets(): ec2.SubnetSelection | undefined {
+    if (!this.hasPrivateSubnets) {
+      return undefined;
+    }
+    return { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS };
+  }
+
+  get isolatedSubnets(): ec2.SubnetSelection {
+    return { subnetType: ec2.SubnetType.PRIVATE_ISOLATED };
+  }
+
   private buildVpc(props: NetworkingProps) {
-    const subnetConfiguration = [
+    const subnetConfiguration: ec2.SubnetConfiguration[] = [
       {
         cidrMask: 24,
         name: 'public',
@@ -44,7 +59,7 @@ export class Networking extends Construct implements INetworking {
         subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
       },
     ];
-    if (!props.natGateways || props.natGateways > 0) {
+    if (this.hasPrivateSubnets) {
       subnetConfiguration.push({
         cidrMask: 24,
         name: 'private',

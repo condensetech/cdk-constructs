@@ -17,6 +17,22 @@ export class NetworkingStack extends cdk.Stack implements INetworking {
     });
   }
 
+  get hasPrivateSubnets(): boolean {
+    return this.construct.hasPrivateSubnets;
+  }
+
+  get isolatedSubnets(): ec2.SubnetSelection {
+    return this.construct.isolatedSubnets;
+  }
+
+  get privateSubnets(): ec2.SubnetSelection | undefined {
+    return this.construct.privateSubnets;
+  }
+
+  get publicSubnets(): ec2.SubnetSelection {
+    return this.construct.publicSubnets;
+  }
+
   get vpc(): ec2.IVpc {
     return this.construct.vpc;
   }

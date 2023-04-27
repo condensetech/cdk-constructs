@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Networking } from '../../lib/constructs/networking';
 
 describe('Constructs/Networking', () => {
@@ -57,5 +57,54 @@ describe('Constructs/Networking', () => {
         },
       ],
     });
+  });
+
+  test('Creates a Bastion Host in private subnets when nat gateways are defined', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack');
+    new Networking(stack, 'Networking', {
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+      bastionHost: true,
+    });
+    const template = Template.fromStack(stack);
+    const subnetIds = Object.keys(
+      template.findResources('AWS::EC2::Subnet', {
+        Properties: {
+          Tags: Match.arrayWith([
+            {
+              Key: 'aws-cdk:subnet-type',
+              Value: 'Private',
+            },
+          ]),
+        },
+      })
+    );
+    const bastionProps = Object.values(template.findResources('AWS::EC2::Instance'))[0].Properties;
+    expect(subnetIds.includes(bastionProps.SubnetId.Ref)).toBe(true);
+  });
+
+  test('Creates a Bastion Host in isolated subnets when nat gateway is not present', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack');
+    new Networking(stack, 'Networking', {
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+      bastionHost: true,
+      natGateways: 0,
+    });
+    const template = Template.fromStack(stack);
+    const subnetIds = Object.keys(
+      template.findResources('AWS::EC2::Subnet', {
+        Properties: {
+          Tags: Match.arrayWith([
+            {
+              Key: 'aws-cdk:subnet-type',
+              Value: 'Isolated',
+            },
+          ]),
+        },
+      })
+    );
+    const bastionProps = Object.values(template.findResources('AWS::EC2::Instance'))[0].Properties;
+    expect(subnetIds.includes(bastionProps.SubnetId.Ref)).toBe(true);
   });
 });
