@@ -1,13 +1,13 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Template } from 'aws-cdk-lib/assertions';
-import * as CdkLib from '../../lib/index';
+import { Networking } from '../../lib/constructs/networking';
 
 describe('Constructs/Networking', () => {
   test('Creates a VPC', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
-    new CdkLib.Networking(stack, 'Networking', {
+    new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     });
     const template = Template.fromStack(stack);
@@ -20,7 +20,7 @@ describe('Constructs/Networking', () => {
   test('Creates a VPC with a name', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
-    new CdkLib.Networking(stack, 'Networking', {
+    new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       vpcName: 'TestVpc',
     });
@@ -38,7 +38,7 @@ describe('Constructs/Networking', () => {
   test('Creates a Bastion Host', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
-    new CdkLib.Networking(stack, 'Networking', {
+    new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       bastionHost: true,
     });

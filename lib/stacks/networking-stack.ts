@@ -11,7 +11,10 @@ export class NetworkingStack extends cdk.Stack implements INetworking {
 
   constructor(scope: Construct, id: string, props: NetworkingStackProps) {
     super(scope, id, props);
-    this.construct = new Networking(this, 'Networking', props);
+    this.construct = new Networking(this, 'Networking', {
+      vpcName: `${this.node.path}/VPC`,
+      ...props,
+    });
   }
 
   get vpc(): ec2.IVpc {
