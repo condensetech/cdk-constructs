@@ -1,18 +1,18 @@
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 as ec2, aws_secretsmanager as sm } from 'aws-cdk-lib';
-import { PostgresCluster, PostgresClusterProps } from '../constructs';
+import { DatabaseInstance, DatabaseInstanceProps } from '../constructs';
 import { IDatabase } from '../interfaces';
 
-export type PostgresClusterStackProps = PostgresClusterProps & cdk.StackProps;
+export type DatabaseInstanceStackProps = DatabaseInstanceProps & cdk.StackProps;
 
-export class PostgresClusterStack extends cdk.Stack implements IDatabase {
+export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {
   private readonly construct: IDatabase;
 
-  constructor(scope: Construct, id: string, props: PostgresClusterStackProps) {
+  constructor(scope: Construct, id: string, props: DatabaseInstanceStackProps) {
     super(scope, id, props);
-    this.construct = new PostgresCluster(this, 'DatabaseCluster', {
-      clusterName: `${this.node.path}/DatabaseCluster`,
+    this.construct = new DatabaseInstance(this, 'Database', {
+      instanceName: `${this.node.path}/Database`,
       ...props,
     });
   }
