@@ -9,6 +9,7 @@ export interface PostgresInstanceProps {
   version: rds.PostgresEngineVersion;
   instanceName?: string;
   databaseName?: string;
+  credentialsSecretName?: string;
   instanceType?: ec2.InstanceType;
   allocatedStorage?: number;
   multiAz?: boolean;
@@ -37,6 +38,10 @@ export class PostgresInstance extends Construct implements IDatabase {
       props.instanceType ??
       ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
 
+    const credentials = rds.Credentials.fromUsername('db_user', {
+      secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
+    });
+
     this.databaseInstance = new rds.DatabaseInstance(this, 'DB', {
       instanceIdentifier: props.instanceName,
       vpc: props.vpc,
@@ -45,9 +50,7 @@ export class PostgresInstance extends Construct implements IDatabase {
       },
       engine,
       databaseName: props.databaseName,
-      credentials: rds.Credentials.fromUsername('db_user', {
-        secretName: `${this.node.path}/secret`,
-      }),
+      credentials,
       parameterGroup: parameterGroup,
       instanceType,
       allocatedStorage: props.allocatedStorage ?? 20,

@@ -5,7 +5,7 @@ import { PostgresCluster } from '../../lib/constructs/postgres-cluster';
 import { Networking } from '../../lib/constructs/networking';
 
 describe('Constructs/PostgresInstance', () => {
-  test('Creates a single RDS Instance', () => {
+  test('Creates a single Aurora cluster', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
     const network = new Networking(stack, 'Networking', {
@@ -26,6 +26,28 @@ describe('Constructs/PostgresInstance', () => {
     template.hasResourceProperties('AWS::RDS::DBInstance', {
       DBInstanceClass: 'db.t3.small',
       Engine: 'aurora-postgresql',
+    });
+
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: 'TestStack/Database/secret',
+    });
+  });
+
+  test('Can change the credentials secret name', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack');
+    const network = new Networking(stack, 'Networking', {
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+      vpcName: 'TestVpc',
+    });
+    new PostgresCluster(stack, 'Database', {
+      version: rds.AuroraPostgresEngineVersion.VER_15_2,
+      vpc: network.vpc,
+      credentialsSecretName: 'TestClusterSecret',
+    });
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: 'TestClusterSecret',
     });
   });
 });

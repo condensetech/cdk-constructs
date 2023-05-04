@@ -9,6 +9,7 @@ export interface PostgresClusterProps {
   version: rds.AuroraPostgresEngineVersion;
   clusterName?: string;
   databaseName?: string;
+  credentialsSecretName?: string;
   instanceType?: ec2.InstanceType;
   multiAz?: boolean;
   allowedSecurityGroups?: ec2.ISecurityGroup[];
@@ -38,12 +39,14 @@ export class PostgresCluster extends Construct implements IDatabase {
 
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;
 
+    const credentials = rds.Credentials.fromUsername('db_user', {
+      secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
+    });
+
     this.databaseCluster = new rds.DatabaseCluster(this, 'DB', {
       clusterIdentifier: props.clusterName,
       engine,
-      credentials: rds.Credentials.fromUsername('db_user', {
-        secretName: `${this.node.path}/secret`,
-      }),
+      credentials,
       instanceProps: {
         instanceType,
         vpc: props.vpc,

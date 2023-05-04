@@ -82,4 +82,23 @@ describe('Constructs/PostgresInstance', () => {
       DBInstanceClass: 'db.t3.micro',
     });
   });
+
+  test('Can define the credentials secret name', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack');
+    const network = new Networking(stack, 'Networking', {
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+      vpcName: 'TestVpc',
+    });
+    new PostgresInstance(stack, 'Database', {
+      version: rds.PostgresEngineVersion.VER_15_2,
+      vpc: network.vpc,
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
+      credentialsSecretName: 'TestSecret',
+    });
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: 'TestSecret',
+    });
+  });
 });
