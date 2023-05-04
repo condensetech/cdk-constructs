@@ -13,7 +13,5 @@ export interface INetworking {
 
 export interface IDatabase {
   fetchSecret(scope: Construct, id?: string): sm.ISecret;
-  getEndpointAddress(scope: Construct): string;
-  getEndpointPort(scope: Construct): string;
   getSecurityGroup(scope: Construct, id: string): ec2.ISecurityGroup;
 }

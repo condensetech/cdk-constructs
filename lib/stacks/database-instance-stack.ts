@@ -17,14 +17,6 @@ export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {
     });
   }
 
-  public getEndpointAddress(scope: Construct): string {
-    return this.construct.getEndpointAddress(scope);
-  }
-
-  public getEndpointPort(scope: Construct): string {
-    return this.construct.getEndpointPort(scope);
-  }
-
   public fetchSecret(scope: Construct, id?: string | undefined): sm.ISecret {
     return this.construct.fetchSecret(scope, id);
   }

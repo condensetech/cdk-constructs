@@ -2,7 +2,6 @@ import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cdk-lib';
 import { IDatabase } from '../interfaces';
-import { Ref } from './ref';
 
 export interface AuroraClusterProps {
   vpc: ec2.IVpc;
@@ -18,8 +17,6 @@ export interface AuroraClusterProps {
 
 export class AuroraCluster extends Construct implements IDatabase {
   private readonly databaseCluster: rds.IDatabaseCluster;
-  private readonly refEndpointAddress: Ref;
-  private readonly refEndpointPort: Ref;
 
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
@@ -59,25 +56,6 @@ export class AuroraCluster extends Construct implements IDatabase {
     (props.allowedSecurityGroups ?? []).forEach((sg) => {
       this.databaseCluster.connections.allowDefaultPortFrom(sg);
     });
-
-    this.refEndpointAddress = new Ref(
-      this,
-      'EndpointAddressRef',
-      this.databaseCluster.clusterEndpoint.hostname
-    );
-    this.refEndpointPort = new Ref(
-      this,
-      'EndpointPortRef',
-      this.databaseCluster.clusterEndpoint.port.toString()
-    );
-  }
-
-  public getEndpointAddress(scope: Construct): string {
-    return this.refEndpointAddress.getValue(scope);
-  }
-
-  public getEndpointPort(scope: Construct): string {
-    return this.refEndpointPort.getValue(scope);
   }
 
   public fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
