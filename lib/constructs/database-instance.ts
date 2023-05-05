@@ -1,10 +1,10 @@
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cdk-lib';
-import { IDatabase } from '../interfaces';
+import { IDatabase, INetworking } from '../interfaces';
 
 export interface DatabaseInstanceProps {
-  vpc: ec2.IVpc;
+  networking: INetworking;
   engine: rds.IInstanceEngine;
   instanceName?: string;
   databaseName?: string;
@@ -37,10 +37,8 @@ export class DatabaseInstance extends Construct implements IDatabase {
 
     this.databaseInstance = new rds.DatabaseInstance(this, 'DB', {
       instanceIdentifier: props.instanceName,
-      vpc: props.vpc,
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-      },
+      vpc: props.networking.vpc,
+      vpcSubnets: props.networking.isolatedSubnets,
       engine: props.engine,
       databaseName: props.databaseName,
       credentials,

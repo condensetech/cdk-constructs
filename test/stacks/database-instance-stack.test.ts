@@ -7,11 +7,11 @@ import { DatabaseInstanceStack } from '../../lib/stacks/database-instance-stack'
 describe('Stacks/PostgresInstanceStack', () => {
   test('Sets a default Instance name', () => {
     const app = new cdk.App();
-    const network = new NetworkingStack(app, 'TestStack', {
+    const networking = new NetworkingStack(app, 'TestStack', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     });
     const stack = new DatabaseInstanceStack(app, 'TestDbStack', {
-      vpc: network.vpc,
+      networking,
       engine: rds.DatabaseInstanceEngine.postgres({
         version: rds.PostgresEngineVersion.VER_15_2,
       }),

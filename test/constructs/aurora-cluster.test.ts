@@ -1,14 +1,14 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_rds as rds, aws_ec2 as ec2 } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { AuroraCluster } from '../../lib/constructs/aurora-cluster';
+import { AuroraCluster, AuroraClusterProps } from '../../lib/constructs/aurora-cluster';
 import { Networking } from '../../lib/constructs/networking';
 
 describe('Constructs/PostgresInstance', () => {
-  test('Creates a single Aurora cluster', () => {
+  const createTestStack = (additionalProps?: Partial<AuroraClusterProps>): cdk.Stack => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
+    const networking = new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       vpcName: 'TestVpc',
     });
@@ -16,8 +16,14 @@ describe('Constructs/PostgresInstance', () => {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_15_2,
       }),
-      vpc: network.vpc,
+      networking,
+      ...additionalProps,
     });
+    return stack;
+  };
+
+  test('Creates a single Aurora cluster', () => {
+    const stack = createTestStack();
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::RDS::DBCluster', {
       Engine: 'aurora-postgresql',
@@ -36,17 +42,10 @@ describe('Constructs/PostgresInstance', () => {
   });
 
   test('Can change the engine', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new AuroraCluster(stack, 'Database', {
+    const stack = createTestStack({
       engine: rds.DatabaseClusterEngine.aurora({
         version: rds.AuroraEngineVersion.VER_1_23_4,
       }),
-      vpc: network.vpc,
     });
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::RDS::DBCluster', {
@@ -61,17 +60,7 @@ describe('Constructs/PostgresInstance', () => {
   });
 
   test('Can change the credentials secret name', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new AuroraCluster(stack, 'Database', {
-      engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_15_2,
-      }),
-      vpc: network.vpc,
+    const stack = createTestStack({
       credentialsSecretName: 'TestClusterSecret',
     });
     const template = Template.fromStack(stack);

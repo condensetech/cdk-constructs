@@ -2,14 +2,14 @@ import * as cdk from 'aws-cdk-lib';
 import { aws_rds as rds } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Template } from 'aws-cdk-lib/assertions';
-import { DatabaseInstance } from '../../lib/constructs/database-instance';
+import { DatabaseInstance, DatabaseInstanceProps } from '../../lib/constructs/database-instance';
 import { Networking } from '../../lib/constructs/networking';
 
 describe('Constructs/DatabaseInstance', () => {
-  test('Creates a single RDS Instance', () => {
+  const createTestStack = (additionalProps: Partial<DatabaseInstanceProps> = {}): cdk.Stack => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
+    const networking = new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       vpcName: 'TestVpc',
     });
@@ -17,8 +17,14 @@ describe('Constructs/DatabaseInstance', () => {
       engine: rds.DatabaseInstanceEngine.postgres({
         version: rds.PostgresEngineVersion.VER_15_2,
       }),
-      vpc: network.vpc,
+      networking,
+      ...additionalProps,
     });
+    return stack;
+  };
+
+  test('Creates a single RDS Instance', () => {
+    const stack = createTestStack();
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::RDS::DBInstance', {
       DBInstanceClass: 'db.t3.small',
@@ -32,17 +38,10 @@ describe('Constructs/DatabaseInstance', () => {
   });
 
   test('Can use a different engine', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new DatabaseInstance(stack, 'Database', {
+    const stack = createTestStack({
       engine: rds.DatabaseInstanceEngine.mariaDb({
         version: rds.MariaDbEngineVersion.VER_10_6_8,
       }),
-      vpc: network.vpc,
     });
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::RDS::DBInstance', {
@@ -52,17 +51,7 @@ describe('Constructs/DatabaseInstance', () => {
   });
 
   test('Can change the allocated storage', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new DatabaseInstance(stack, 'Database', {
-      engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_15_2,
-      }),
-      vpc: network.vpc,
+    const stack = createTestStack({
       allocatedStorage: 100,
     });
     const template = Template.fromStack(stack);
@@ -72,17 +61,7 @@ describe('Constructs/DatabaseInstance', () => {
   });
 
   test('Can change the backup retention', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new DatabaseInstance(stack, 'Database', {
-      engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_15_2,
-      }),
-      vpc: network.vpc,
+    const stack = createTestStack({
       backupRetention: cdk.Duration.days(7),
     });
     const template = Template.fromStack(stack);
@@ -92,17 +71,7 @@ describe('Constructs/DatabaseInstance', () => {
   });
 
   test('Can change the instance type', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new DatabaseInstance(stack, 'Database', {
-      engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_15_2,
-      }),
-      vpc: network.vpc,
+    const stack = createTestStack({
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
     });
     const template = Template.fromStack(stack);
@@ -112,17 +81,7 @@ describe('Constructs/DatabaseInstance', () => {
   });
 
   test('Can define the credentials secret name', () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, 'TestStack');
-    const network = new Networking(stack, 'Networking', {
-      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      vpcName: 'TestVpc',
-    });
-    new DatabaseInstance(stack, 'Database', {
-      engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_15_2,
-      }),
-      vpc: network.vpc,
+    const stack = createTestStack({
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
       credentialsSecretName: 'TestSecret',
     });

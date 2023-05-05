@@ -7,11 +7,11 @@ import { AuroraClusterStack } from '../../lib/stacks/aurora-cluster-stack';
 describe('Stacks/PostgresInstanceStack', () => {
   test('Sets a default Instance name', () => {
     const app = new cdk.App();
-    const network = new NetworkingStack(app, 'TestStack', {
+    const networking = new NetworkingStack(app, 'TestStack', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     });
     const stack = new AuroraClusterStack(app, 'TestDbStack', {
-      vpc: network.vpc,
+      networking,
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_15_2,
       }),

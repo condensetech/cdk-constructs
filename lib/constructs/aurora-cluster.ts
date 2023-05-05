@@ -1,10 +1,10 @@
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cdk-lib';
-import { IDatabase } from '../interfaces';
+import { IDatabase, INetworking } from '../interfaces';
 
 export interface AuroraClusterProps {
-  vpc: ec2.IVpc;
+  networking: INetworking;
   engine: rds.IClusterEngine;
   clusterName?: string;
   databaseName?: string;
@@ -45,10 +45,8 @@ export class AuroraCluster extends Construct implements IDatabase {
       credentials,
       instanceProps: {
         instanceType,
-        vpc: props.vpc,
-        vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-        },
+        vpc: props.networking.vpc,
+        vpcSubnets: props.networking.isolatedSubnets,
       },
       defaultDatabaseName: props.databaseName,
       parameterGroup,
