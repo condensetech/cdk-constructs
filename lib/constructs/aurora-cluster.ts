@@ -26,9 +26,12 @@ export class AuroraCluster extends Construct implements IDatabase {
       description: this.node.path,
     });
 
-    const instanceType =
-      props.instanceType ??
-      ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
+    const minimumInstanceType =
+      props.engine.engineType === 'aurora-postgresql'
+        ? ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM)
+        : ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
+
+    const instanceType = props.instanceType ?? minimumInstanceType;
 
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;
 

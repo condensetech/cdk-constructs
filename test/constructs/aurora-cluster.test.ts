@@ -26,7 +26,7 @@ describe('Constructs/PostgresInstance', () => {
     });
     template.resourceCountIs('AWS::RDS::DBInstance', 2);
     template.hasResourceProperties('AWS::RDS::DBInstance', {
-      DBInstanceClass: 'db.t3.small',
+      DBInstanceClass: 'db.t3.medium',
       Engine: 'aurora-postgresql',
     });
 
