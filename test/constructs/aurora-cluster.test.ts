@@ -5,25 +5,30 @@ import { AuroraCluster, AuroraClusterProps } from '../../lib/constructs/aurora-c
 import { Networking } from '../../lib/constructs/networking';
 
 describe('Constructs/PostgresInstance', () => {
-  const createTestStack = (additionalProps?: Partial<AuroraClusterProps>): cdk.Stack => {
+  interface TestStackOutput {
+    stack: cdk.Stack;
+    networking: Networking;
+    testTarget: AuroraCluster;
+  }
+  const createTestStack = (additionalProps?: Partial<AuroraClusterProps>): TestStackOutput => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
     const networking = new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       vpcName: 'TestVpc',
     });
-    new AuroraCluster(stack, 'Database', {
+    const testTarget = new AuroraCluster(stack, 'DatabaseCluster', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_15_2,
       }),
       networking,
       ...additionalProps,
     });
-    return stack;
+    return { stack, networking, testTarget };
   };
 
   test('Creates a single Aurora cluster', () => {
-    const stack = createTestStack();
+    const { stack } = createTestStack();
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::RDS::DBCluster', {
       Engine: 'aurora-postgresql',
@@ -37,12 +42,12 @@ describe('Constructs/PostgresInstance', () => {
     });
 
     template.hasResourceProperties('AWS::SecretsManager::Secret', {
-      Name: 'TestStack/Database/secret',
+      Name: 'TestStack/DatabaseCluster/secret',
     });
   });
 
   test('Can change the engine', () => {
-    const stack = createTestStack({
+    const { stack } = createTestStack({
       engine: rds.DatabaseClusterEngine.aurora({
         version: rds.AuroraEngineVersion.VER_1_23_4,
       }),
@@ -60,12 +65,34 @@ describe('Constructs/PostgresInstance', () => {
   });
 
   test('Can change the credentials secret name', () => {
-    const stack = createTestStack({
+    const { stack } = createTestStack({
       credentialsSecretName: 'TestClusterSecret',
     });
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::SecretsManager::Secret', {
       Name: 'TestClusterSecret',
+    });
+  });
+
+  test('Can allow connections from a security group', () => {
+    const { stack, testTarget, networking } = createTestStack();
+    const securityGroup = new ec2.SecurityGroup(stack, 'TestSecurityGroup', {
+      vpc: networking.vpc,
+      description: 'Test security group',
+      allowAllOutbound: false,
+    });
+    testTarget.connections.allowDefaultPortFrom(securityGroup);
+    const template = Template.fromStack(stack);
+    template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
+    template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
+      Description: 'to TestStackDatabaseClusterDBSecurityGroupE4F9263A:{IndirectPort}',
+      DestinationSecurityGroupId: {
+        'Fn::GetAtt': ['DatabaseClusterDBSecurityGroup4C7601D4', 'GroupId'],
+      },
+      FromPort: { 'Fn::GetAtt': ['DatabaseClusterDB62D9423F', 'Endpoint.Port'] },
+      GroupId: { 'Fn::GetAtt': ['TestSecurityGroup880B57C0', 'GroupId'] },
+      IpProtocol: 'tcp',
+      ToPort: { 'Fn::GetAtt': ['DatabaseClusterDB62D9423F', 'Endpoint.Port'] },
     });
   });
 });

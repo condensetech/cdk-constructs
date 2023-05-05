@@ -11,12 +11,12 @@ export interface AuroraClusterProps {
   credentialsSecretName?: string;
   instanceType?: ec2.InstanceType;
   multiAz?: boolean;
-  allowedSecurityGroups?: ec2.ISecurityGroup[];
   backupRetention?: cdk.Duration;
 }
 
 export class AuroraCluster extends Construct implements IDatabase {
   private readonly databaseCluster: rds.IDatabaseCluster;
+  public connections: ec2.Connections;
 
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
@@ -54,17 +54,10 @@ export class AuroraCluster extends Construct implements IDatabase {
       backup,
     });
 
-    (props.allowedSecurityGroups ?? []).forEach((sg) => {
-      this.databaseCluster.connections.allowDefaultPortFrom(sg);
-    });
+    this.connections = this.databaseCluster.connections;
   }
 
   public fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
     return sm.Secret.fromSecretNameV2(scope, id, `${this.node.path}/secret`);
-  }
-
-  public getSecurityGroup(scope: Construct, id: string): ec2.ISecurityGroup {
-    const securityGroup = this.databaseCluster.connections.securityGroups[0];
-    return ec2.SecurityGroup.fromSecurityGroupId(scope, id, securityGroup.securityGroupId);
   }
 }

@@ -17,11 +17,11 @@ export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {
     });
   }
 
-  public fetchSecret(scope: Construct, id?: string | undefined): sm.ISecret {
-    return this.construct.fetchSecret(scope, id);
+  get connections(): ec2.Connections {
+    return this.construct.connections;
   }
 
-  public getSecurityGroup(scope: Construct, id: string): ec2.ISecurityGroup {
-    return this.construct.getSecurityGroup(scope, id);
+  public fetchSecret(scope: Construct, id?: string | undefined): sm.ISecret {
+    return this.construct.fetchSecret(scope, id);
   }
 }

@@ -11,7 +11,6 @@ export interface INetworking {
   readonly publicSubnets: ec2.SubnetSelection;
 }
 
-export interface IDatabase {
+export interface IDatabase extends ec2.IConnectable {
   fetchSecret(scope: Construct, id?: string): sm.ISecret;
-  getSecurityGroup(scope: Construct, id: string): ec2.ISecurityGroup;
 }
