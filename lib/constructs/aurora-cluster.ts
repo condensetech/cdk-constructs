@@ -16,7 +16,6 @@ export interface AuroraClusterProps {
 
 export class AuroraCluster extends Construct implements IDatabase {
   private readonly databaseCluster: rds.IDatabaseCluster;
-  public connections: ec2.Connections;
 
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
@@ -53,8 +52,10 @@ export class AuroraCluster extends Construct implements IDatabase {
       storageEncrypted: true,
       backup,
     });
+  }
 
-    this.connections = this.databaseCluster.connections;
+  get connections(): ec2.Connections {
+    return this.databaseCluster.connections;
   }
 
   public fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
