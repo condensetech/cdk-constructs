@@ -12,7 +12,6 @@ export class AuroraClusterStack extends cdk.Stack implements IDatabase {
   constructor(scope: Construct, id: string, props: AuroraClusterStackProps) {
     super(scope, id, props);
     this.construct = new AuroraCluster(this, 'DatabaseCluster', {
-      clusterName: `${this.node.path}/DatabaseCluster`,
       ...props,
     });
   }

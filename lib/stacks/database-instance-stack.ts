@@ -12,7 +12,6 @@ export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {
   constructor(scope: Construct, id: string, props: DatabaseInstanceStackProps) {
     super(scope, id, props);
     this.construct = new DatabaseInstance(this, 'Database', {
-      instanceName: `${this.node.path}/Database`,
       ...props,
     });
   }
