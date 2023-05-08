@@ -5,7 +5,7 @@ import { NetworkingStack } from '../../lib/stacks/networking-stack';
 import { AuroraClusterStack } from '../../lib/stacks/aurora-cluster-stack';
 
 describe('Stacks/PostgresInstanceStack', () => {
-  test('Sets a default Instance name', () => {
+  test('does not set the cluster identifier', () => {
     const app = new cdk.App();
     const networking = new NetworkingStack(app, 'TestStack', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
@@ -18,8 +18,9 @@ describe('Stacks/PostgresInstanceStack', () => {
     });
 
     const template = Template.fromStack(stack);
-    template.hasResourceProperties('AWS::RDS::DBCluster', {
-      DBClusterIdentifier: 'testdbstack/databasecluster',
+
+    Object.values(template.findResources('AWS::RDS::DBCluster')).map((resource) => {
+      expect(Object.keys(resource.Properties)).not.toContain('DBClusterIdentifier');
     });
   });
 });
