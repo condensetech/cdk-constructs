@@ -14,3 +14,7 @@ export interface INetworking {
 export interface IDatabase extends ec2.IConnectable {
   fetchSecret(scope: Construct, id?: string): sm.ISecret;
 }
+
+export interface IPrivateOpenSearch extends ec2.IConnectable {
+  domainEndpoint(): string;
+}
