@@ -8,10 +8,6 @@
     "name": "Condense s.r.l.",
     "email": "tech@condense.tech"
   },
-  "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com"
-  },
   "files": [
     "dist"
   ],
