@@ -35,7 +35,7 @@ describe('Constructs/PostgresInstance', () => {
       EngineVersion: '15.2',
       StorageEncrypted: true,
     });
-    template.resourceCountIs('AWS::RDS::DBInstance', 2);
+    template.resourceCountIs('AWS::RDS::DBInstance', 1);
     template.hasResourceProperties('AWS::RDS::DBInstance', {
       DBInstanceClass: 'db.t3.medium',
       Engine: 'aurora-postgresql',
@@ -57,7 +57,7 @@ describe('Constructs/PostgresInstance', () => {
       Engine: 'aurora',
       EngineVersion: '5.6.mysql_aurora.1.23.4',
     });
-    template.resourceCountIs('AWS::RDS::DBInstance', 2);
+    template.resourceCountIs('AWS::RDS::DBInstance', 1);
     template.hasResourceProperties('AWS::RDS::DBInstance', {
       DBInstanceClass: 'db.t3.small',
       Engine: 'aurora',
@@ -89,7 +89,9 @@ describe('Constructs/PostgresInstance', () => {
       DestinationSecurityGroupId: {
         'Fn::GetAtt': ['DatabaseClusterDBSecurityGroup4C7601D4', 'GroupId'],
       },
-      FromPort: { 'Fn::GetAtt': ['DatabaseClusterDB62D9423F', 'Endpoint.Port'] },
+      FromPort: {
+        'Fn::GetAtt': ['DatabaseClusterDB62D9423F', 'Endpoint.Port'],
+      },
       GroupId: { 'Fn::GetAtt': ['TestSecurityGroup880B57C0', 'GroupId'] },
       IpProtocol: 'tcp',
       ToPort: { 'Fn::GetAtt': ['DatabaseClusterDB62D9423F', 'Endpoint.Port'] },

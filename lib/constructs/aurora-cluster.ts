@@ -9,9 +9,10 @@ export interface AuroraClusterProps {
   clusterName?: string;
   databaseName?: string;
   credentialsSecretName?: string;
-  instanceType?: ec2.InstanceType;
   multiAz?: boolean;
   backupRetention?: cdk.Duration;
+  writer?: rds.IClusterInstance;
+  readers?: rds.IClusterInstance[];
 }
 
 export class AuroraCluster extends Construct implements IDatabase {
@@ -25,13 +26,6 @@ export class AuroraCluster extends Construct implements IDatabase {
       description: this.node.path,
     });
 
-    const minimumInstanceType =
-      props.engine.engineType === 'aurora-postgresql'
-        ? ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM)
-        : ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
-
-    const instanceType = props.instanceType ?? minimumInstanceType;
-
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;
 
     const credentials = rds.Credentials.fromUsername('db_user', {
@@ -42,11 +36,14 @@ export class AuroraCluster extends Construct implements IDatabase {
       clusterIdentifier: props.clusterName,
       engine: props.engine,
       credentials,
-      instanceProps: {
-        instanceType,
-        vpc: props.networking.vpc,
-        vpcSubnets: props.networking.isolatedSubnets,
-      },
+      writer:
+        props.writer ??
+        rds.ClusterInstance.provisioned('ClusterInstance', {
+          instanceType: AuroraCluster.minimumInstanceType(props.engine),
+        }),
+      readers: props.readers,
+      vpc: props.networking.vpc,
+      vpcSubnets: props.networking.isolatedSubnets,
       defaultDatabaseName: props.databaseName,
       parameterGroup,
       storageEncrypted: true,
@@ -58,7 +55,13 @@ export class AuroraCluster extends Construct implements IDatabase {
     return this.databaseCluster.connections;
   }
 
-  public fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
+  fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
     return sm.Secret.fromSecretNameV2(scope, id, `${this.node.path}/secret`);
+  }
+
+  static minimumInstanceType(engine: rds.IClusterEngine): ec2.InstanceType {
+    return engine.engineType === 'aurora-postgresql'
+      ? ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM)
+      : ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
   }
 }
