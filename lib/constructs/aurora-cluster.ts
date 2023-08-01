@@ -17,6 +17,7 @@ export interface AuroraClusterProps {
 
 export class AuroraCluster extends Construct implements IDatabase {
   private readonly databaseCluster: rds.IDatabaseCluster;
+  readonly endpoint: rds.Endpoint;
 
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
@@ -49,6 +50,7 @@ export class AuroraCluster extends Construct implements IDatabase {
       storageEncrypted: true,
       backup,
     });
+    this.endpoint = this.databaseCluster.clusterEndpoint;
   }
 
   get connections(): ec2.Connections {

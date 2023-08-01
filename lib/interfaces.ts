@@ -1,5 +1,6 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
+import * as rds from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 
 export interface INetworking {
@@ -12,5 +13,6 @@ export interface INetworking {
 }
 
 export interface IDatabase extends ec2.IConnectable {
+  readonly endpoint: rds.Endpoint;
   fetchSecret(scope: Construct, id?: string): sm.ISecret;
 }

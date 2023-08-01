@@ -1,6 +1,6 @@
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
-import { aws_ec2 as ec2, aws_secretsmanager as sm } from 'aws-cdk-lib';
+import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cdk-lib';
 import { DatabaseInstance, DatabaseInstanceProps } from '../constructs';
 import { IDatabase } from '../interfaces';
 
@@ -14,6 +14,10 @@ export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {
     this.construct = new DatabaseInstance(this, 'Database', {
       ...props,
     });
+  }
+
+  get endpoint(): rds.Endpoint {
+    return this.construct.endpoint;
   }
 
   get connections(): ec2.Connections {

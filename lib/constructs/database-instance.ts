@@ -17,6 +17,7 @@ export interface DatabaseInstanceProps {
 
 export class DatabaseInstance extends Construct implements IDatabase {
   private readonly databaseInstance: rds.IDatabaseInstance;
+  readonly endpoint: rds.Endpoint;
 
   constructor(scope: Construct, id: string, props: DatabaseInstanceProps) {
     super(scope, id);
@@ -49,6 +50,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       storageEncrypted: true,
       backupRetention: props.backupRetention,
     });
+    this.endpoint = this.databaseInstance.instanceEndpoint;
   }
 
   get connections(): ec2.Connections {
