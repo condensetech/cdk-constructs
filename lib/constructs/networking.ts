@@ -7,7 +7,9 @@ export interface NetworkingProps {
   readonly ipAddresses: ec2.IIpAddresses;
   readonly vpcName?: string;
   readonly natGateways?: number;
-  readonly bastionHost?: boolean;
+  readonly bastionHostEnabled?: boolean;
+  readonly bastionHostAmi?: ec2.IMachineImage;
+  readonly bastionHostInstanceType?: ec2.InstanceType;
 }
 
 export class Networking extends Construct implements INetworking {
@@ -20,14 +22,18 @@ export class Networking extends Construct implements INetworking {
 
     this.hasPrivateSubnets = props.natGateways !== 0;
     this.vpc = this.buildVpc(props);
-    if (props.bastionHost) {
+    if (props.bastionHostEnabled) {
       this.bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
         vpc: this.vpc,
-        machineImage: new ec2.AmazonLinuxImage({
-          generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2023,
-          cpuType: ec2.AmazonLinuxCpuType.ARM_64,
-        }),
-        instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
+        machineImage:
+          props.bastionHostAmi ??
+          new ec2.AmazonLinuxImage({
+            generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
+            cpuType: ec2.AmazonLinuxCpuType.ARM_64,
+          }),
+        instanceType:
+          props.bastionHostInstanceType ??
+          ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
         subnetSelection: this.privateSubnets ?? this.isolatedSubnets,
       });
       cdk.Tags.of(this.bastionHost.instance).add('Resource', 'Bastion');

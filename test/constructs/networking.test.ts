@@ -40,7 +40,7 @@ describe('Constructs/Networking', () => {
     const stack = new cdk.Stack(app, 'TestStack');
     new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      bastionHost: true,
+      bastionHostEnabled: true,
     });
     const template = Template.fromStack(stack);
     template.resourceCountIs('AWS::EC2::Instance', 1);
@@ -64,7 +64,7 @@ describe('Constructs/Networking', () => {
     const stack = new cdk.Stack(app, 'TestStack');
     new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      bastionHost: true,
+      bastionHostEnabled: true,
     });
     const template = Template.fromStack(stack);
     const subnetIds = Object.keys(
@@ -88,7 +88,7 @@ describe('Constructs/Networking', () => {
     const stack = new cdk.Stack(app, 'TestStack');
     new Networking(stack, 'Networking', {
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      bastionHost: true,
+      bastionHostEnabled: true,
       natGateways: 0,
     });
     const template = Template.fromStack(stack);
