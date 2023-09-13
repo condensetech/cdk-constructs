@@ -77,7 +77,7 @@ describe('Constructs/Networking', () => {
             },
           ]),
         },
-      })
+      }),
     );
     const bastionProps = Object.values(template.findResources('AWS::EC2::Instance'))[0].Properties;
     expect(subnetIds.includes(bastionProps.SubnetId.Ref)).toBe(true);
@@ -102,7 +102,7 @@ describe('Constructs/Networking', () => {
             },
           ]),
         },
-      })
+      }),
     );
     const bastionProps = Object.values(template.findResources('AWS::EC2::Instance'))[0].Properties;
     expect(subnetIds.includes(bastionProps.SubnetId.Ref)).toBe(true);

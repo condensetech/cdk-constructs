@@ -13,7 +13,7 @@ describe('Constructs/DatabaseInstance', () => {
   }
 
   const createTestStack = (
-    additionalProps: Partial<DatabaseInstanceProps> = {}
+    additionalProps: Partial<DatabaseInstanceProps> = {},
   ): TestStackOutput => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');

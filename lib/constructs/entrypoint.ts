@@ -25,7 +25,7 @@ export class Entrypoint extends Construct implements IEntrypoint {
     const hostedZone = HostedZone.fromHostedZoneAttributes(
       this,
       'HostedZone',
-      props.hostedZoneProps
+      props.hostedZoneProps,
     );
     this.domainName = props.domainName;
 
@@ -81,7 +81,7 @@ export class Entrypoint extends Construct implements IEntrypoint {
       securityGroup: ec2.SecurityGroup.fromSecurityGroupId(
         scope,
         `${id}-SG`,
-        this.securityGroup.securityGroupId
+        this.securityGroup.securityGroupId,
       ),
     });
   }

@@ -28,7 +28,7 @@ export class NaiveBasicAuthCloudfrontFunction extends cloudfront.Function {
         }
 
         return request;
-      }`
+      }`,
       ),
     });
   }

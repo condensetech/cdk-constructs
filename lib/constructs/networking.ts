@@ -24,7 +24,7 @@ export class Networking extends Construct implements INetworking {
       this.bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
         vpc: this.vpc,
         machineImage: new ec2.AmazonLinuxImage({
-          generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
+          generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2023,
           cpuType: ec2.AmazonLinuxCpuType.ARM_64,
         }),
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
