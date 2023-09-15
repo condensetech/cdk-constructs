@@ -27,14 +27,13 @@ export class Networking extends Construct implements INetworking {
         vpc: this.vpc,
         machineImage:
           props.bastionHostAmi ??
-          new ec2.AmazonLinuxImage({
-            generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
+          ec2.MachineImage.latestAmazonLinux2023({
             cpuType: ec2.AmazonLinuxCpuType.ARM_64,
           }),
         instanceType:
           props.bastionHostInstanceType ??
           ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
-        subnetSelection: this.privateSubnets ?? this.isolatedSubnets,
+        subnetSelection: this.privateSubnets ?? this.publicSubnets,
       });
       cdk.Tags.of(this.bastionHost.instance).add('Resource', 'Bastion');
     }

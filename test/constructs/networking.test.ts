@@ -83,7 +83,7 @@ describe('Constructs/Networking', () => {
     expect(subnetIds.includes(bastionProps.SubnetId.Ref)).toBe(true);
   });
 
-  test('Creates a Bastion Host in isolated subnets when nat gateway is not present', () => {
+  test('Creates a Bastion Host in public subnets when nat gateway is not present', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
     new Networking(stack, 'Networking', {
@@ -98,7 +98,7 @@ describe('Constructs/Networking', () => {
           Tags: Match.arrayWith([
             {
               Key: 'aws-cdk:subnet-type',
-              Value: 'Isolated',
+              Value: 'Public',
             },
           ]),
         },
