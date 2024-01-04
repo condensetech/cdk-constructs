@@ -44,7 +44,7 @@ export class NaiveBasicAuthCloudfrontFunction extends cloudfront.Function {
             return path.test(request.uri);
           }
           return path === request.uri;
-        }
+        });
 
         var isPathProtected = !isPathExcluded;
         var isBasicAuthInvalid = typeof headers.authorization === "undefined" || headers.authorization.value === authString;
