@@ -47,7 +47,7 @@ export class NaiveBasicAuthCloudfrontFunction extends cloudfront.Function {
         });
 
         var isPathProtected = !isPathExcluded;
-        var isBasicAuthInvalid = typeof headers.authorization === "undefined" || headers.authorization.value === authString;
+        var isBasicAuthInvalid = typeof headers.authorization === "undefined" || headers.authorization.value !== authString;
         if (isPathProtected && isBasicAuthInvalid) {
           return {
             statusCode: 401,
