@@ -7,6 +7,7 @@ export interface NetworkingProps {
   readonly ipAddresses: ec2.IIpAddresses;
   readonly vpcName?: string;
   readonly natGateways?: number;
+  readonly bastionName?: string;
   readonly bastionHostEnabled?: boolean;
   readonly bastionHostAmi?: ec2.IMachineImage;
   readonly bastionHostInstanceType?: ec2.InstanceType;
@@ -26,6 +27,7 @@ export class Networking extends Construct implements INetworking {
     if (props.bastionHostEnabled) {
       this.bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
         vpc: this.vpc,
+        instanceName: props.bastionName ?? (props.vpcName ? `${props.vpcName}-bastion` : undefined),
         machineImage:
           props.bastionHostAmi ??
           ec2.MachineImage.latestAmazonLinux2023({

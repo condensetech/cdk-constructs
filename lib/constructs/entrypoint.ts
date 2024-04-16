@@ -4,13 +4,15 @@ import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
-import { HostedZoneAttributes, IEntrypoint } from '../interfaces';
+import { HostedZoneAttributes, IEntrypoint, INetworking } from '../interfaces';
 
 export interface EntrypointProps {
-  vpc: ec2.IVpc;
-  hostedZoneProps: HostedZoneAttributes;
-  domainName: string;
-  wildcardCertificate?: boolean;
+  readonly networking: INetworking;
+  readonly entrypointName?: string;
+  readonly hostedZoneProps: HostedZoneAttributes;
+  readonly domainName: string;
+  readonly wildcardCertificate?: boolean;
+  readonly entrypointSecurityGroupName?: string;
 }
 
 export class Entrypoint extends Construct implements IEntrypoint {
@@ -40,14 +42,18 @@ export class Entrypoint extends Construct implements IEntrypoint {
     });
 
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
-      vpc: props.vpc,
+      vpc: props.networking.vpc,
       allowAllOutbound: true,
+      securityGroupName:
+        props.entrypointSecurityGroupName ??
+        (props.entrypointName ? `${props.entrypointName}-sg` : undefined),
     });
 
     this.alb = new elb.ApplicationLoadBalancer(this, 'Alb', {
-      vpc: props.vpc,
+      vpc: props.networking.vpc,
       internetFacing: true,
       securityGroup: this.securityGroup,
+      loadBalancerName: props.entrypointName,
     });
 
     this.alb.addListener('HTTP', {
