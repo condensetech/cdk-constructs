@@ -10,6 +10,7 @@ export interface NetworkingProps {
   readonly bastionHostEnabled?: boolean;
   readonly bastionHostAmi?: ec2.IMachineImage;
   readonly bastionHostInstanceType?: ec2.InstanceType;
+  readonly maxAzs?: number;
 }
 
 export class Networking extends Construct implements INetworking {
@@ -79,6 +80,7 @@ export class Networking extends Construct implements INetworking {
       vpcName: props.vpcName,
       subnetConfiguration,
       natGateways: props.natGateways,
+      maxAzs: props.maxAzs,
     });
   }
 }
