@@ -13,6 +13,7 @@ export interface AuroraClusterProps {
   backupRetention?: cdk.Duration;
   writer?: rds.IClusterInstance;
   readers?: rds.IClusterInstance[];
+  removalPolicy?: cdk.RemovalPolicy;
 }
 
 export class AuroraCluster extends Construct implements IDatabase {
@@ -25,6 +26,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     const parameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
       engine: props.engine,
       description: this.node.path,
+      removalPolicy: props.removalPolicy,
     });
 
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;

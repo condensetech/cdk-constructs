@@ -1,6 +1,7 @@
 import { CertificateValidation, Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
@@ -13,6 +14,7 @@ export interface EntrypointProps {
   readonly domainName: string;
   readonly wildcardCertificate?: boolean;
   readonly entrypointSecurityGroupName?: string;
+  readonly logsBucket?: s3.IBucket;
 }
 
 export class Entrypoint extends Construct implements IEntrypoint {
@@ -49,12 +51,16 @@ export class Entrypoint extends Construct implements IEntrypoint {
         (props.entrypointName ? `${props.entrypointName}-sg` : undefined),
     });
 
-    this.alb = new elb.ApplicationLoadBalancer(this, 'Alb', {
+    const alb = new elb.ApplicationLoadBalancer(this, 'Alb', {
       vpc: props.networking.vpc,
       internetFacing: true,
       securityGroup: this.securityGroup,
       loadBalancerName: props.entrypointName,
     });
+    if (props.logsBucket) {
+      alb.logAccessLogs(props.logsBucket);
+    }
+    this.alb = alb;
 
     this.alb.addListener('HTTP', {
       protocol: elb.ApplicationProtocol.HTTP,
