@@ -52,3 +52,32 @@ All of them implements the [IDatabase](lib/interfaces.ts) interface, allowing to
 ### Naive BasicAuth Cloudfront Function
 
 [NaiveBasicAuthCloudfrontFunction](lib/constructs/naive-basic-auth-cloudfront-function.ts) is useful when a basic protection layer must be added to Cloudfront (for SPAs or static sites) and you just need to avoid crawlers and unwanted visitors.
+
+### Monitoring Facade
+
+By instantiating this class in a stack, it ensures all resources are properly monitored by CloudWatch.
+
+Further configuration can be done by `.of` method.
+
+```ts
+class Stack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const monitoring = new MonitoringFacade(this, 'Monitoring');
+    const construct = new MyConstruct(this, 'MyConstruct');
+  }
+}
+
+export class MyConstruct extends Construct {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+    const elb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
+      ...
+    });
+    MonitoringFacade.of(this).configAppliationLoadBalancer(elb, {
+      target5xxErrorsThreshold: 1,
+    });
+  }
+}
+```

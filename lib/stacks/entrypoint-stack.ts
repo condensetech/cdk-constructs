@@ -3,8 +3,14 @@ import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { Entrypoint, EntrypointProps } from '../constructs/entrypoint';
 import { IEntrypoint } from '../interfaces';
+import {
+  MonitoringFacade,
+  MonitoringFacadeProps,
+} from '../constructs/monitoring/monitoring-facade';
 
-export type EntrypointStackProps = EntrypointProps & StackProps;
+export interface EntrypointStackProps extends EntrypointProps, StackProps {
+  monitoring?: MonitoringFacadeProps;
+}
 
 export class EntrypointStack extends Stack implements IEntrypoint {
   private readonly construct: IEntrypoint;
@@ -12,6 +18,9 @@ export class EntrypointStack extends Stack implements IEntrypoint {
   constructor(scope: Construct, id: string, props: EntrypointStackProps) {
     super(scope, id, props);
     this.construct = new Entrypoint(this, 'Entrypoint', props);
+    if (props.monitoring) {
+      new MonitoringFacade(this, props.monitoring);
+    }
   }
 
   get alb(): elb.IApplicationLoadBalancer {
