@@ -47,6 +47,12 @@ And their relative stack version:
 
 All of them implements the [IDatabase](lib/interfaces.ts) interface, allowing to easily compose your infrastructure.
 
+## Cloudwatch Alarms Topic
+
+The CloudwatchAlarmsTopicStack creates an SNS Topic which can be used as a target for Cloudwatch Alarms, allowing to easily:
+- create alarms in Jira Service Desk
+- send messages to Discord
+
 ## Other useful constructs
 
 ### Naive BasicAuth Cloudfront Function
