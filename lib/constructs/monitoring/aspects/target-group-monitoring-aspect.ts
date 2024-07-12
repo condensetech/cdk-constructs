@@ -14,7 +14,7 @@ export interface TargetGroupMonitoringMetrics {
 }
 
 export interface TargetGroupMonitoringConfig {
-  responseTimeThreshold: cdk.Duration;
+  responseTimeThreshold?: cdk.Duration;
   minHealthyHostsThreshold: number;
 }
 
@@ -25,7 +25,6 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
 > {
   protected instanceType = elbv2.ApplicationTargetGroup;
   protected defaultConfig = {
-    responseTimeThreshold: cdk.Duration.seconds(1),
     minHealthyHostsThreshold: 1,
   };
 
@@ -40,7 +39,10 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
         title: 'Response Time',
         left: [metrics.responseTime],
         leftYAxis: dashboardSecondsAxis,
-        leftAnnotations: [alertAnnotation(config.responseTimeThreshold.toSeconds())],
+        leftAnnotations:
+          config.responseTimeThreshold !== undefined
+            ? [alertAnnotation(config.responseTimeThreshold.toSeconds())]
+            : [],
         width: 12,
       }),
       new cw.GraphWidget({
@@ -59,13 +61,17 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
     metrics: TargetGroupMonitoringMetrics,
   ): cw.Alarm[] {
     return [
-      new cw.Alarm(node, 'TargetGroupResponseTimeAlarm', {
-        alarmName: `TargetGroupResponseTimeAlarm-${node.targetGroupName}`,
-        metric: metrics.responseTime,
-        evaluationPeriods: 5,
-        threshold: config.responseTimeThreshold.toSeconds(),
-        alarmDescription: `Response time is too high on ${node.targetGroupName}`,
-      }),
+      ...(config.responseTimeThreshold
+        ? [
+            new cw.Alarm(node, 'TargetGroupResponseTimeAlarm', {
+              alarmName: `TargetGroupResponseTimeAlarm-${node.targetGroupName}`,
+              metric: metrics.responseTime,
+              evaluationPeriods: 5,
+              threshold: config.responseTimeThreshold.toSeconds(),
+              alarmDescription: `Response time is too high on ${node.targetGroupName}`,
+            }),
+          ]
+        : []),
       new cw.Alarm(node, 'TargetGroupMinHealthyHostsAlarm', {
         alarmName: `TargetGroupMinHealthyHostsAlarm-${node.targetGroupName}`,
         metric: metrics.minHealthyHosts,
