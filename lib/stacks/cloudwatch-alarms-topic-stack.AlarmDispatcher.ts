@@ -1,3 +1,4 @@
+/* global fetch */
 /// <reference lib="dom" />
 
 interface AlarmPayload {
