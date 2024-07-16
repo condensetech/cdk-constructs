@@ -14,7 +14,7 @@ export interface TargetGroupMonitoringMetrics {
 }
 
 export interface TargetGroupMonitoringConfig {
-  responseTimeThreshold?: number;
+  responseTimeThreshold?: cdk.Duration;
   minHealthyHostsThreshold: number;
 }
 
@@ -41,7 +41,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
         leftYAxis: dashboardSecondsAxis,
         leftAnnotations:
           config.responseTimeThreshold !== undefined
-            ? [alertAnnotation(config.responseTimeThreshold)]
+            ? [alertAnnotation(config.responseTimeThreshold.toSeconds({ integral: false }))]
             : [],
         width: 12,
       }),
@@ -67,7 +67,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
               alarmName: `TargetGroupResponseTimeAlarm-${node.targetGroupName}`,
               metric: metrics.responseTime,
               evaluationPeriods: 5,
-              threshold: config.responseTimeThreshold,
+              threshold: config.responseTimeThreshold.toSeconds({ integral: false }),
               alarmDescription: `Response time is too high on ${node.targetGroupName}`,
             }),
           ]

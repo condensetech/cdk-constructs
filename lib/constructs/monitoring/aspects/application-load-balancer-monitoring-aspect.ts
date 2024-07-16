@@ -40,7 +40,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
   protected widgets(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
-    metrics: ApplicationLoadBalancerMonitoringMetrics,
+    metrics: ApplicationLoadBalancerMonitoringMetrics
   ): cw.IWidget[] {
     return [
       dashboardSectionTitle(`Load Balancer ${node.loadBalancerName}`),
@@ -49,7 +49,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
         left: [metrics.responseTime],
         leftYAxis: dashboardSecondsAxis,
         leftAnnotations: config.responseTimeThreshold
-          ? [alertAnnotation(config.responseTimeThreshold.toSeconds())]
+          ? [alertAnnotation(config.responseTimeThreshold.toSeconds({ integral: false }))]
           : [],
         width: 12,
       }),
@@ -90,7 +90,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
   protected alarms(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
-    metrics: ApplicationLoadBalancerMonitoringMetrics,
+    metrics: ApplicationLoadBalancerMonitoringMetrics
   ): cw.Alarm[] {
     return [
       ...(config.responseTimeThreshold !== undefined
@@ -99,7 +99,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
               alarmName: `LoadBalancerResponseTimeAlarm-${node.loadBalancerName}`,
               metric: metrics.responseTime,
               evaluationPeriods: 5,
-              threshold: config.responseTimeThreshold.toSeconds(),
+              threshold: config.responseTimeThreshold.toSeconds({ integral: false }),
               alarmDescription: `Response time is too high on ${node.loadBalancerName}`,
             }),
           ]
