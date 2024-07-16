@@ -14,7 +14,7 @@ export interface TargetGroupMonitoringMetrics {
 }
 
 export interface TargetGroupMonitoringConfig {
-  responseTimeThreshold?: cdk.Duration;
+  responseTimeThreshold?: number;
   minHealthyHostsThreshold: number;
 }
 
@@ -31,7 +31,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
   protected widgets(
     node: elbv2.ApplicationTargetGroup,
     config: TargetGroupMonitoringConfig,
-    metrics: TargetGroupMonitoringMetrics,
+    metrics: TargetGroupMonitoringMetrics
   ): cw.IWidget[] {
     return [
       dashboardSectionTitle(`TargetGroup ${node.targetGroupName}`),
@@ -41,7 +41,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
         leftYAxis: dashboardSecondsAxis,
         leftAnnotations:
           config.responseTimeThreshold !== undefined
-            ? [alertAnnotation(config.responseTimeThreshold.toSeconds())]
+            ? [alertAnnotation(config.responseTimeThreshold)]
             : [],
         width: 12,
       }),
@@ -58,7 +58,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
   protected alarms(
     node: elbv2.ApplicationTargetGroup,
     config: TargetGroupMonitoringConfig,
-    metrics: TargetGroupMonitoringMetrics,
+    metrics: TargetGroupMonitoringMetrics
   ): cw.Alarm[] {
     return [
       ...(config.responseTimeThreshold
@@ -67,7 +67,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
               alarmName: `TargetGroupResponseTimeAlarm-${node.targetGroupName}`,
               metric: metrics.responseTime,
               evaluationPeriods: 5,
-              threshold: config.responseTimeThreshold.toSeconds(),
+              threshold: config.responseTimeThreshold,
               alarmDescription: `Response time is too high on ${node.targetGroupName}`,
             }),
           ]
@@ -87,6 +87,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
     return {
       responseTime: node.metrics.targetResponseTime({
         period: cdk.Duration.minutes(1),
+        statistic: 'tm99',
       }),
       minHealthyHosts: node.metrics.healthyHostCount({
         period: cdk.Duration.minutes(1),
