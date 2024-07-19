@@ -1,14 +1,19 @@
 import { Construct } from 'constructs';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 
-function serializeExcludePaths(paths: Array<string | RegExp>): string {
-  const serializedValues = paths.map((path) => {
-    if (path instanceof RegExp) {
+function serializeExcludePaths(paths: Array<NaiveBasicAuthCloudfrontFunctionExcludedPath>): string {
+  const serializedValues = paths.map(({ path, matchMode }) => {
+    if (matchMode === 'regex') {
       return path.toString();
     }
     return `"${path}"`;
   });
   return `[${serializedValues.join(', ')}]`;
+}
+
+export interface NaiveBasicAuthCloudfrontFunctionExcludedPath {
+  readonly path: string;
+  readonly matchMode?: 'exact' | 'regex';
 }
 
 /**
@@ -19,12 +24,12 @@ export interface NaiveBasicAuthCloudfrontFunctionProps {
    * The basic auth string to use for checking basic auth credentials
    * You can generate a basic auth string using the following command: echo -n "$username:$password" | base64
    */
-  basicAuthString: string;
+  readonly basicAuthString: string;
   /**
    * The paths to exclude from basic auth. Pass a string or regex to match the path. Strings are checked using === operator.
    * @default - no paths are excluded
    */
-  excludePaths?: Array<string | RegExp>;
+  readonly excludePaths?: Array<NaiveBasicAuthCloudfrontFunctionExcludedPath>;
 }
 
 export class NaiveBasicAuthCloudfrontFunction extends cloudfront.Function {
