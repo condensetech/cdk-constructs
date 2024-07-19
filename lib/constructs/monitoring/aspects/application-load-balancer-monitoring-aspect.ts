@@ -40,7 +40,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
   protected widgets(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
-    metrics: ApplicationLoadBalancerMonitoringMetrics
+    metrics: ApplicationLoadBalancerMonitoringMetrics,
   ): cw.IWidget[] {
     return [
       dashboardSectionTitle(`Load Balancer ${node.loadBalancerName}`),
@@ -90,7 +90,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
   protected alarms(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
-    metrics: ApplicationLoadBalancerMonitoringMetrics
+    metrics: ApplicationLoadBalancerMonitoringMetrics,
   ): cw.Alarm[] {
     return [
       ...(config.responseTimeThreshold !== undefined

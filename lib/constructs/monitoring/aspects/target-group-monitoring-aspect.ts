@@ -31,7 +31,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
   protected widgets(
     node: elbv2.ApplicationTargetGroup,
     config: TargetGroupMonitoringConfig,
-    metrics: TargetGroupMonitoringMetrics
+    metrics: TargetGroupMonitoringMetrics,
   ): cw.IWidget[] {
     return [
       dashboardSectionTitle(`TargetGroup ${node.targetGroupName}`),
@@ -58,7 +58,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
   protected alarms(
     node: elbv2.ApplicationTargetGroup,
     config: TargetGroupMonitoringConfig,
-    metrics: TargetGroupMonitoringMetrics
+    metrics: TargetGroupMonitoringMetrics,
   ): cw.Alarm[] {
     return [
       ...(config.responseTimeThreshold
