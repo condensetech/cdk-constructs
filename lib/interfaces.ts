@@ -23,8 +23,3 @@ export interface IEntrypoint {
   readonly alb: elb.IApplicationLoadBalancer;
   referenceListener(scope: Construct, id: string): elb.IApplicationListener;
 }
-
-export interface HostedZoneAttributes {
-  hostedZoneId: string;
-  zoneName: string;
-}

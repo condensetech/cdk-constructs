@@ -2,15 +2,15 @@ import { CertificateValidation, Certificate } from 'aws-cdk-lib/aws-certificatem
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import * as r53 from 'aws-cdk-lib/aws-route53';
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
-import { HostedZoneAttributes, IEntrypoint, INetworking } from '../interfaces';
+import { IEntrypoint, INetworking } from '../interfaces';
 
 export interface EntrypointProps {
   readonly networking: INetworking;
   readonly entrypointName?: string;
-  readonly hostedZoneProps: HostedZoneAttributes;
+  readonly hostedZoneProps: r53.HostedZoneAttributes;
   readonly domainName: string;
   readonly wildcardCertificate?: boolean;
   readonly entrypointSecurityGroupName?: string;
@@ -26,7 +26,7 @@ export class Entrypoint extends Construct implements IEntrypoint {
   constructor(scope: Construct, id: string, props: EntrypointProps) {
     super(scope, id);
 
-    const hostedZone = HostedZone.fromHostedZoneAttributes(
+    const hostedZone = r53.HostedZone.fromHostedZoneAttributes(
       this,
       'HostedZone',
       props.hostedZoneProps,
@@ -78,8 +78,8 @@ export class Entrypoint extends Construct implements IEntrypoint {
       }),
     });
 
-    new ARecord(this, 'AlbRecord', {
-      target: RecordTarget.fromAlias(new LoadBalancerTarget(this.alb)),
+    new r53.ARecord(this, 'AlbRecord', {
+      target: r53.RecordTarget.fromAlias(new LoadBalancerTarget(this.alb)),
       zone: hostedZone,
       recordName: this.domainName.replace(`.${props.hostedZoneProps.zoneName}`, ''),
     });
