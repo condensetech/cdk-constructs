@@ -7,13 +7,15 @@ import {
   aws_lambda_event_sources as lambdaEventSources,
 } from 'aws-cdk-lib';
 
+export interface CloudwatchAlarmsDiscordConfig {
+  readonly username?: string;
+  readonly webhook: string;
+}
+
 export interface CloudwatchAlarmsTopicStackProps extends cdk.StackProps {
-  discord?: {
-    username?: string;
-    webhook: string;
-  };
-  jiraSubscriptionWebhook?: string;
-  topicName?: string;
+  readonly discord?: CloudwatchAlarmsDiscordConfig;
+  readonly jiraSubscriptionWebhook?: string;
+  readonly topicName?: string;
 }
 
 export class CloudwatchAlarmsTopicStack extends cdk.Stack {

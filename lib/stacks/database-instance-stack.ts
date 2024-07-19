@@ -9,7 +9,7 @@ import {
 } from '../constructs/monitoring/monitoring-facade';
 
 export interface DatabaseInstanceStackProps extends DatabaseInstanceProps, cdk.StackProps {
-  monitoring?: MonitoringFacadeProps;
+  readonly monitoring?: MonitoringFacadeProps;
 }
 
 export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {

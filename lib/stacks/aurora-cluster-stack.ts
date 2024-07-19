@@ -9,7 +9,7 @@ import {
 } from '../constructs/monitoring/monitoring-facade';
 
 export interface AuroraClusterStackProps extends AuroraClusterProps, cdk.StackProps {
-  monitoring?: MonitoringFacadeProps;
+  readonly monitoring?: MonitoringFacadeProps;
 }
 
 export class AuroraClusterStack extends cdk.Stack implements IDatabase {
