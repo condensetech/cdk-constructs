@@ -2,27 +2,28 @@ import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_elasticache as elasticache } from 'aws-cdk-lib';
 import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
-  alertAnnotation,
+  alertAnnotations,
   dashboardGenericAxis,
   dashboardMillisecondsAxis,
   dashboardPercentAxis,
   dashboardSectionTitle,
 } from '../widgets';
+import { buildAlarms } from '../alarms';
 
 export interface CacheClusterMonitoringMetrics {
-  cpuUtilization: cw.IMetric[];
-  maxConnections: cw.IMetric[];
-  memoryUsage: cw.IMetric;
-  engineCpuUtilization: cw.IMetric;
-  replicationLag: cw.IMetric;
+  readonly cpuUtilization: cw.IMetric[];
+  readonly maxConnections: cw.IMetric[];
+  readonly memoryUsage: cw.IMetric;
+  readonly engineCpuUtilization: cw.IMetric;
+  readonly replicationLag: cw.IMetric;
 }
 
 export interface CacheClusterMonitoringConfig {
-  cpuUtilizationThreshold: number;
-  maxConnectionsThreshold: number;
-  memoryUsageThreshold: number;
-  engineCpuUtilizationThreshold: number;
-  replicationLagThreshold?: cdk.Duration;
+  readonly cpuUtilizationThreshold?: number;
+  readonly maxConnectionsThreshold?: number;
+  readonly memoryUsageThreshold?: number;
+  readonly engineCpuUtilizationThreshold?: number;
+  readonly replicationLagThreshold?: cdk.Duration;
 }
 
 export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
@@ -31,7 +32,7 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
   CacheClusterMonitoringMetrics
 > {
   protected instanceType = elasticache.CfnCacheCluster;
-  protected defaultConfig = {
+  protected defaultConfig: CacheClusterMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     maxConnectionsThreshold: 60_000,
     memoryUsageThreshold: 90,
@@ -51,24 +52,23 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
         title: 'Memory Usage',
         left: [metrics.memoryUsage],
         leftYAxis: dashboardPercentAxis,
-        leftAnnotations: [alertAnnotation(config.memoryUsageThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.memoryUsageThreshold }]),
         width: 8,
       }),
       new cw.GraphWidget({
         title: 'CPU Utilization',
         left: [metrics.engineCpuUtilization],
         leftYAxis: dashboardPercentAxis,
-        leftAnnotations: [alertAnnotation(config.engineCpuUtilizationThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.engineCpuUtilizationThreshold }]),
         width: 8,
       }),
       new cw.GraphWidget({
         title: 'Replication Lag',
         left: [metrics.replicationLag],
         leftYAxis: dashboardMillisecondsAxis,
-        leftAnnotations:
-          config.replicationLagThreshold !== undefined
-            ? [alertAnnotation(config.replicationLagThreshold.toMilliseconds())]
-            : [],
+        leftAnnotations: alertAnnotations([
+          { value: config.replicationLagThreshold?.toMilliseconds() },
+        ]),
         width: 8,
       }),
       new cw.TextWidget({
@@ -81,7 +81,7 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
             title: `CPU Utilization Node ${i}`,
             left: [metric],
             leftYAxis: dashboardPercentAxis,
-            leftAnnotations: [alertAnnotation(config.cpuUtilizationThreshold)],
+            leftAnnotations: alertAnnotations([{ value: config.cpuUtilizationThreshold }]),
             width: cpuWidth,
           }),
       ),
@@ -91,7 +91,7 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
             title: `Connections Node ${i}`,
             left: [metric],
             leftYAxis: dashboardGenericAxis,
-            leftAnnotations: [alertAnnotation(config.maxConnectionsThreshold)],
+            leftAnnotations: alertAnnotations([{ value: config.maxConnectionsThreshold }]),
             width: connectionsWidth,
           }),
       ),
@@ -103,53 +103,49 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
     config: CacheClusterMonitoringConfig,
     metrics: CacheClusterMonitoringMetrics,
   ): cw.Alarm[] {
-    return [
-      ...metrics.cpuUtilization.map(
-        (metric, i) =>
-          new cw.Alarm(node, `CacheClusterCpuUsageAlarm${i}`, {
-            alarmName: `CacheClusterCpuUsageAlarm-${node.ref}-${i + 1}`,
-            metric,
-            evaluationPeriods: 5,
-            threshold: config.cpuUtilizationThreshold,
-            alarmDescription: `CPU Utilization high on ${node.ref}, node ${i + 1}`,
-          }),
-      ),
-      ...metrics.maxConnections.map(
-        (metric, i) =>
-          new cw.Alarm(node, `CacheClusterMaxConnectionsAlarm${i}`, {
-            alarmName: `CacheClusterMaxConnectionsAlarm-${node.ref}-${i + 1}`,
-            metric,
-            evaluationPeriods: 10,
-            threshold: config.maxConnectionsThreshold,
-            alarmDescription: `Max Connections high on ${node.ref}, node ${i + 1}`,
-          }),
-      ),
-      new cw.Alarm(node, 'CacheClusterMemoryUsageAlarm', {
-        alarmName: `CacheClusterMemoryUsageAlarm-${node.ref}`,
-        metric: metrics.memoryUsage,
-        evaluationPeriods: 5,
-        threshold: config.memoryUsageThreshold,
-        alarmDescription: `Memory Usage high on ${node.ref}`,
-      }),
-      new cw.Alarm(node, 'CacheClusterEngineCpuUsageAlarm', {
-        alarmName: `CacheClusterEngineCpuUsageAlarm-${node.ref}`,
-        metric: metrics.engineCpuUtilization,
-        evaluationPeriods: 5,
-        threshold: config.engineCpuUtilizationThreshold,
-        alarmDescription: `Engine CPU Utilization high on ${node.ref}`,
-      }),
-      ...(config.replicationLagThreshold !== undefined
-        ? [
-            new cw.Alarm(node, 'CacheClusterReplicationLagAlarm', {
-              alarmName: `CacheClusterReplicationLagAlarm-${node.ref}`,
-              metric: metrics.replicationLag,
-              evaluationPeriods: 15,
-              threshold: config.replicationLagThreshold.toMilliseconds(),
-              alarmDescription: `Replication Lag high on ${node.ref}`,
-            }),
-          ]
-        : []),
-    ];
+    return buildAlarms({
+      node,
+      nodeIdentifier: node.ref,
+      alarms: [
+        ...metrics.cpuUtilization.map((metric, i) => ({
+          alarmId: `CacheCluster-CpuUsageAlarm-${i}`,
+          alarmName: `CacheCluster-CpuUsageAlarm-${node.ref}-${i + 1}`,
+          metric,
+          evaluationPeriods: 5,
+          threshold: config.cpuUtilizationThreshold,
+          alarmDescription: `CPU Utilization high on ${node.ref}, node ${i + 1}`,
+        })),
+        ...metrics.maxConnections.map((metric, i) => ({
+          alarmId: `CacheCluster-MaxConnectionsAlarm-${i}`,
+          alarmName: `CacheCluster-MaxConnectionsAlarm-${node.ref}-${i + 1}`,
+          metric,
+          evaluationPeriods: 10,
+          threshold: config.maxConnectionsThreshold,
+          alarmDescription: `Max Connections high on ${node.ref}, node ${i + 1}`,
+        })),
+        {
+          alarmId: 'CacheCluster-MemoryUsageAlarm',
+          metric: metrics.memoryUsage,
+          evaluationPeriods: 5,
+          threshold: config.memoryUsageThreshold,
+          alarmDescription: `Memory Usage high on ${node.ref}`,
+        },
+        {
+          alarmId: 'CacheCluster-EngineCpuUsageAlarm',
+          metric: metrics.engineCpuUtilization,
+          evaluationPeriods: 5,
+          threshold: config.engineCpuUtilizationThreshold,
+          alarmDescription: `Engine CPU Utilization high on ${node.ref}`,
+        },
+        {
+          alarmId: 'CacheCluster-ReplicationLagAlarm',
+          metric: metrics.replicationLag,
+          evaluationPeriods: 15,
+          threshold: config.replicationLagThreshold?.toMilliseconds(),
+          alarmDescription: `Replication Lag high on ${node.ref}`,
+        },
+      ],
+    });
   }
 
   protected metrics(node: elasticache.CfnCacheCluster): CacheClusterMonitoringMetrics {

@@ -2,20 +2,21 @@ import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_elasticloadbalancingv2 as elbv2 } from 'aws-cdk-lib';
 import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
-  alertAnnotation,
+  alertAnnotations,
   dashboardGenericAxis,
   dashboardSecondsAxis,
   dashboardSectionTitle,
 } from '../widgets';
+import { buildAlarms } from '../alarms';
 
 export interface TargetGroupMonitoringMetrics {
-  responseTime: cw.IMetric;
-  minHealthyHosts: cw.IMetric;
+  readonly responseTime: cw.IMetric;
+  readonly minHealthyHosts: cw.IMetric;
 }
 
 export interface TargetGroupMonitoringConfig {
-  responseTimeThreshold?: cdk.Duration;
-  minHealthyHostsThreshold: number;
+  readonly responseTimeThreshold?: cdk.Duration;
+  readonly minHealthyHostsThreshold?: number;
 }
 
 export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
@@ -24,7 +25,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
   TargetGroupMonitoringMetrics
 > {
   protected instanceType = elbv2.ApplicationTargetGroup;
-  protected defaultConfig = {
+  protected defaultConfig: TargetGroupMonitoringConfig = {
     minHealthyHostsThreshold: 1,
   };
 
@@ -39,17 +40,16 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
         title: 'Response Time',
         left: [metrics.responseTime],
         leftYAxis: dashboardSecondsAxis,
-        leftAnnotations:
-          config.responseTimeThreshold !== undefined
-            ? [alertAnnotation(config.responseTimeThreshold.toSeconds({ integral: false }))]
-            : [],
+        leftAnnotations: alertAnnotations([
+          { value: config.responseTimeThreshold?.toSeconds({ integral: false }) },
+        ]),
         width: 12,
       }),
       new cw.GraphWidget({
         title: 'Healthy Hosts',
         left: [metrics.minHealthyHosts],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations: [alertAnnotation(config.minHealthyHostsThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.minHealthyHostsThreshold }]),
         width: 12,
       }),
     ];
@@ -60,27 +60,27 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
     config: TargetGroupMonitoringConfig,
     metrics: TargetGroupMonitoringMetrics,
   ): cw.Alarm[] {
-    return [
-      ...(config.responseTimeThreshold
-        ? [
-            new cw.Alarm(node, 'TargetGroupResponseTimeAlarm', {
-              alarmName: `TargetGroupResponseTimeAlarm-${node.targetGroupName}`,
-              metric: metrics.responseTime,
-              evaluationPeriods: 5,
-              threshold: config.responseTimeThreshold.toSeconds({ integral: false }),
-              alarmDescription: `Response time is too high on ${node.targetGroupName}`,
-            }),
-          ]
-        : []),
-      new cw.Alarm(node, 'TargetGroupMinHealthyHostsAlarm', {
-        alarmName: `TargetGroupMinHealthyHostsAlarm-${node.targetGroupName}`,
-        metric: metrics.minHealthyHosts,
-        evaluationPeriods: 5,
-        threshold: config.minHealthyHostsThreshold,
-        comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
-        alarmDescription: `Not enough healthy hosts on ${node.targetGroupName}`,
-      }),
-    ];
+    return buildAlarms({
+      node,
+      nodeIdentifier: node.targetGroupName,
+      alarms: [
+        {
+          alarmId: `TargetGroup-ResponseTimeAlarm`,
+          metric: metrics.responseTime,
+          evaluationPeriods: 5,
+          threshold: config.responseTimeThreshold?.toSeconds({ integral: false }),
+          alarmDescription: `Response time is too high on ${node.targetGroupName}`,
+        },
+        {
+          alarmId: `TargetGroup-MinHealthyHostsAlarm`,
+          metric: metrics.minHealthyHosts,
+          evaluationPeriods: 5,
+          threshold: config.minHealthyHostsThreshold,
+          comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
+          alarmDescription: `Not enough healthy hosts on ${node.targetGroupName}`,
+        },
+      ],
+    });
   }
 
   protected metrics(node: elbv2.ApplicationTargetGroup): TargetGroupMonitoringMetrics {

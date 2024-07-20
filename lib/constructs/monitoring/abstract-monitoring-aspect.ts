@@ -27,7 +27,7 @@ export abstract class AbstractMonitoringAspect<T extends Construct, C, M> implem
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
-  overrideConfig(node: T, config: Partial<C>) {
+  overrideConfig(node: T, config: C) {
     this.overriddenConfig[node.node.path] = config;
   }
 
