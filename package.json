@@ -4,6 +4,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/condensetech/cdk-lib"
+  },
   "author": {
     "name": "Condense s.r.l.",
     "email": "tech@condense.tech"
