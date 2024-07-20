@@ -6,7 +6,7 @@ import { Construct } from 'constructs';
 
 export interface INetworking {
   readonly vpc: ec2.IVpc;
-  readonly bastionHost?: ec2.IInstance;
+  readonly bastionHost?: ec2.BastionHostLinux;
   readonly hasPrivateSubnets: boolean;
   readonly isolatedSubnets: ec2.SubnetSelection;
   readonly privateSubnets?: ec2.SubnetSelection;

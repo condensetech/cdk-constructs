@@ -4,16 +4,16 @@ import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cd
 import { IDatabase, INetworking } from '../interfaces';
 
 export interface AuroraClusterProps {
-  networking: INetworking;
-  engine: rds.IClusterEngine;
-  clusterName?: string;
-  databaseName?: string;
-  credentialsSecretName?: string;
-  multiAz?: boolean;
-  backupRetention?: cdk.Duration;
-  writer?: rds.IClusterInstance;
-  readers?: rds.IClusterInstance[];
-  removalPolicy?: cdk.RemovalPolicy;
+  readonly networking: INetworking;
+  readonly engine: rds.IClusterEngine;
+  readonly clusterName?: string;
+  readonly databaseName?: string;
+  readonly credentialsSecretName?: string;
+  readonly multiAz?: boolean;
+  readonly backupRetention?: cdk.Duration;
+  readonly writer?: rds.IClusterInstance;
+  readonly readers?: rds.IClusterInstance[];
+  readonly removalPolicy?: cdk.RemovalPolicy;
 }
 
 export class AuroraCluster extends Construct implements IDatabase {

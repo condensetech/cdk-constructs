@@ -4,15 +4,15 @@ import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cd
 import { IDatabase, INetworking } from '../interfaces';
 
 export interface DatabaseInstanceProps {
-  networking: INetworking;
-  engine: rds.IInstanceEngine;
-  instanceName?: string;
-  databaseName?: string;
-  credentialsSecretName?: string;
-  instanceType?: ec2.InstanceType;
-  allocatedStorage?: number;
-  multiAz?: boolean;
-  backupRetention?: cdk.Duration;
+  readonly networking: INetworking;
+  readonly engine: rds.IInstanceEngine;
+  readonly instanceName?: string;
+  readonly databaseName?: string;
+  readonly credentialsSecretName?: string;
+  readonly instanceType?: ec2.InstanceType;
+  readonly allocatedStorage?: number;
+  readonly multiAz?: boolean;
+  readonly backupRetention?: cdk.Duration;
 }
 
 export class DatabaseInstance extends Construct implements IDatabase {
