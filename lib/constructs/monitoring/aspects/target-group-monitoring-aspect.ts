@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_elasticloadbalancingv2 as elbv2 } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
   alertAnnotations,
   dashboardGenericAxis,
@@ -8,6 +7,8 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface TargetGroupMonitoringMetrics {
   readonly responseTime: cw.IMetric;
@@ -19,17 +20,36 @@ export interface TargetGroupMonitoringConfig {
   readonly minHealthyHostsThreshold?: number;
 }
 
-export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
-  elbv2.ApplicationTargetGroup,
-  TargetGroupMonitoringConfig,
-  TargetGroupMonitoringMetrics
-> {
-  protected instanceType = elbv2.ApplicationTargetGroup;
-  protected defaultConfig: TargetGroupMonitoringConfig = {
+export class TargetGroupMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, TargetGroupMonitoringConfig> = {};
+  private readonly defaultConfig: TargetGroupMonitoringConfig = {
     minHealthyHostsThreshold: 1,
   };
 
-  protected widgets(
+  constructor(readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof elbv2.ApplicationTargetGroup)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: elbv2.ApplicationTargetGroup, config: TargetGroupMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: elbv2.ApplicationTargetGroup): TargetGroupMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: elbv2.ApplicationTargetGroup,
     config: TargetGroupMonitoringConfig,
     metrics: TargetGroupMonitoringMetrics,
@@ -55,7 +75,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: elbv2.ApplicationTargetGroup,
     config: TargetGroupMonitoringConfig,
     metrics: TargetGroupMonitoringMetrics,
@@ -83,7 +103,7 @@ export class TargetGroupMonitoringAspect extends AbstractMonitoringAspect<
     });
   }
 
-  protected metrics(node: elbv2.ApplicationTargetGroup): TargetGroupMonitoringMetrics {
+  private metrics(node: elbv2.ApplicationTargetGroup): TargetGroupMonitoringMetrics {
     return {
       responseTime: node.metrics.targetResponseTime({
         period: cdk.Duration.minutes(1),

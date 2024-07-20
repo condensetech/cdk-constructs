@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_rds as rds } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
   alertAnnotations,
   dashboardGenericAxis,
@@ -8,6 +7,8 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface RdsInstanceMonitoringConfig {
   readonly cpuUtilizationThreshold?: number;
@@ -29,13 +30,9 @@ export interface RdsInstanceMonitoringMetrics {
   readonly ebsByteBalance: cw.IMetric;
 }
 
-export class RdsInstanceMonitoringAspect extends AbstractMonitoringAspect<
-  rds.DatabaseInstance,
-  RdsInstanceMonitoringConfig,
-  RdsInstanceMonitoringMetrics
-> {
-  protected instanceType = rds.DatabaseInstance;
-  protected defaultConfig: RdsInstanceMonitoringConfig = {
+export class RdsInstanceMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, RdsInstanceMonitoringConfig> = {};
+  private readonly defaultConfig: RdsInstanceMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     maxConnectionsThreshold: 50,
     ebsByteBalanceThreshold: 10,
@@ -45,7 +42,30 @@ export class RdsInstanceMonitoringAspect extends AbstractMonitoringAspect<
     readLatencyThreshold: 20,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof rds.DatabaseInstance)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: rds.DatabaseInstance, config: RdsInstanceMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: rds.DatabaseInstance): RdsInstanceMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: rds.DatabaseInstance,
     config: RdsInstanceMonitoringConfig,
     metrics: RdsInstanceMonitoringMetrics,
@@ -91,7 +111,7 @@ export class RdsInstanceMonitoringAspect extends AbstractMonitoringAspect<
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: rds.DatabaseInstance,
     config: RdsInstanceMonitoringConfig,
     metrics: RdsInstanceMonitoringMetrics,
@@ -158,7 +178,7 @@ export class RdsInstanceMonitoringAspect extends AbstractMonitoringAspect<
     });
   }
 
-  protected metrics(node: rds.DatabaseInstance): RdsInstanceMonitoringMetrics {
+  private metrics(node: rds.DatabaseInstance): RdsInstanceMonitoringMetrics {
     return {
       cpuUtilization: node.metricCPUUtilization({
         period: cdk.Duration.minutes(1),

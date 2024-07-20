@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_ecs as ecs } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
   alertAnnotations,
   dashboardGenericAxis,
@@ -8,6 +7,8 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface FargateServiceMonitoringMetrics {
   readonly cpuUtilization: cw.IMetric;
@@ -19,18 +20,37 @@ export interface FargateServiceMonitoringConfig {
   readonly memoryUtilization?: number;
 }
 
-export class FargateServiceMonitoringAspect extends AbstractMonitoringAspect<
-  ecs.FargateService,
-  FargateServiceMonitoringConfig,
-  FargateServiceMonitoringMetrics
-> {
-  protected instanceType = ecs.FargateService;
-  protected defaultConfig: FargateServiceMonitoringConfig = {
+export class FargateServiceMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, FargateServiceMonitoringConfig> = {};
+  private readonly defaultConfig: FargateServiceMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     memoryUtilization: 90,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof ecs.FargateService)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: ecs.FargateService, config: FargateServiceMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: ecs.FargateService): FargateServiceMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: ecs.FargateService,
     config: FargateServiceMonitoringConfig,
     metrics: FargateServiceMonitoringMetrics,
@@ -54,7 +74,7 @@ export class FargateServiceMonitoringAspect extends AbstractMonitoringAspect<
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: ecs.FargateService,
     config: FargateServiceMonitoringConfig,
     metrics: FargateServiceMonitoringMetrics,
@@ -81,7 +101,7 @@ export class FargateServiceMonitoringAspect extends AbstractMonitoringAspect<
     });
   }
 
-  protected metrics(node: ecs.FargateService): FargateServiceMonitoringMetrics {
+  private metrics(node: ecs.FargateService): FargateServiceMonitoringMetrics {
     return {
       cpuUtilization: node.metricCpuUtilization({
         period: cdk.Duration.minutes(1),

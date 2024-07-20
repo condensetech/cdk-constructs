@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_rds as rds } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
   alertAnnotations,
   dashboardGenericAxis,
@@ -8,6 +7,8 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface RdsClusterMonitoringConfig {
   readonly cpuUtilizationThreshold?: number;
@@ -27,13 +28,9 @@ export interface RdsClusterMonitoringMetrics {
   readonly ebsByteBalance: cw.IMetric;
 }
 
-export class RdsClusterMonitoringAspect extends AbstractMonitoringAspect<
-  rds.DatabaseCluster,
-  RdsClusterMonitoringConfig,
-  RdsClusterMonitoringMetrics
-> {
-  protected instanceType = rds.DatabaseCluster;
-  protected defaultConfig: RdsClusterMonitoringConfig = {
+export class RdsClusterMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, Partial<RdsClusterMonitoringConfig>> = {};
+  private readonly defaultConfig: RdsClusterMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     maxConnectionsThreshold: 50,
     ebsByteBalanceThreshold: 10,
@@ -42,7 +39,30 @@ export class RdsClusterMonitoringAspect extends AbstractMonitoringAspect<
     readLatencyThreshold: 20,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof rds.DatabaseCluster)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: rds.DatabaseCluster, config: RdsClusterMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: rds.DatabaseCluster): RdsClusterMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: rds.DatabaseCluster,
     config: RdsClusterMonitoringConfig,
     metrics: RdsClusterMonitoringMetrics,
@@ -79,7 +99,7 @@ export class RdsClusterMonitoringAspect extends AbstractMonitoringAspect<
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: rds.DatabaseCluster,
     config: RdsClusterMonitoringConfig,
     metrics: RdsClusterMonitoringMetrics,
@@ -138,7 +158,7 @@ export class RdsClusterMonitoringAspect extends AbstractMonitoringAspect<
     });
   }
 
-  protected metrics(node: rds.DatabaseCluster): RdsClusterMonitoringMetrics {
+  private metrics(node: rds.DatabaseCluster): RdsClusterMonitoringMetrics {
     return {
       cpuUtilization: node.metricCPUUtilization({
         period: cdk.Duration.minutes(1),

@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_elasticloadbalancingv2 as elbv2 } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
   alertAnnotations,
   dashboardGenericAxis,
@@ -8,6 +7,8 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 import { buildAlarms } from '../alarms';
+import { IConstruct } from 'constructs';
+import { ICondenseMonitoringFacade } from '../interfaces';
 
 export interface ApplicationLoadBalancerMonitoringMetrics {
   readonly responseTime: cw.IMetric;
@@ -26,19 +27,41 @@ export interface ApplicationLoadBalancerMonitoringConfig {
   readonly target5xxErrorsThreshold?: number;
 }
 
-export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringAspect<
-  elbv2.ApplicationLoadBalancer,
-  ApplicationLoadBalancerMonitoringConfig,
-  ApplicationLoadBalancerMonitoringMetrics
-> {
-  protected instanceType = elbv2.ApplicationLoadBalancer;
-  protected defaultConfig: ApplicationLoadBalancerMonitoringConfig = {
+export class ApplicationLoadBalancerMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, ApplicationLoadBalancerMonitoringConfig> = {};
+  private readonly defaultConfig: ApplicationLoadBalancerMonitoringConfig = {
     redirectUrlLimitExceededThreshold: 0,
     rejectedConnectionsThreshold: 0,
     targetConnectionErrorsThreshold: 0,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof elbv2.ApplicationLoadBalancer)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(
+    node: elbv2.ApplicationLoadBalancer,
+    config: ApplicationLoadBalancerMonitoringConfig,
+  ) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: elbv2.ApplicationLoadBalancer): ApplicationLoadBalancerMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
     metrics: ApplicationLoadBalancerMonitoringMetrics,
@@ -87,7 +110,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
     metrics: ApplicationLoadBalancerMonitoringMetrics,
@@ -139,7 +162,7 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
     });
   }
 
-  protected metrics(node: elbv2.ApplicationLoadBalancer): ApplicationLoadBalancerMonitoringMetrics {
+  private metrics(node: elbv2.ApplicationLoadBalancer): ApplicationLoadBalancerMonitoringMetrics {
     return {
       responseTime: node.metrics.targetResponseTime({
         period: cdk.Duration.minutes(1),

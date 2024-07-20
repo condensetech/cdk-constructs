@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_elasticache as elasticache } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
   alertAnnotations,
   dashboardGenericAxis,
@@ -9,6 +8,8 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface CacheClusterMonitoringMetrics {
   readonly cpuUtilization: cw.IMetric[];
@@ -26,20 +27,39 @@ export interface CacheClusterMonitoringConfig {
   readonly replicationLagThreshold?: cdk.Duration;
 }
 
-export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
-  elasticache.CfnCacheCluster,
-  CacheClusterMonitoringConfig,
-  CacheClusterMonitoringMetrics
-> {
-  protected instanceType = elasticache.CfnCacheCluster;
-  protected defaultConfig: CacheClusterMonitoringConfig = {
+export class CacheClusterMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, CacheClusterMonitoringConfig> = {};
+  private readonly defaultConfig: CacheClusterMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     maxConnectionsThreshold: 60_000,
     memoryUsageThreshold: 90,
     engineCpuUtilizationThreshold: 95,
   };
 
-  protected widgets(
+  constructor(readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof elasticache.CfnCacheCluster)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: elasticache.CfnCacheCluster, config: CacheClusterMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: elasticache.CfnCacheCluster): CacheClusterMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: elasticache.CfnCacheCluster,
     config: CacheClusterMonitoringConfig,
     metrics: CacheClusterMonitoringMetrics,
@@ -98,7 +118,7 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: elasticache.CfnCacheCluster,
     config: CacheClusterMonitoringConfig,
     metrics: CacheClusterMonitoringMetrics,
@@ -148,7 +168,7 @@ export class CacheClusterMonitoringAspect extends AbstractMonitoringAspect<
     });
   }
 
-  protected metrics(node: elasticache.CfnCacheCluster): CacheClusterMonitoringMetrics {
+  private metrics(node: elasticache.CfnCacheCluster): CacheClusterMonitoringMetrics {
     const cacheNodeIds = this.getCacheNodeIds(node);
     const cpuUtilization = cacheNodeIds.map(
       (cacheNodeId) =>
