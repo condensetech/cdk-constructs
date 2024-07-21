@@ -6,5 +6,5 @@
   "rules": {
     "prettier/prettier": "error"
   },
-  "ignorePatterns": ["dist/**/*"]
+  "ignorePatterns": ["dist/**/*", "lib/**/*.js", "lib/**/*.d.ts"]
 }
