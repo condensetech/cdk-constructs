@@ -15,7 +15,7 @@ export interface NetworkingProps {
 }
 
 export class Networking extends Construct implements INetworking {
-  readonly vpc: ec2.Vpc;
+  readonly vpc: ec2.IVpc;
   readonly bastionHost?: ec2.BastionHostLinux;
   readonly hasPrivateSubnets: boolean;
 

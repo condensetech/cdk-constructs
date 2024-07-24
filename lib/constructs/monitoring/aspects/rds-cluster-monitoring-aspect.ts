@@ -1,48 +1,68 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_rds as rds } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
-  alertAnnotation,
+  alertAnnotations,
   dashboardGenericAxis,
   dashboardPercentAxis,
   dashboardSectionTitle,
 } from '../widgets';
+import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface RdsClusterMonitoringConfig {
-  cpuUtilizationThreshold: number;
-  maxConnectionsThreshold: number;
-  ebsByteBalanceThreshold: number;
-  ebsIoBalanceThreshold: number;
-  freeableMemoryThreshold: cdk.Size;
-  readLatencyThreshold: number;
+  readonly cpuUtilizationThreshold?: number;
+  readonly maxConnectionsThreshold?: number;
+  readonly ebsByteBalanceThreshold?: number;
+  readonly ebsIoBalanceThreshold?: number;
+  readonly freeableMemoryThreshold?: cdk.Size;
+  readonly readLatencyThreshold?: number;
 }
 
 export interface RdsClusterMonitoringMetrics {
-  cpuUtilization: cw.IMetric;
-  maxConnections: cw.IMetric;
-  freeableMemory: cw.IMetric;
-  readLatency: cw.IMetric;
-  ebsIOBalance: cw.IMetric;
-  ebsByteBalance: cw.IMetric;
+  readonly cpuUtilization: cw.IMetric;
+  readonly maxConnections: cw.IMetric;
+  readonly freeableMemory: cw.IMetric;
+  readonly readLatency: cw.IMetric;
+  readonly ebsIOBalance: cw.IMetric;
+  readonly ebsByteBalance: cw.IMetric;
 }
 
-export class RdsClusterMonitoringAspect extends AbstractMonitoringAspect<
-  rds.DatabaseCluster,
-  RdsClusterMonitoringConfig,
-  RdsClusterMonitoringMetrics
-> {
-  protected instanceType = rds.DatabaseCluster;
-  protected defaultConfig = {
+export class RdsClusterMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, Partial<RdsClusterMonitoringConfig>> = {};
+  private readonly defaultConfig: RdsClusterMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     maxConnectionsThreshold: 50,
     ebsByteBalanceThreshold: 10,
     ebsIoBalanceThreshold: 10,
     freeableMemoryThreshold: cdk.Size.mebibytes(100),
-    freeStorageSpaceThreshold: cdk.Size.mebibytes(100),
     readLatencyThreshold: 20,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof rds.DatabaseCluster)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: rds.DatabaseCluster, config: RdsClusterMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: rds.DatabaseCluster): RdsClusterMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: rds.DatabaseCluster,
     config: RdsClusterMonitoringConfig,
     metrics: RdsClusterMonitoringMetrics,
@@ -53,129 +73,92 @@ export class RdsClusterMonitoringAspect extends AbstractMonitoringAspect<
         title: 'CPU Utilization',
         left: [metrics.cpuUtilization],
         leftYAxis: dashboardPercentAxis,
-        leftAnnotations: [alertAnnotation(config.cpuUtilizationThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.cpuUtilizationThreshold }]),
       }),
       new cw.GraphWidget({
         title: 'Connections',
         left: [metrics.maxConnections],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations: [alertAnnotation(config.maxConnectionsThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.maxConnectionsThreshold }]),
       }),
       new cw.GraphWidget({
         title: 'EBS Byte & IO Balance',
         left: [metrics.ebsByteBalance, metrics.ebsIOBalance],
         leftYAxis: dashboardPercentAxis,
-        leftAnnotations: [
-          alertAnnotation(config.ebsByteBalanceThreshold, 'EBS Byte Balance'),
-          alertAnnotation(config.ebsIoBalanceThreshold, 'EBS IO Balance'),
-        ],
+        leftAnnotations: alertAnnotations([
+          { value: config.ebsByteBalanceThreshold, label: 'EBS Byte Balance' },
+          { value: config.ebsIoBalanceThreshold, label: 'EBS IO Balance' },
+        ]),
       }),
       new cw.GraphWidget({
         title: 'Read Latency',
         left: [metrics.readLatency],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations: [alertAnnotation(config.readLatencyThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.readLatencyThreshold }]),
       }),
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: rds.DatabaseCluster,
     config: RdsClusterMonitoringConfig,
     metrics: RdsClusterMonitoringMetrics,
   ): cw.Alarm[] {
-    return [
-      new cw.Alarm(node, 'RdsClusterCpuUsageAlarm', {
-        alarmName: `RdsCluster-CpuUsageAlarm-${node.clusterIdentifier}`,
-        metric: metrics.cpuUtilization,
-        evaluationPeriods: 5,
-        threshold: config.cpuUtilizationThreshold,
-        alarmDescription: `CPU Utilization high on ${node.clusterIdentifier}`,
-      }),
-      new cw.Alarm(node, 'RdsClusterMaxConnectionsAlarm', {
-        alarmName: `RdsCluster-MaxConnectionsAlarm-${node.clusterIdentifier}`,
-        metric: metrics.maxConnections,
-        evaluationPeriods: 5,
-        threshold: config.maxConnectionsThreshold, // FIXME: This depends on the database
-        alarmDescription: `Max Connections high on ${node.clusterIdentifier}`,
-      }),
-      new cw.Alarm(node, 'RdsClusterEBSByteBalanceAlarm', {
-        alarmName: `RdsCluster-EBSByteBalanceAlarm-${node.clusterIdentifier}`,
-        metric: metrics.ebsByteBalance,
-        evaluationPeriods: 3,
-        threshold: config.ebsByteBalanceThreshold,
-        comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
-        alarmDescription: `EBS Byte Balance too low on ${node.clusterIdentifier}`,
-      }),
-      new cw.Alarm(node, 'RdsClusterEBSIOBalanceAlarm', {
-        alarmName: `RdsCluster-EBSIOBalanceAlarm-${node.clusterIdentifier}`,
-        metric: metrics.ebsIOBalance,
-        evaluationPeriods: 3,
-        threshold: config.ebsIoBalanceThreshold,
-        comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
-        alarmDescription: `EBS IO Balance too low on ${node.clusterIdentifier}`,
-      }),
-      new cw.Alarm(node, 'RdsClusterFreeableMemoryAlarm', {
-        alarmName: `RdsCluster-FreeableMemoryAlarm-${node.clusterIdentifier}`,
-        metric: metrics.freeableMemory,
-        evaluationPeriods: 15,
-        threshold: config.freeableMemoryThreshold.toBytes(),
-        comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
-        alarmDescription: `Freeable Memory low on ${node.clusterIdentifier}`,
-      }),
-      // Not all instances have these metrics. To lest instance types with support:
-      // aws ec2 describe-instance-types \
-      // --filters "Name=instance-type,Values=*" "Name=instance-storage-supported,Values=true" \
-      // --query "InstanceTypes[].[InstanceType, InstanceStorageInfo.TotalSizeInGB]" \
-      // --output table
-      // new cw.Alarm(node, 'RdsClusterFreeLocalStorageAlarm', {
-      //   metric: node.metric('FreeLocalStorage', {
-      //     period: cdk.Duration.minutes(1),
-      //   }),
-      //   evaluationPeriods: 5,
-      //   threshold: cdk.Size.mebibytes(100).toBytes(),
-      //   comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
-      // }),
-      // These metrics are only available for Postgres instances
-      // new cw.Alarm(node, 'RdsClusterMaximumUsedTransactionIDsAlarm', {
-      //   metric: node.metric('MaximumUsedTransactionIDs', {
-      //     period: cdk.Duration.minutes(1),
-      //   }),
-      //   evaluationPeriods: 1,
-      //   threshold: 1.0e9,
-      //   comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      // }),
-      new cw.Alarm(node, 'RdsClusterReadLatencyAlarm', {
-        alarmName: `RdsCluster-ReadLatencyAlarm-${node.clusterIdentifier}`,
-        metric: metrics.readLatency,
-        evaluationPeriods: 5,
-        threshold: config.readLatencyThreshold,
-        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-        alarmDescription: `Read Latency high on ${node.clusterIdentifier}`,
-      }),
-      // This is only for read replica configurations, the amount of time a read replica DB instance lags behind the source DB instance. Applies to MariaDB, Microsoft SQL Server, MySQL, Oracle, and PostgreSQL read replicas.
-      // new cw.Alarm(node, 'RdsClusterReplicaLagAlarm', {
-      //   metric: node.metric('ReplicaLag', {
-      //     period: cdk.Duration.minutes(1),
-      //     statistic: 'Maximum',
-      //   }),
-      //   evaluationPeriods: 10,
-      //   threshold: 60,
-      //   comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      // }),
-      // new cw.Alarm(node, 'RdsClusterWriteLatencyAlarm', {
-      //   metric: node.metric('ReplicaLag', {
-      //     period: cdk.Duration.minutes(1),
-      //     statistic: 'p90',
-      //   }),
-      //   evaluationPeriods: 5,
-      //   threshold: 20,
-      //   comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      // }),
-    ];
+    return buildAlarms({
+      node,
+      nodeIdentifier: node.clusterIdentifier,
+      alarms: [
+        {
+          alarmId: 'RdsCluster-CpuUsageAlarm',
+          metric: metrics.cpuUtilization,
+          evaluationPeriods: 5,
+          threshold: config.cpuUtilizationThreshold,
+          alarmDescription: `CPU Utilization high on ${node.clusterIdentifier}`,
+        },
+        {
+          alarmId: 'RdsCluster-MaxConnectionsAlarm',
+          metric: metrics.maxConnections,
+          evaluationPeriods: 5,
+          threshold: config.maxConnectionsThreshold, // FIXME: This depends on the database
+          alarmDescription: `Max Connections high on ${node.clusterIdentifier}`,
+        },
+        {
+          alarmId: 'RdsCluster-EBSByteBalanceAlarm',
+          metric: metrics.ebsByteBalance,
+          evaluationPeriods: 3,
+          threshold: config.ebsByteBalanceThreshold,
+          comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
+          alarmDescription: `EBS Byte Balance too low on ${node.clusterIdentifier}`,
+        },
+        {
+          alarmId: 'RdsCluster-EBSIOBalanceAlarm',
+          metric: metrics.ebsIOBalance,
+          evaluationPeriods: 3,
+          threshold: config.ebsIoBalanceThreshold,
+          comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
+          alarmDescription: `EBS IO Balance too low on ${node.clusterIdentifier}`,
+        },
+        {
+          alarmId: 'RdsCluster-FreeableMemoryAlarm',
+          metric: metrics.freeableMemory,
+          evaluationPeriods: 15,
+          threshold: config.freeableMemoryThreshold?.toBytes(),
+          comparisonOperator: cw.ComparisonOperator.LESS_THAN_THRESHOLD,
+          alarmDescription: `Freeable Memory low on ${node.clusterIdentifier}`,
+        },
+        {
+          alarmId: 'RdsCluster-ReadLatencyAlarm',
+          metric: metrics.readLatency,
+          evaluationPeriods: 5,
+          threshold: config.readLatencyThreshold,
+          comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
+          alarmDescription: `Read Latency high on ${node.clusterIdentifier}`,
+        },
+      ],
+    });
   }
 
-  protected metrics(node: rds.DatabaseCluster): RdsClusterMonitoringMetrics {
+  private metrics(node: rds.DatabaseCluster): RdsClusterMonitoringMetrics {
     return {
       cpuUtilization: node.metricCPUUtilization({
         period: cdk.Duration.minutes(1),

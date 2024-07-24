@@ -67,34 +67,25 @@ export class MonitoringFacade {
     alarm.addAlarmAction(new cwActions.SnsAction(this.alarmTopic));
   }
 
-  configCacheCluster(
-    resource: elasticache.CfnCacheCluster,
-    config: Partial<CacheClusterMonitoringConfig>,
-  ) {
+  configCacheCluster(resource: elasticache.CfnCacheCluster, config: CacheClusterMonitoringConfig) {
     this.cacheClusterAspect.overrideConfig(resource, config);
   }
-  configTargetGroup(
-    resource: elbv2.ApplicationTargetGroup,
-    config: Partial<TargetGroupMonitoringConfig>,
-  ) {
+  configTargetGroup(resource: elbv2.ApplicationTargetGroup, config: TargetGroupMonitoringConfig) {
     this.targetGroupAspect.overrideConfig(resource, config);
   }
-  configRdsInstance(resource: rds.DatabaseInstance, config: Partial<RdsInstanceMonitoringConfig>) {
+  configRdsInstance(resource: rds.DatabaseInstance, config: RdsInstanceMonitoringConfig) {
     this.rdsInstanceAspect.overrideConfig(resource, config);
   }
-  configFargateService(
-    resource: ecs.FargateService,
-    config: Partial<FargateServiceMonitoringConfig>,
-  ) {
+  configFargateService(resource: ecs.FargateService, config: FargateServiceMonitoringConfig) {
     this.fargateServiceAspect.overrideConfig(resource, config);
   }
   configApplicationLoadBalancer(
     resource: elbv2.ApplicationLoadBalancer,
-    config: Partial<ApplicationLoadBalancerMonitoringConfig>,
+    config: ApplicationLoadBalancerMonitoringConfig,
   ) {
     this.albAspect.overrideConfig(resource, config);
   }
-  configRdsCluster(resource: rds.DatabaseCluster, config: Partial<RdsInstanceMonitoringConfig>) {
+  configRdsCluster(resource: rds.DatabaseCluster, config: RdsInstanceMonitoringConfig) {
     this.rdsClusterAspect.overrideConfig(resource, config);
   }
 }

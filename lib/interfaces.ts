@@ -6,7 +6,7 @@ import { Construct } from 'constructs';
 
 export interface INetworking {
   readonly vpc: ec2.IVpc;
-  readonly bastionHost?: ec2.IInstance;
+  readonly bastionHost?: ec2.BastionHostLinux;
   readonly hasPrivateSubnets: boolean;
   readonly isolatedSubnets: ec2.SubnetSelection;
   readonly privateSubnets?: ec2.SubnetSelection;
@@ -22,9 +22,4 @@ export interface IEntrypoint {
   readonly domainName: string;
   readonly alb: elb.IApplicationLoadBalancer;
   referenceListener(scope: Construct, id: string): elb.IApplicationListener;
-}
-
-export interface HostedZoneAttributes {
-  hostedZoneId: string;
-  zoneName: string;
 }

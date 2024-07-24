@@ -1,46 +1,70 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_elasticloadbalancingv2 as elbv2 } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
-  alertAnnotation,
+  alertAnnotations,
   dashboardGenericAxis,
   dashboardSecondsAxis,
   dashboardSectionTitle,
 } from '../widgets';
+import { buildAlarms } from '../alarms';
+import { IConstruct } from 'constructs';
+import { ICondenseMonitoringFacade } from '../interfaces';
 
 export interface ApplicationLoadBalancerMonitoringMetrics {
-  responseTime: cw.IMetric;
-  redirectUrlLimitExceeded: cw.IMetric;
-  rejectedConnections: cw.IMetric;
-  activeConnections: cw.IMetric;
-  targetConnectionErrors: cw.IMetric;
-  target5xxErrors: cw.IMetric;
+  readonly responseTime: cw.IMetric;
+  readonly redirectUrlLimitExceeded: cw.IMetric;
+  readonly rejectedConnections: cw.IMetric;
+  readonly activeConnections: cw.IMetric;
+  readonly targetConnectionErrors: cw.IMetric;
+  readonly target5xxErrors: cw.IMetric;
 }
 
 export interface ApplicationLoadBalancerMonitoringConfig {
-  responseTimeThreshold?: cdk.Duration;
-  redirectUrlLimitExceededThreshold: number;
-  rejectedConnectionsThreshold: number;
-  targetConnectionErrorsThreshold: number;
-  target5xxErrorsThreshold?: number;
+  readonly responseTimeThreshold?: cdk.Duration;
+  readonly redirectUrlLimitExceededThreshold?: number;
+  readonly rejectedConnectionsThreshold?: number;
+  readonly targetConnectionErrorsThreshold?: number;
+  readonly target5xxErrorsThreshold?: number;
 }
 
-export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringAspect<
-  elbv2.ApplicationLoadBalancer,
-  ApplicationLoadBalancerMonitoringConfig,
-  ApplicationLoadBalancerMonitoringMetrics
-> {
-  protected instanceType = elbv2.ApplicationLoadBalancer;
-  protected defaultConfig = {
+export class ApplicationLoadBalancerMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, ApplicationLoadBalancerMonitoringConfig> = {};
+  private readonly defaultConfig: ApplicationLoadBalancerMonitoringConfig = {
     redirectUrlLimitExceededThreshold: 0,
     rejectedConnectionsThreshold: 0,
     targetConnectionErrorsThreshold: 0,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof elbv2.ApplicationLoadBalancer)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
-    metrics: ApplicationLoadBalancerMonitoringMetrics
+  ) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: elbv2.ApplicationLoadBalancer): ApplicationLoadBalancerMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
+    node: elbv2.ApplicationLoadBalancer,
+    config: ApplicationLoadBalancerMonitoringConfig,
+    metrics: ApplicationLoadBalancerMonitoringMetrics,
   ): cw.IWidget[] {
     return [
       dashboardSectionTitle(`Load Balancer ${node.loadBalancerName}`),
@@ -48,16 +72,18 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
         title: 'Response Time',
         left: [metrics.responseTime],
         leftYAxis: dashboardSecondsAxis,
-        leftAnnotations: config.responseTimeThreshold
-          ? [alertAnnotation(config.responseTimeThreshold.toSeconds({ integral: false }))]
-          : [],
+        leftAnnotations: alertAnnotations([
+          {
+            value: config.responseTimeThreshold?.toSeconds({ integral: false }),
+          },
+        ]),
         width: 12,
       }),
       new cw.GraphWidget({
         title: 'Redirect URL Limit Exceeded',
         left: [metrics.redirectUrlLimitExceeded],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations: [alertAnnotation(config.redirectUrlLimitExceededThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.redirectUrlLimitExceededThreshold }]),
         width: 12,
       }),
       new cw.GraphWidget({
@@ -71,79 +97,72 @@ export class ApplicationLoadBalancerMonitoringAspect extends AbstractMonitoringA
         title: 'Target Connection Errors',
         left: [metrics.targetConnectionErrors],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations: [alertAnnotation(config.targetConnectionErrorsThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.targetConnectionErrorsThreshold }]),
         width: 12,
       }),
       new cw.GraphWidget({
         title: '5xx Errors',
         left: [metrics.target5xxErrors],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations:
-          config.target5xxErrorsThreshold !== undefined
-            ? [alertAnnotation(config.target5xxErrorsThreshold)]
-            : [],
+        leftAnnotations: alertAnnotations([{ value: config.target5xxErrorsThreshold }]),
         width: 12,
       }),
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: elbv2.ApplicationLoadBalancer,
     config: ApplicationLoadBalancerMonitoringConfig,
-    metrics: ApplicationLoadBalancerMonitoringMetrics
+    metrics: ApplicationLoadBalancerMonitoringMetrics,
   ): cw.Alarm[] {
-    return [
-      ...(config.responseTimeThreshold !== undefined
-        ? [
-            new cw.Alarm(node, 'LoadBalancerResponseTimeAlarm', {
-              alarmName: `LoadBalancerResponseTimeAlarm-${node.loadBalancerName}`,
-              metric: metrics.responseTime,
-              evaluationPeriods: 5,
-              threshold: config.responseTimeThreshold.toSeconds({ integral: false }),
-              alarmDescription: `Response time is too high on ${node.loadBalancerName}`,
-            }),
-          ]
-        : []),
-      new cw.Alarm(node, 'LoadBalancerRedirectUrlLimitExceeded', {
-        alarmName: `LoadBalancerRedirectUrlLimitExceeded-${node.loadBalancerName}`,
-        metric: metrics.redirectUrlLimitExceeded,
-        evaluationPeriods: 5,
-        threshold: config.redirectUrlLimitExceededThreshold,
-        alarmDescription: `Some redirect actions couldn't be completed on ${node.loadBalancerName}`,
-        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      }),
-      new cw.Alarm(node, 'LoadBalancerRejectedConnectionsAlarm', {
-        alarmName: `LoadBalancerRejectedConnectionsAlarm-${node.loadBalancerName}`,
-        metric: metrics.rejectedConnections,
-        evaluationPeriods: 5,
-        threshold: config.rejectedConnectionsThreshold,
-        alarmDescription: `Rejected connections on ${node.loadBalancerName}`,
-        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      }),
-      new cw.Alarm(node, 'LoadBalancerTargetConnectionErrorsAlarm', {
-        alarmName: `LoadBalancerTargetConnectionErrorsAlarm-${node.loadBalancerName}`,
-        metric: metrics.targetConnectionErrors,
-        evaluationPeriods: 5,
-        threshold: config.targetConnectionErrorsThreshold,
-        alarmDescription: `Target connection errors on ${node.loadBalancerName}`,
-        comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      }),
-      ...(config.target5xxErrorsThreshold !== undefined
-        ? [
-            new cw.Alarm(node, 'LoadBalancerTarget5xxErrorsAlarm', {
-              alarmName: `LoadBalancerTarget5xxErrorsAlarm-${node.loadBalancerName}`,
-              metric: metrics.target5xxErrors,
-              evaluationPeriods: 5,
-              threshold: config.target5xxErrorsThreshold,
-              alarmDescription: `5xx errors on ${node.loadBalancerName}`,
-              comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
-            }),
-          ]
-        : []),
-    ];
+    return buildAlarms({
+      node,
+      nodeIdentifier: node.loadBalancerName,
+      alarms: [
+        {
+          alarmId: `LoadBalancer-ResponseTimeAlarm`,
+          metric: metrics.responseTime,
+          evaluationPeriods: 5,
+          threshold: config.responseTimeThreshold?.toSeconds({ integral: false }),
+          alarmDescription: `Response time is too high on ${node.loadBalancerName}`,
+        },
+        {
+          alarmId: `LoadBalancer-RedirectUrlLimitExceeded`,
+          metric: metrics.redirectUrlLimitExceeded,
+          evaluationPeriods: 5,
+          threshold: config.redirectUrlLimitExceededThreshold,
+          alarmDescription: `Some redirect actions couldn't be completed on ${node.loadBalancerName}`,
+          comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
+        },
+        {
+          alarmId: `LoadBalancer-RejectedConnectionsAlarm`,
+          metric: metrics.rejectedConnections,
+          evaluationPeriods: 5,
+          threshold: config.rejectedConnectionsThreshold,
+          alarmDescription: `Rejected connections on ${node.loadBalancerName}`,
+          comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
+        },
+        {
+          alarmId: `LoadBalancer-TargetConnectionErrorsAlarm`,
+          metric: metrics.targetConnectionErrors,
+          evaluationPeriods: 5,
+          threshold: config.targetConnectionErrorsThreshold,
+          alarmDescription: `Target connection errors on ${node.loadBalancerName}`,
+          comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
+        },
+        {
+          alarmId: `LoadBalancer-Target5xxErrorsAlarm`,
+          metric: metrics.target5xxErrors,
+          evaluationPeriods: 5,
+          threshold: config.target5xxErrorsThreshold,
+          alarmDescription: `5xx errors on ${node.loadBalancerName}`,
+          comparisonOperator: cw.ComparisonOperator.GREATER_THAN_THRESHOLD,
+        },
+      ],
+    });
   }
 
-  protected metrics(node: elbv2.ApplicationLoadBalancer): ApplicationLoadBalancerMonitoringMetrics {
+  private metrics(node: elbv2.ApplicationLoadBalancer): ApplicationLoadBalancerMonitoringMetrics {
     return {
       responseTime: node.metrics.targetResponseTime({
         period: cdk.Duration.minutes(1),

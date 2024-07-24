@@ -23,7 +23,7 @@ describe('Constructs/NaiveBasicAuthCloudfrontFunctrion', () => {
     const stack = new cdk.Stack(app, 'TestStack');
     new NaiveBasicAuthCloudfrontFunction(stack, 'TestFunction', {
       basicAuthString: 'test',
-      excludePaths: ['/test', '/test2'],
+      excludePaths: [{ path: '/test' }, { path: '/test2' }],
     });
     const template = Template.fromStack(stack);
 
@@ -39,7 +39,10 @@ describe('Constructs/NaiveBasicAuthCloudfrontFunctrion', () => {
     const stack = new cdk.Stack(app, 'TestStack');
     new NaiveBasicAuthCloudfrontFunction(stack, 'TestFunction', {
       basicAuthString: 'test',
-      excludePaths: [/test/, /^\/\.well-known\/acme-challenge\//i],
+      excludePaths: [
+        { path: '/test/', matchMode: 'regex' },
+        { path: '/^\\/\\.well-known\\/acme-challenge\\//i', matchMode: 'regex' },
+      ],
     });
     const template = Template.fromStack(stack);
 

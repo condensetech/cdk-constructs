@@ -1,4 +1,5 @@
 import { aws_cloudwatch as cw } from 'aws-cdk-lib';
+import { WidgetAlertAnnotationProps } from './interfaces';
 
 export const dashboardSectionTitle = (title: string) =>
   new cw.TextWidget({
@@ -27,8 +28,11 @@ export const dashboardMillisecondsAxis: cw.YAxisProps = {
   label: 'ms',
 };
 
-export const alertAnnotation = (threshold: number, label?: string): cw.HorizontalAnnotation => ({
-  label,
-  value: threshold,
-  color: '#ff0000',
-});
+export const alertAnnotations = (
+  thresholds: WidgetAlertAnnotationProps[],
+): cw.HorizontalAnnotation[] =>
+  thresholds
+    .map(({ label, value, color }) =>
+      value ? { label, value, color: color ?? '#ff0000' } : undefined,
+    )
+    .filter(Boolean) as cw.HorizontalAnnotation[];

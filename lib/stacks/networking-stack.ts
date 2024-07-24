@@ -4,7 +4,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { INetworking } from '../interfaces';
 import { Networking, NetworkingProps } from '../constructs/networking';
 
-export type NetworkingStackProps = NetworkingProps & cdk.StackProps;
+export interface NetworkingStackProps extends NetworkingProps, cdk.StackProps {}
 
 export class NetworkingStack extends cdk.Stack implements INetworking {
   private readonly construct: INetworking;
@@ -37,7 +37,7 @@ export class NetworkingStack extends cdk.Stack implements INetworking {
     return this.construct.vpc;
   }
 
-  get bastionHost(): ec2.IInstance | undefined {
+  get bastionHost(): ec2.BastionHostLinux | undefined {
     return this.construct.bastionHost;
   }
 }

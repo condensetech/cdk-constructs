@@ -1,35 +1,56 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_cloudwatch as cw, aws_ecs as ecs } from 'aws-cdk-lib';
-import { AbstractMonitoringAspect } from '../abstract-monitoring-aspect';
 import {
-  alertAnnotation,
+  alertAnnotations,
   dashboardGenericAxis,
   dashboardSecondsAxis,
   dashboardSectionTitle,
 } from '../widgets';
+import { buildAlarms } from '../alarms';
+import { ICondenseMonitoringFacade } from '../interfaces';
+import { IConstruct } from 'constructs';
 
 export interface FargateServiceMonitoringMetrics {
-  cpuUtilization: cw.IMetric;
-  memoryUtilization: cw.IMetric;
+  readonly cpuUtilization: cw.IMetric;
+  readonly memoryUtilization: cw.IMetric;
 }
 
 export interface FargateServiceMonitoringConfig {
-  cpuUtilizationThreshold: number;
-  memoryUtilization: number;
+  readonly cpuUtilizationThreshold?: number;
+  readonly memoryUtilization?: number;
 }
 
-export class FargateServiceMonitoringAspect extends AbstractMonitoringAspect<
-  ecs.FargateService,
-  FargateServiceMonitoringConfig,
-  FargateServiceMonitoringMetrics
-> {
-  protected instanceType = ecs.FargateService;
-  protected defaultConfig: FargateServiceMonitoringConfig = {
+export class FargateServiceMonitoringAspect implements cdk.IAspect {
+  private readonly overriddenConfig: Record<string, FargateServiceMonitoringConfig> = {};
+  private readonly defaultConfig: FargateServiceMonitoringConfig = {
     cpuUtilizationThreshold: 90,
     memoryUtilization: 90,
   };
 
-  protected widgets(
+  constructor(private readonly monitoringFacade: ICondenseMonitoringFacade) {}
+
+  visit(node: IConstruct): void {
+    if (!(node instanceof ecs.FargateService)) {
+      return;
+    }
+    const config = this.readConfig(node);
+    const metrics = this.metrics(node);
+    this.monitoringFacade.dashboard.addWidgets(...this.widgets(node, config, metrics));
+    this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
+  }
+
+  overrideConfig(node: ecs.FargateService, config: FargateServiceMonitoringConfig) {
+    this.overriddenConfig[node.node.path] = config;
+  }
+
+  private readConfig(node: ecs.FargateService): FargateServiceMonitoringConfig {
+    return {
+      ...this.defaultConfig,
+      ...(this.overriddenConfig[node.node.path] || {}),
+    };
+  }
+
+  private widgets(
     node: ecs.FargateService,
     config: FargateServiceMonitoringConfig,
     metrics: FargateServiceMonitoringMetrics,
@@ -40,43 +61,47 @@ export class FargateServiceMonitoringAspect extends AbstractMonitoringAspect<
         title: 'CPU Utilization',
         left: [metrics.cpuUtilization],
         leftYAxis: dashboardSecondsAxis,
-        leftAnnotations: [alertAnnotation(config.cpuUtilizationThreshold)],
+        leftAnnotations: alertAnnotations([{ value: config.cpuUtilizationThreshold }]),
         width: 12,
       }),
       new cw.GraphWidget({
         title: 'Memory Utilization',
         left: [metrics.memoryUtilization],
         leftYAxis: dashboardGenericAxis,
-        leftAnnotations: [alertAnnotation(config.memoryUtilization)],
+        leftAnnotations: alertAnnotations([{ value: config.memoryUtilization }]),
         width: 12,
       }),
     ];
   }
 
-  protected alarms(
+  private alarms(
     node: ecs.FargateService,
     config: FargateServiceMonitoringConfig,
     metrics: FargateServiceMonitoringMetrics,
   ): cw.Alarm[] {
-    return [
-      new cw.Alarm(node, 'ServiceCPUUtilizationAlarm', {
-        alarmName: `ServiceCPUUtilizationAlarm-${node.serviceName}`,
-        metric: metrics.cpuUtilization,
-        evaluationPeriods: 5,
-        threshold: config.cpuUtilizationThreshold,
-        alarmDescription: `CPU Utilization high on ${node.serviceName}`,
-      }),
-      new cw.Alarm(node, 'ServiceMemoryUtilizationAlarm', {
-        alarmName: `ServiceMemoryUtilizationAlarm-${node.serviceName}`,
-        metric: metrics.memoryUtilization,
-        evaluationPeriods: 5,
-        threshold: config.memoryUtilization,
-        alarmDescription: `Memory Utilization high on ${node.serviceName}`,
-      }),
-    ];
+    return buildAlarms({
+      node,
+      nodeIdentifier: node.serviceName,
+      alarms: [
+        {
+          alarmId: `FargateService-CPUUtilizationAlarm`,
+          metric: metrics.cpuUtilization,
+          evaluationPeriods: 5,
+          threshold: config.cpuUtilizationThreshold,
+          alarmDescription: `CPU Utilization high on ${node.serviceName}`,
+        },
+        {
+          alarmId: `FargateService-MemoryUtilizationAlarm`,
+          metric: metrics.memoryUtilization,
+          evaluationPeriods: 5,
+          threshold: config.memoryUtilization,
+          alarmDescription: `Memory Utilization high on ${node.serviceName}`,
+        },
+      ],
+    });
   }
 
-  protected metrics(node: ecs.FargateService): FargateServiceMonitoringMetrics {
+  private metrics(node: ecs.FargateService): FargateServiceMonitoringMetrics {
     return {
       cpuUtilization: node.metricCpuUtilization({
         period: cdk.Duration.minutes(1),

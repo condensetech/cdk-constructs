@@ -9,7 +9,7 @@ import {
 } from '../constructs/monitoring/monitoring-facade';
 
 export interface EntrypointStackProps extends EntrypointProps, StackProps {
-  monitoring?: MonitoringFacadeProps;
+  readonly monitoring?: MonitoringFacadeProps;
 }
 
 export class EntrypointStack extends Stack implements IEntrypoint {

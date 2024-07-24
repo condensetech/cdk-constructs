@@ -8,3 +8,8 @@ node_modules
 cdk.out
 .DS_Store
 dist
+
+# JSII generated files
+.jsii
+tsconfig.json
+lib/tsconfig.tsbuildinfo
