@@ -6,7 +6,10 @@
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
-The AuroraCluster Construct creates an opinionated Aurora Cluster. Under the hood, it creates a [rds.DatabaseCluster](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#starting-a-clustered-database) construct.
+The AuroraCluster Construct creates an opinionated Aurora Cluster.
+
+Under the hood, it creates a [rds.DatabaseCluster](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#starting-a-clustered-database) construct.
+It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
 It also applies the following changes to the default behavior:
 - A [rds.ParameterGroup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#parameter-groups) specific for the cluster is always defined.
@@ -174,9 +177,7 @@ public readonly parameterGroup: ParameterGroup;
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
-The AuroraClusterStack creates an AuroraCluster construct and optionally defines the monitoring configuration.
-
-It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+The AuroraClusterStack creates an [AuroraCluster](#@condensetech/cdk-constructs.AuroraCluster) construct and optionally defines the monitoring configuration. It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.AuroraClusterStack.Initializer"></a>
 
@@ -2150,9 +2151,7 @@ The endpoint of the database.
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
-The DatabaseInstanceStack creates a DatabaseInstance construct and optionally defines the monitoring configuration.
-
-It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+The DatabaseInstanceStack creates a [DatabaseInstance](#@condensetech/cdk-constructs.DatabaseInstance) construct and optionally defines the monitoring configuration. It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.DatabaseInstanceStack.Initializer"></a>
 
@@ -3078,6 +3077,18 @@ The endpoint of the database.
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IEntrypoint">IEntrypoint</a>
 
+The Entrypoint construct creates an Application Load Balancer (ALB) that serves as the centralized entry point for all applications.
+
+This ALB is shared across multiple applications, primarily to optimize infrastructure costs by reducing the need for multiple load balancers.
+It implements the IEntrypoint interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+
+It creates an HTTPS certificate, bound to the domain name and all subdomains (unless wildcardCertificate is set to false).
+It creates an ALB with:
+- an HTTP listener that redirects all traffic to HTTPS.
+- an HTTPS listener that returns a 403 Forbidden response by default.
+- a custom security group. This allows to expose the security group as a property of the entrypoint construct, making it easier to reference it in other constructs.
+Finally, it creates the Route 53 A and AAAA record that point to the ALB.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.Entrypoint.Initializer"></a>
 
 ```typescript
@@ -3117,7 +3128,7 @@ new Entrypoint(scope: Construct, id: string, props: EntrypointProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#@condensetech/cdk-constructs.Entrypoint.referenceListener">referenceListener</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
 
 ---
 
@@ -3134,6 +3145,8 @@ Returns a string representation of this construct.
 ```typescript
 public referenceListener(scope: Construct, id: string): IApplicationListener
 ```
+
+Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.Entrypoint.referenceListener.parameter.scope"></a>
 
@@ -3178,8 +3191,8 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The ALB that serves as the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.listener">listener</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationListener</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.securityGroup">securityGroup</a></code> | <code>aws-cdk-lib.aws_ec2.ISecurityGroup</code> | *No description.* |
 
@@ -3205,6 +3218,8 @@ public readonly alb: IApplicationLoadBalancer;
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer
 
+The ALB that serves as the entrypoint.
+
 ---
 
 ##### `domainName`<sup>Required</sup> <a name="domainName" id="@condensetech/cdk-constructs.Entrypoint.property.domainName"></a>
@@ -3214,6 +3229,8 @@ public readonly domainName: string;
 ```
 
 - *Type:* string
+
+The domain name to which the entrypoint is associated.
 
 ---
 
@@ -3241,6 +3258,8 @@ public readonly securityGroup: ISecurityGroup;
 ### EntrypointStack <a name="EntrypointStack" id="@condensetech/cdk-constructs.EntrypointStack"></a>
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IEntrypoint">IEntrypoint</a>
+
+The EntrypointStack creates an [Entrypoint](#@condensetech/cdk-constructs.Entrypoint) construct and optionally defines the monitoring configuration. It implements the IEntrypoint interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.EntrypointStack.Initializer"></a>
 
@@ -3295,7 +3314,7 @@ new EntrypointStack(scope: Construct, id: string, props: EntrypointStackProps)
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.splitArn">splitArn</a></code> | Splits the provided ARN into its components. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.toJsonString">toJsonString</a></code> | Convert an object, potentially containing tokens, to a JSON string. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.toYamlString">toYamlString</a></code> | Convert an object, potentially containing tokens, to a YAML string. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.referenceListener">referenceListener</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
 
 ---
 
@@ -3697,6 +3716,8 @@ Convert an object, potentially containing tokens, to a YAML string.
 public referenceListener(scope: Construct, id: string): IApplicationListener
 ```
 
+Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way.
+
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.EntrypointStack.referenceListener.parameter.scope"></a>
 
 - *Type:* constructs.Construct
@@ -3800,8 +3821,8 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.nestedStackParent">nestedStackParent</a></code> | <code>aws-cdk-lib.Stack</code> | If this is a nested stack, returns it's parent stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.nestedStackResource">nestedStackResource</a></code> | <code>aws-cdk-lib.CfnResource</code> | If this is a nested stack, this represents its `AWS::CloudFormation::Stack` resource. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The ALB that serves as the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
 
 ---
 
@@ -4143,6 +4164,8 @@ public readonly alb: IApplicationLoadBalancer;
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer
 
+The ALB that serves as the entrypoint.
+
 ---
 
 ##### `domainName`<sup>Required</sup> <a name="domainName" id="@condensetech/cdk-constructs.EntrypointStack.property.domainName"></a>
@@ -4152,6 +4175,8 @@ public readonly domainName: string;
 ```
 
 - *Type:* string
+
+The domain name to which the entrypoint is associated.
 
 ---
 
@@ -7508,6 +7533,8 @@ The monitoring configuration to apply to this stack.
 
 ### EntrypointProps <a name="EntrypointProps" id="@condensetech/cdk-constructs.EntrypointProps"></a>
 
+Properties for the Entrypoint construct.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.EntrypointProps.Initializer"></a>
 
 ```typescript
@@ -7520,13 +7547,14 @@ const entrypointProps: EntrypointProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The name of the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket to store the logs of the ALB. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | Indicates whether the HTTPS certificate should be bound to all subdomains. |
 
 ---
 
@@ -7538,6 +7566,8 @@ public readonly domainName: string;
 
 - *Type:* string
 
+The domain name to which the entrypoint is associated.
+
 ---
 
 ##### `hostedZoneProps`<sup>Required</sup> <a name="hostedZoneProps" id="@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps"></a>
@@ -7547,6 +7577,8 @@ public readonly hostedZoneProps: HostedZoneAttributes;
 ```
 
 - *Type:* aws-cdk-lib.aws_route53.HostedZoneAttributes
+
+The Route 53 hosted zone attributes for the domain name.
 
 ---
 
@@ -7558,6 +7590,8 @@ public readonly networking: INetworking;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The networking configuration for the entrypoint.
+
 ---
 
 ##### `entrypointName`<sup>Optional</sup> <a name="entrypointName" id="@condensetech/cdk-constructs.EntrypointProps.property.entrypointName"></a>
@@ -7567,16 +7601,27 @@ public readonly entrypointName: string;
 ```
 
 - *Type:* string
+- *Default:* No name is specified.
+
+The name of the entrypoint.
+
+This value is used as the name of the underlying Application Load Balancer (ALB)
+and as the prefix for the name of the associated security group.
 
 ---
 
-##### `entrypointSecurityGroupName`<sup>Optional</sup> <a name="entrypointSecurityGroupName" id="@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName"></a>
+##### ~~`entrypointSecurityGroupName`~~<sup>Optional</sup> <a name="entrypointSecurityGroupName" id="@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName"></a>
+
+- *Deprecated:* Use `securityGroupName` instead.
 
 ```typescript
 public readonly entrypointSecurityGroupName: string;
 ```
 
 - *Type:* string
+- *Default:* `${entrypointName}-sg`
+
+The name of the security group for the entrypoint.
 
 ---
 
@@ -7587,6 +7632,24 @@ public readonly logsBucket: IBucket;
 ```
 
 - *Type:* aws-cdk-lib.aws_s3.IBucket
+- *Default:* Logging is disabled.
+
+The S3 bucket to store the logs of the ALB.
+
+Setting this will enable the access logs for the ALB.
+
+---
+
+##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.EntrypointProps.property.securityGroupName"></a>
+
+```typescript
+public readonly securityGroupName: string;
+```
+
+- *Type:* string
+- *Default:* `${entrypointName}-sg` if `entrypointName` is specified, otherwise no name is specified.
+
+The name of the security group for the entrypoint.
 
 ---
 
@@ -7597,10 +7660,15 @@ public readonly wildcardCertificate: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* true
+
+Indicates whether the HTTPS certificate should be bound to all subdomains.
 
 ---
 
 ### EntrypointStackProps <a name="EntrypointStackProps" id="@condensetech/cdk-constructs.EntrypointStackProps"></a>
+
+Properties for the EntrypointStack.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.EntrypointStackProps.Initializer"></a>
 
@@ -7614,13 +7682,14 @@ const entrypointStackProps: EntrypointStackProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The name of the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket to store the logs of the ALB. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | Indicates whether the HTTPS certificate should be bound to all subdomains. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
@@ -7631,7 +7700,7 @@ const entrypointStackProps: EntrypointStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.monitoring">monitoring</a></code> | <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.monitoring">monitoring</a></code> | <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a></code> | The monitoring configuration to apply to this stack. |
 
 ---
 
@@ -7643,6 +7712,8 @@ public readonly domainName: string;
 
 - *Type:* string
 
+The domain name to which the entrypoint is associated.
+
 ---
 
 ##### `hostedZoneProps`<sup>Required</sup> <a name="hostedZoneProps" id="@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps"></a>
@@ -7652,6 +7723,8 @@ public readonly hostedZoneProps: HostedZoneAttributes;
 ```
 
 - *Type:* aws-cdk-lib.aws_route53.HostedZoneAttributes
+
+The Route 53 hosted zone attributes for the domain name.
 
 ---
 
@@ -7663,6 +7736,8 @@ public readonly networking: INetworking;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The networking configuration for the entrypoint.
+
 ---
 
 ##### `entrypointName`<sup>Optional</sup> <a name="entrypointName" id="@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointName"></a>
@@ -7672,16 +7747,27 @@ public readonly entrypointName: string;
 ```
 
 - *Type:* string
+- *Default:* No name is specified.
+
+The name of the entrypoint.
+
+This value is used as the name of the underlying Application Load Balancer (ALB)
+and as the prefix for the name of the associated security group.
 
 ---
 
-##### `entrypointSecurityGroupName`<sup>Optional</sup> <a name="entrypointSecurityGroupName" id="@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName"></a>
+##### ~~`entrypointSecurityGroupName`~~<sup>Optional</sup> <a name="entrypointSecurityGroupName" id="@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName"></a>
+
+- *Deprecated:* Use `securityGroupName` instead.
 
 ```typescript
 public readonly entrypointSecurityGroupName: string;
 ```
 
 - *Type:* string
+- *Default:* `${entrypointName}-sg`
+
+The name of the security group for the entrypoint.
 
 ---
 
@@ -7692,6 +7778,24 @@ public readonly logsBucket: IBucket;
 ```
 
 - *Type:* aws-cdk-lib.aws_s3.IBucket
+- *Default:* Logging is disabled.
+
+The S3 bucket to store the logs of the ALB.
+
+Setting this will enable the access logs for the ALB.
+
+---
+
+##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.EntrypointStackProps.property.securityGroupName"></a>
+
+```typescript
+public readonly securityGroupName: string;
+```
+
+- *Type:* string
+- *Default:* `${entrypointName}-sg` if `entrypointName` is specified, otherwise no name is specified.
+
+The name of the security group for the entrypoint.
 
 ---
 
@@ -7702,6 +7806,9 @@ public readonly wildcardCertificate: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* true
+
+Indicates whether the HTTPS certificate should be bound to all subdomains.
 
 ---
 
@@ -7922,6 +8029,9 @@ public readonly monitoring: MonitoringFacadeProps;
 ```
 
 - *Type:* <a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a>
+- *Default:* No monitoring.
+
+The monitoring configuration to apply to this stack.
 
 ---
 
@@ -9857,11 +9967,18 @@ The endpoint of the database.
 
 - *Implemented By:* <a href="#@condensetech/cdk-constructs.Entrypoint">Entrypoint</a>, <a href="#@condensetech/cdk-constructs.EntrypointStack">EntrypointStack</a>, <a href="#@condensetech/cdk-constructs.IEntrypoint">IEntrypoint</a>
 
+The Entrypoint LoadBalancer is an Application Load Balancer (ALB) that serves as the centralized entry point for all applications.
+
+This ALB is shared across multiple applications, primarily to optimize infrastructure costs by reducing the need for multiple load balancers.
+
+The IEntrypoint interface defines the common behaviors and properties that various implementations must adhere to.
+This allows stacks and constructs to interact with the entry point without being dependent on a specific implementation, ensuring greater flexibility and maintainability.
+
 #### Methods <a name="Methods" id="Methods"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.referenceListener">referenceListener</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
 
 ---
 
@@ -9870,6 +9987,8 @@ The endpoint of the database.
 ```typescript
 public referenceListener(scope: Construct, id: string): IApplicationListener
 ```
+
+Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.IEntrypoint.referenceListener.parameter.scope"></a>
 
@@ -9887,8 +10006,8 @@ public referenceListener(scope: Construct, id: string): IApplicationListener
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The ALB that serves as the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
 
 ---
 
@@ -9900,6 +10019,8 @@ public readonly alb: IApplicationLoadBalancer;
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer
 
+The ALB that serves as the entrypoint.
+
 ---
 
 ##### `domainName`<sup>Required</sup> <a name="domainName" id="@condensetech/cdk-constructs.IEntrypoint.property.domainName"></a>
@@ -9909,6 +10030,8 @@ public readonly domainName: string;
 ```
 
 - *Type:* string
+
+The domain name to which the entrypoint is associated.
 
 ---
 

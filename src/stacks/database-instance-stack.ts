@@ -17,7 +17,7 @@ export interface DatabaseInstanceStackProps extends DatabaseInstanceProps, cdk.S
 }
 
 /**
- * The DatabaseInstanceStack creates a DatabaseInstance construct and optionally defines the monitoring configuration.
+ * The DatabaseInstanceStack creates a [DatabaseInstance](#@condensetech/cdk-constructs.DatabaseInstance) construct and optionally defines the monitoring configuration.
  * It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  */
 export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {

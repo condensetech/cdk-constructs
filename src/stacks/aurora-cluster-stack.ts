@@ -17,7 +17,7 @@ export interface AuroraClusterStackProps extends AuroraClusterProps, cdk.StackPr
 }
 
 /**
- * The AuroraClusterStack creates an AuroraCluster construct and optionally defines the monitoring configuration.
+ * The AuroraClusterStack creates an [AuroraCluster](#@condensetech/cdk-constructs.AuroraCluster) construct and optionally defines the monitoring configuration.
  * It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  */
 export class AuroraClusterStack extends cdk.Stack implements IDatabase {

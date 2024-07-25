@@ -5,10 +5,21 @@ import { Entrypoint, EntrypointProps } from '../constructs/entrypoint';
 import { MonitoringFacade, MonitoringFacadeProps } from '../constructs/monitoring/monitoring-facade';
 import { IEntrypoint } from '../interfaces';
 
+/**
+ * Properties for the EntrypointStack.
+ */
 export interface EntrypointStackProps extends EntrypointProps, StackProps {
+  /**
+   * The monitoring configuration to apply to this stack.
+   * @default - No monitoring.
+   */
   readonly monitoring?: MonitoringFacadeProps;
 }
 
+/**
+ * The EntrypointStack creates an [Entrypoint](#@condensetech/cdk-constructs.Entrypoint) construct and optionally defines the monitoring configuration.
+ * It implements the IEntrypoint interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+ */
 export class EntrypointStack extends Stack implements IEntrypoint {
   private readonly construct: IEntrypoint;
 
