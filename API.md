@@ -174,6 +174,10 @@ public readonly parameterGroup: ParameterGroup;
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
+The AuroraClusterStack creates an AuroraCluster construct and optionally defines the monitoring configuration.
+
+It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.AuroraClusterStack.Initializer"></a>
 
 ```typescript
@@ -1984,6 +1988,20 @@ public readonly alarmsTopic: Topic;
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
+The DatabaseInstance construct creates an RDS database instance.
+
+Under the hood, it creates a [rds.DatabaseInstance](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#starting-an-instance-database) construct.
+It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+
+It also applies the following changes to the default behavior:
+- A [rds.ParameterGroup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#parameter-groups) specific for the cluster is always defined.
+  By using a custom parameter group instead of relying on the default one, a later change in the parameter group's parameters wouldn't require a replace of the cluster.
+- The credentials secret name is created after the construct's path. This way, the secret name is more readable and, when working with multiple stacks, can be easily inferred without having to rely on Cloudformation exports.
+- It defaults the storage type to GP3 when not specified.
+- It defaults the allocated storage to the minimum storage of 20 GB when not specified.
+- The default instance type is set to t3.small.
+- The storage is always encrypted.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.DatabaseInstance.Initializer"></a>
 
 ```typescript
@@ -2131,6 +2149,10 @@ The endpoint of the database.
 ### DatabaseInstanceStack <a name="DatabaseInstanceStack" id="@condensetech/cdk-constructs.DatabaseInstanceStack"></a>
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
+
+The DatabaseInstanceStack creates a DatabaseInstance construct and optionally defines the monitoring configuration.
+
+It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.DatabaseInstanceStack.Initializer"></a>
 
@@ -5980,6 +6002,8 @@ The writer instance of the Aurora cluster.
 
 ### AuroraClusterStackProps <a name="AuroraClusterStackProps" id="@condensetech/cdk-constructs.AuroraClusterStackProps"></a>
 
+Properties for the AuroraClusterStack.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.AuroraClusterStackProps.Initializer"></a>
 
 ```typescript
@@ -6014,7 +6038,7 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.monitoring">monitoring</a></code> | <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.monitoring">monitoring</a></code> | <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a></code> | The monitoring configuration to apply to this stack. |
 
 ---
 
@@ -6393,6 +6417,9 @@ public readonly monitoring: MonitoringFacadeProps;
 ```
 
 - *Type:* <a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a>
+- *Default:* No monitoring.
+
+The monitoring configuration to apply to this stack.
 
 ---
 
@@ -6901,6 +6928,8 @@ public readonly topicName: string;
 
 ### DatabaseInstanceProps <a name="DatabaseInstanceProps" id="@condensetech/cdk-constructs.DatabaseInstanceProps"></a>
 
+Properties for the DatabaseInstance construct.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.DatabaseInstanceProps.Initializer"></a>
 
 ```typescript
@@ -6913,15 +6942,17 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IInstanceEngine</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.databaseName">databaseName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName">instanceName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IInstanceEngine</code> | The engine of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName">instanceName</a></code> | <code>string</code> | The name of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
 
 ---
 
@@ -6933,6 +6964,8 @@ public readonly engine: IInstanceEngine;
 
 - *Type:* aws-cdk-lib.aws_rds.IInstanceEngine
 
+The engine of the database instance.
+
 ---
 
 ##### `networking`<sup>Required</sup> <a name="networking" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.networking"></a>
@@ -6943,6 +6976,8 @@ public readonly networking: INetworking;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The networking configuration for the database instance.
+
 ---
 
 ##### `allocatedStorage`<sup>Optional</sup> <a name="allocatedStorage" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.allocatedStorage"></a>
@@ -6952,6 +6987,9 @@ public readonly allocatedStorage: number;
 ```
 
 - *Type:* number
+- *Default:* 20
+
+The allocated storage of the database instance.
 
 ---
 
@@ -6962,6 +7000,9 @@ public readonly backupRetention: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* It uses the default applied by [rds.DatabaseInstanceProps#backupRetention]https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseInstanceProps.html#backupretention).
+
+The backup retention period.
 
 ---
 
@@ -6972,6 +7013,9 @@ public readonly credentialsSecretName: string;
 ```
 
 - *Type:* string
+- *Default:* `${construct.node.path}/secret`
+
+The name of the secret that stores the credentials of the database.
 
 ---
 
@@ -6982,16 +7026,37 @@ public readonly databaseName: string;
 ```
 
 - *Type:* string
+- *Default:* No default database is created.
+
+The name of the database.
 
 ---
 
-##### `instanceName`<sup>Optional</sup> <a name="instanceName" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName"></a>
+##### `instanceIdentifier`<sup>Optional</sup> <a name="instanceIdentifier" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier"></a>
+
+```typescript
+public readonly instanceIdentifier: string;
+```
+
+- *Type:* string
+- *Default:* No identifier is specified.
+
+The identifier of the database instance.
+
+---
+
+##### ~~`instanceName`~~<sup>Optional</sup> <a name="instanceName" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName"></a>
+
+- *Deprecated:* Use `instanceIdentifier` instead.
 
 ```typescript
 public readonly instanceName: string;
 ```
 
 - *Type:* string
+- *Default:* No name is specified.
+
+The name of the database instance.
 
 ---
 
@@ -7002,6 +7067,9 @@ public readonly instanceType: InstanceType;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.InstanceType
+- *Default:* db.t3.small.
+
+The instance type of the database instance.
 
 ---
 
@@ -7012,10 +7080,28 @@ public readonly multiAz: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* false
+
+If the database instance is multi-AZ.
+
+---
+
+##### `storageType`<sup>Optional</sup> <a name="storageType" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.storageType"></a>
+
+```typescript
+public readonly storageType: StorageType;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.StorageType
+- *Default:* rds.StorageType.GP3
+
+The storage type of the database instance.
 
 ---
 
 ### DatabaseInstanceStackProps <a name="DatabaseInstanceStackProps" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps"></a>
+
+Properties for the DatabaseInstanceStack.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.Initializer"></a>
 
@@ -7029,15 +7115,17 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IInstanceEngine</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName">instanceName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IInstanceEngine</code> | The engine of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName">instanceName</a></code> | <code>string</code> | The name of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
@@ -7048,7 +7136,7 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.monitoring">monitoring</a></code> | <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.monitoring">monitoring</a></code> | <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a></code> | The monitoring configuration to apply to this stack. |
 
 ---
 
@@ -7060,6 +7148,8 @@ public readonly engine: IInstanceEngine;
 
 - *Type:* aws-cdk-lib.aws_rds.IInstanceEngine
 
+The engine of the database instance.
+
 ---
 
 ##### `networking`<sup>Required</sup> <a name="networking" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.networking"></a>
@@ -7070,6 +7160,8 @@ public readonly networking: INetworking;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The networking configuration for the database instance.
+
 ---
 
 ##### `allocatedStorage`<sup>Optional</sup> <a name="allocatedStorage" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allocatedStorage"></a>
@@ -7079,6 +7171,9 @@ public readonly allocatedStorage: number;
 ```
 
 - *Type:* number
+- *Default:* 20
+
+The allocated storage of the database instance.
 
 ---
 
@@ -7089,6 +7184,9 @@ public readonly backupRetention: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* It uses the default applied by [rds.DatabaseInstanceProps#backupRetention]https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseInstanceProps.html#backupretention).
+
+The backup retention period.
 
 ---
 
@@ -7099,6 +7197,9 @@ public readonly credentialsSecretName: string;
 ```
 
 - *Type:* string
+- *Default:* `${construct.node.path}/secret`
+
+The name of the secret that stores the credentials of the database.
 
 ---
 
@@ -7109,16 +7210,37 @@ public readonly databaseName: string;
 ```
 
 - *Type:* string
+- *Default:* No default database is created.
+
+The name of the database.
 
 ---
 
-##### `instanceName`<sup>Optional</sup> <a name="instanceName" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName"></a>
+##### `instanceIdentifier`<sup>Optional</sup> <a name="instanceIdentifier" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier"></a>
+
+```typescript
+public readonly instanceIdentifier: string;
+```
+
+- *Type:* string
+- *Default:* No identifier is specified.
+
+The identifier of the database instance.
+
+---
+
+##### ~~`instanceName`~~<sup>Optional</sup> <a name="instanceName" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName"></a>
+
+- *Deprecated:* Use `instanceIdentifier` instead.
 
 ```typescript
 public readonly instanceName: string;
 ```
 
 - *Type:* string
+- *Default:* No name is specified.
+
+The name of the database instance.
 
 ---
 
@@ -7129,6 +7251,9 @@ public readonly instanceType: InstanceType;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.InstanceType
+- *Default:* db.t3.small.
+
+The instance type of the database instance.
 
 ---
 
@@ -7139,6 +7264,22 @@ public readonly multiAz: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* false
+
+If the database instance is multi-AZ.
+
+---
+
+##### `storageType`<sup>Optional</sup> <a name="storageType" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.storageType"></a>
+
+```typescript
+public readonly storageType: StorageType;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.StorageType
+- *Default:* rds.StorageType.GP3
+
+The storage type of the database instance.
 
 ---
 
@@ -7359,6 +7500,9 @@ public readonly monitoring: MonitoringFacadeProps;
 ```
 
 - *Type:* <a href="#@condensetech/cdk-constructs.MonitoringFacadeProps">MonitoringFacadeProps</a>
+- *Default:* No monitoring.
+
+The monitoring configuration to apply to this stack.
 
 ---
 
