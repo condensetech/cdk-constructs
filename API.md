@@ -6,6 +6,15 @@
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
+The AuroraCluster Construct creates an opinionated Aurora Cluster. Under the hood, it creates a [rds.DatabaseCluster](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#starting-a-clustered-database) construct.
+
+It also applies the following changes to the default behavior:
+- A [rds.ParameterGroup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#parameter-groups) specific for the cluster is always defined.
+  By using a custom parameter group instead of relying on the default one, a later change in the parameter group's parameters wouldn't require a replace of the cluster.
+- The credentials secret name is created after the construct's path. This way, the secret name is more readable and, when working with multiple stacks, can be easily inferred without having to rely on Cloudformation exports.
+- The default instance type for the writer instance is set to a minimum instance type based on the engine type.
+- The storage is always encrypted.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.AuroraCluster.Initializer"></a>
 
 ```typescript
@@ -45,7 +54,7 @@ new AuroraCluster(scope: Construct, id: string, props: AuroraClusterProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.fetchSecret">fetchSecret</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
 
@@ -62,6 +71,8 @@ Returns a string representation of this construct.
 ```typescript
 public fetchSecret(scope: Construct, id?: string): ISecret
 ```
+
+Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.AuroraCluster.fetchSecret.parameter.scope"></a>
 
@@ -80,7 +91,6 @@ public fetchSecret(scope: Construct, id?: string): ISecret
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.minimumInstanceType">minimumInstanceType</a></code> | *No description.* |
 
 ---
 
@@ -102,27 +112,14 @@ Any object.
 
 ---
 
-##### `minimumInstanceType` <a name="minimumInstanceType" id="@condensetech/cdk-constructs.AuroraCluster.minimumInstanceType"></a>
-
-```typescript
-import { AuroraCluster } from '@condensetech/cdk-constructs'
-
-AuroraCluster.minimumInstanceType(engine: IClusterEngine)
-```
-
-###### `engine`<sup>Required</sup> <a name="engine" id="@condensetech/cdk-constructs.AuroraCluster.minimumInstanceType.parameter.engine"></a>
-
-- *Type:* aws-cdk-lib.aws_rds.IClusterEngine
-
----
-
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup">parameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
 
 ---
 
@@ -157,6 +154,18 @@ public readonly endpoint: Endpoint;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
+
+The endpoint of the database.
+
+---
+
+##### `parameterGroup`<sup>Required</sup> <a name="parameterGroup" id="@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup"></a>
+
+```typescript
+public readonly parameterGroup: ParameterGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.ParameterGroup
 
 ---
 
@@ -218,7 +227,7 @@ new AuroraClusterStack(scope: Construct, id: string, props: AuroraClusterStackPr
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.splitArn">splitArn</a></code> | Splits the provided ARN into its components. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.toJsonString">toJsonString</a></code> | Convert an object, potentially containing tokens, to a JSON string. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.toYamlString">toYamlString</a></code> | Convert an object, potentially containing tokens, to a YAML string. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.fetchSecret">fetchSecret</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
 
@@ -620,6 +629,8 @@ Convert an object, potentially containing tokens, to a YAML string.
 public fetchSecret(scope: Construct, id?: string): ISecret
 ```
 
+Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way.
+
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.AuroraClusterStack.fetchSecret.parameter.scope"></a>
 
 - *Type:* constructs.Construct
@@ -724,7 +735,7 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.nestedStackResource">nestedStackResource</a></code> | <code>aws-cdk-lib.CfnResource</code> | If this is a nested stack, this represents its `AWS::CloudFormation::Stack` resource. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
 
 ---
 
@@ -1077,6 +1088,8 @@ public readonly endpoint: Endpoint;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
+
+The endpoint of the database.
 
 ---
 
@@ -2010,7 +2023,7 @@ new DatabaseInstance(scope: Construct, id: string, props: DatabaseInstanceProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.fetchSecret">fetchSecret</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
 
@@ -2027,6 +2040,8 @@ Returns a string representation of this construct.
 ```typescript
 public fetchSecret(scope: Construct, id?: string): ISecret
 ```
+
+Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.DatabaseInstance.fetchSecret.parameter.scope"></a>
 
@@ -2072,7 +2087,7 @@ Any object.
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
 
 ---
 
@@ -2107,6 +2122,8 @@ public readonly endpoint: Endpoint;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
+
+The endpoint of the database.
 
 ---
 
@@ -2168,7 +2185,7 @@ new DatabaseInstanceStack(scope: Construct, id: string, props: DatabaseInstanceS
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.splitArn">splitArn</a></code> | Splits the provided ARN into its components. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.toJsonString">toJsonString</a></code> | Convert an object, potentially containing tokens, to a JSON string. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.toYamlString">toYamlString</a></code> | Convert an object, potentially containing tokens, to a YAML string. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.fetchSecret">fetchSecret</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
 
@@ -2570,6 +2587,8 @@ Convert an object, potentially containing tokens, to a YAML string.
 public fetchSecret(scope: Construct, id?: string): ISecret
 ```
 
+Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way.
+
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.DatabaseInstanceStack.fetchSecret.parameter.scope"></a>
 
 - *Type:* constructs.Construct
@@ -2674,7 +2693,7 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.nestedStackResource">nestedStackResource</a></code> | <code>aws-cdk-lib.CfnResource</code> | If this is a nested stack, this represents its `AWS::CloudFormation::Stack` resource. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
 
 ---
 
@@ -3027,6 +3046,8 @@ public readonly endpoint: Endpoint;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
+
+The endpoint of the database.
 
 ---
 
@@ -4468,12 +4489,12 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Networking.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.hasPrivateSubnets">hasPrivateSubnets</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.hasPrivateSubnets">hasPrivateSubnets</a></code> | <code>boolean</code> | Returns if the VPC has private subnets (with access to internet through a NAT gateway). |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the isolated subnets of the VPC (without access to internet). |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the public subnets of the VPC. |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the networking resources are created. |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | Returns the bastion host instance of the VPC, if any. |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the private subnets of the VPC (with access to internet through a NAT gateway). |
 
 ---
 
@@ -4497,6 +4518,8 @@ public readonly hasPrivateSubnets: boolean;
 
 - *Type:* boolean
 
+Returns if the VPC has private subnets (with access to internet through a NAT gateway).
+
 ---
 
 ##### `isolatedSubnets`<sup>Required</sup> <a name="isolatedSubnets" id="@condensetech/cdk-constructs.Networking.property.isolatedSubnets"></a>
@@ -4506,6 +4529,8 @@ public readonly isolatedSubnets: SubnetSelection;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
+
+Returns the isolated subnets of the VPC (without access to internet).
 
 ---
 
@@ -4517,6 +4542,8 @@ public readonly publicSubnets: SubnetSelection;
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
 
+Returns the public subnets of the VPC.
+
 ---
 
 ##### `vpc`<sup>Required</sup> <a name="vpc" id="@condensetech/cdk-constructs.Networking.property.vpc"></a>
@@ -4526,6 +4553,8 @@ public readonly vpc: IVpc;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.IVpc
+
+The VPC where the networking resources are created.
 
 ---
 
@@ -4537,6 +4566,8 @@ public readonly bastionHost: BastionHostLinux;
 
 - *Type:* aws-cdk-lib.aws_ec2.BastionHostLinux
 
+Returns the bastion host instance of the VPC, if any.
+
 ---
 
 ##### `privateSubnets`<sup>Optional</sup> <a name="privateSubnets" id="@condensetech/cdk-constructs.Networking.property.privateSubnets"></a>
@@ -4546,6 +4577,8 @@ public readonly privateSubnets: SubnetSelection;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
+
+Returns the private subnets of the VPC (with access to internet through a NAT gateway).
 
 ---
 
@@ -5093,12 +5126,12 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.nestedStackParent">nestedStackParent</a></code> | <code>aws-cdk-lib.Stack</code> | If this is a nested stack, returns it's parent stack. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.nestedStackResource">nestedStackResource</a></code> | <code>aws-cdk-lib.CfnResource</code> | If this is a nested stack, this represents its `AWS::CloudFormation::Stack` resource. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.hasPrivateSubnets">hasPrivateSubnets</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.hasPrivateSubnets">hasPrivateSubnets</a></code> | <code>boolean</code> | Returns if the VPC has private subnets (with access to internet through a NAT gateway). |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the isolated subnets of the VPC (without access to internet). |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the public subnets of the VPC. |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the networking resources are created. |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | Returns the bastion host instance of the VPC, if any. |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the private subnets of the VPC (with access to internet through a NAT gateway). |
 
 ---
 
@@ -5440,6 +5473,8 @@ public readonly hasPrivateSubnets: boolean;
 
 - *Type:* boolean
 
+Returns if the VPC has private subnets (with access to internet through a NAT gateway).
+
 ---
 
 ##### `isolatedSubnets`<sup>Required</sup> <a name="isolatedSubnets" id="@condensetech/cdk-constructs.NetworkingStack.property.isolatedSubnets"></a>
@@ -5449,6 +5484,8 @@ public readonly isolatedSubnets: SubnetSelection;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
+
+Returns the isolated subnets of the VPC (without access to internet).
 
 ---
 
@@ -5460,6 +5497,8 @@ public readonly publicSubnets: SubnetSelection;
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
 
+Returns the public subnets of the VPC.
+
 ---
 
 ##### `vpc`<sup>Required</sup> <a name="vpc" id="@condensetech/cdk-constructs.NetworkingStack.property.vpc"></a>
@@ -5469,6 +5508,8 @@ public readonly vpc: IVpc;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.IVpc
+
+The VPC where the networking resources are created.
 
 ---
 
@@ -5480,6 +5521,8 @@ public readonly bastionHost: BastionHostLinux;
 
 - *Type:* aws-cdk-lib.aws_ec2.BastionHostLinux
 
+Returns the bastion host instance of the VPC, if any.
+
 ---
 
 ##### `privateSubnets`<sup>Optional</sup> <a name="privateSubnets" id="@condensetech/cdk-constructs.NetworkingStack.property.privateSubnets"></a>
@@ -5489,6 +5532,8 @@ public readonly privateSubnets: SubnetSelection;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
+
+Returns the private subnets of the VPC (with access to internet through a NAT gateway).
 
 ---
 
@@ -5746,6 +5791,8 @@ public readonly targetConnectionErrors: IMetric;
 
 ### AuroraClusterProps <a name="AuroraClusterProps" id="@condensetech/cdk-constructs.AuroraClusterProps"></a>
 
+Properties for the AuroraCluster construct.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.AuroraClusterProps.Initializer"></a>
 
 ```typescript
@@ -5758,16 +5805,18 @@ const auroraClusterProps: AuroraClusterProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IClusterEngine</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName">clusterName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.databaseName">databaseName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.writer">writer</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IClusterEngine</code> | The engine of the Aurora cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the Aurora cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the Aurora cluster is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.writer">writer</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance</code> | The writer instance of the Aurora cluster. |
 
 ---
 
@@ -5779,6 +5828,8 @@ public readonly engine: IClusterEngine;
 
 - *Type:* aws-cdk-lib.aws_rds.IClusterEngine
 
+The engine of the Aurora cluster.
+
 ---
 
 ##### `networking`<sup>Required</sup> <a name="networking" id="@condensetech/cdk-constructs.AuroraClusterProps.property.networking"></a>
@@ -5789,6 +5840,8 @@ public readonly networking: INetworking;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The networking configuration for the Aurora cluster.
+
 ---
 
 ##### `backupRetention`<sup>Optional</sup> <a name="backupRetention" id="@condensetech/cdk-constructs.AuroraClusterProps.property.backupRetention"></a>
@@ -5798,16 +5851,39 @@ public readonly backupRetention: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* It uses the default applied by [rds.DatabaseClusterProps#backup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseClusterProps.html#backup).
+
+The backup retention period.
 
 ---
 
-##### `clusterName`<sup>Optional</sup> <a name="clusterName" id="@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName"></a>
+##### `clusterIdentifier`<sup>Optional</sup> <a name="clusterIdentifier" id="@condensetech/cdk-constructs.AuroraClusterProps.property.clusterIdentifier"></a>
+
+```typescript
+public readonly clusterIdentifier: string;
+```
+
+- *Type:* string
+
+The identifier of the cluster.
+
+If not specified, it relies on the underlying default naming.
+
+---
+
+##### ~~`clusterName`~~<sup>Optional</sup> <a name="clusterName" id="@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName"></a>
+
+- *Deprecated:* Use `clusterIdentifier` instead.
 
 ```typescript
 public readonly clusterName: string;
 ```
 
 - *Type:* string
+
+The name of the cluster.
+
+If not specified, it relies on the underlying default naming.
 
 ---
 
@@ -5818,6 +5894,9 @@ public readonly credentialsSecretName: string;
 ```
 
 - *Type:* string
+- *Default:* `${construct.node.path}/secret`
+
+The name of the secret that stores the credentials of the database.
 
 ---
 
@@ -5828,6 +5907,9 @@ public readonly databaseName: string;
 ```
 
 - *Type:* string
+- *Default:* No default database is created.
+
+The name of the database.
 
 ---
 
@@ -5838,6 +5920,22 @@ public readonly multiAz: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* false
+
+If the Aurora cluster is multi-AZ.
+
+---
+
+##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.AuroraClusterProps.property.parameters"></a>
+
+```typescript
+public readonly parameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the parameter group.
 
 ---
 
@@ -5848,6 +5946,9 @@ public readonly readers: IClusterInstance[];
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.IClusterInstance[]
+- *Default:* No reader instances are created.
+
+The reader instances of the Aurora cluster.
 
 ---
 
@@ -5858,6 +5959,9 @@ public readonly removalPolicy: RemovalPolicy;
 ```
 
 - *Type:* aws-cdk-lib.RemovalPolicy
+- *Default:* RemovalPolicy.RETAIN
+
+The removal policy to apply when the cluster is removed.
 
 ---
 
@@ -5868,6 +5972,9 @@ public readonly writer: IClusterInstance;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.IClusterInstance
+- *Default:* A provisioned instance with the minimum instance type based on the engine type.
+
+The writer instance of the Aurora cluster.
 
 ---
 
@@ -5885,16 +5992,18 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IClusterEngine</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName">clusterName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.writer">writer</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IClusterEngine</code> | The engine of the Aurora cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the Aurora cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the Aurora cluster is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.writer">writer</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance</code> | The writer instance of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
@@ -5917,6 +6026,8 @@ public readonly engine: IClusterEngine;
 
 - *Type:* aws-cdk-lib.aws_rds.IClusterEngine
 
+The engine of the Aurora cluster.
+
 ---
 
 ##### `networking`<sup>Required</sup> <a name="networking" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.networking"></a>
@@ -5927,6 +6038,8 @@ public readonly networking: INetworking;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The networking configuration for the Aurora cluster.
+
 ---
 
 ##### `backupRetention`<sup>Optional</sup> <a name="backupRetention" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.backupRetention"></a>
@@ -5936,16 +6049,39 @@ public readonly backupRetention: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* It uses the default applied by [rds.DatabaseClusterProps#backup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseClusterProps.html#backup).
+
+The backup retention period.
 
 ---
 
-##### `clusterName`<sup>Optional</sup> <a name="clusterName" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName"></a>
+##### `clusterIdentifier`<sup>Optional</sup> <a name="clusterIdentifier" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterIdentifier"></a>
+
+```typescript
+public readonly clusterIdentifier: string;
+```
+
+- *Type:* string
+
+The identifier of the cluster.
+
+If not specified, it relies on the underlying default naming.
+
+---
+
+##### ~~`clusterName`~~<sup>Optional</sup> <a name="clusterName" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName"></a>
+
+- *Deprecated:* Use `clusterIdentifier` instead.
 
 ```typescript
 public readonly clusterName: string;
 ```
 
 - *Type:* string
+
+The name of the cluster.
+
+If not specified, it relies on the underlying default naming.
 
 ---
 
@@ -5956,6 +6092,9 @@ public readonly credentialsSecretName: string;
 ```
 
 - *Type:* string
+- *Default:* `${construct.node.path}/secret`
+
+The name of the secret that stores the credentials of the database.
 
 ---
 
@@ -5966,6 +6105,9 @@ public readonly databaseName: string;
 ```
 
 - *Type:* string
+- *Default:* No default database is created.
+
+The name of the database.
 
 ---
 
@@ -5976,6 +6118,22 @@ public readonly multiAz: boolean;
 ```
 
 - *Type:* boolean
+- *Default:* false
+
+If the Aurora cluster is multi-AZ.
+
+---
+
+##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters"></a>
+
+```typescript
+public readonly parameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the parameter group.
 
 ---
 
@@ -5986,6 +6144,9 @@ public readonly readers: IClusterInstance[];
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.IClusterInstance[]
+- *Default:* No reader instances are created.
+
+The reader instances of the Aurora cluster.
 
 ---
 
@@ -5996,6 +6157,9 @@ public readonly removalPolicy: RemovalPolicy;
 ```
 
 - *Type:* aws-cdk-lib.RemovalPolicy
+- *Default:* RemovalPolicy.RETAIN
+
+The removal policy to apply when the cluster is removed.
 
 ---
 
@@ -6006,6 +6170,9 @@ public readonly writer: IClusterInstance;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.IClusterInstance
+- *Default:* A provisioned instance with the minimum instance type based on the engine type.
+
+The writer instance of the Aurora cluster.
 
 ---
 
@@ -9439,11 +9606,53 @@ public readonly dashboard: Dashboard;
 
 - *Implemented By:* <a href="#@condensetech/cdk-constructs.AuroraCluster">AuroraCluster</a>, <a href="#@condensetech/cdk-constructs.AuroraClusterStack">AuroraClusterStack</a>, <a href="#@condensetech/cdk-constructs.DatabaseInstance">DatabaseInstance</a>, <a href="#@condensetech/cdk-constructs.DatabaseInstanceStack">DatabaseInstanceStack</a>, <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
 
+The IDatabase interface allows to write stacks and constructs that depend on a database without being tied to the specific database implementation.
+
+*Example*
+
+```typescript
+// In this example, MyConstruct is used across several IDatabase implementations without being tied to a specific construct or stack
+
+interface MyProps {
+  database: IDatabase;
+}
+
+class MyConstruct extends Construct {
+  constructor(scope: Construct, id: string, props: MyProps) {
+   super(scope, id);
+   new CfnOutput(this, 'DatabaseEndpoint', { value: props.database.endpoint.hostname });
+  }
+}
+
+interface MyStackProps {
+  database3: IDatabase;
+}
+
+class MyStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: MyStackProps) {
+    super(scope, id, props);
+    new MyConstruct(this, 'MyConstruct1', {
+      database: new AuroraCluster(this, 'Database', { ... })
+    });
+    new MyConstruct(this, 'MyConstruct2', {
+      database: new DatabaseInstance(this, 'Database', { ... })
+    });
+    new MyConstruct(this, 'MyConstruct3', {
+       database: props.database3
+    });
+  }
+}
+
+const database3 = new AuroraClustrStack(app, 'AuroraClusterStack', { ... });
+new MyStack(app, 'MyStack', { database3 });
+```
+
+
 #### Methods <a name="Methods" id="Methods"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.IDatabase.fetchSecret">fetchSecret</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.IDatabase.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
 
@@ -9452,6 +9661,8 @@ public readonly dashboard: Dashboard;
 ```typescript
 public fetchSecret(scope: Construct, id?: string): ISecret
 ```
+
+Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.IDatabase.fetchSecret.parameter.scope"></a>
 
@@ -9470,7 +9681,7 @@ public fetchSecret(scope: Construct, id?: string): ISecret
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.IDatabase.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
-| <code><a href="#@condensetech/cdk-constructs.IDatabase.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.IDatabase.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
 
 ---
 
@@ -9493,6 +9704,8 @@ public readonly endpoint: Endpoint;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
+
+The endpoint of the database.
 
 ---
 
@@ -9559,17 +9772,23 @@ public readonly domainName: string;
 
 - *Implemented By:* <a href="#@condensetech/cdk-constructs.Networking">Networking</a>, <a href="#@condensetech/cdk-constructs.NetworkingStack">NetworkingStack</a>, <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The INetworking interface allows to write stacks and constructs that depend on networking without being tied to the specific networking implementation.
+
+This allows to write composable infrastructures that, depending on the scenario, can split the networking layer in a separate stack or in a construct.
+
+In addition, the INetworking interface imposes a set of properties to ease the development of constructs that depend on networking resources.
+
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.hasPrivateSubnets">hasPrivateSubnets</a></code> | <code>boolean</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.hasPrivateSubnets">hasPrivateSubnets</a></code> | <code>boolean</code> | Returns if the VPC has private subnets (with access to internet through a NAT gateway). |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the isolated subnets of the VPC (without access to internet). |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the public subnets of the VPC. |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the networking resources are created. |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | Returns the bastion host instance of the VPC, if any. |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the private subnets of the VPC (with access to internet through a NAT gateway). |
 
 ---
 
@@ -9581,6 +9800,8 @@ public readonly hasPrivateSubnets: boolean;
 
 - *Type:* boolean
 
+Returns if the VPC has private subnets (with access to internet through a NAT gateway).
+
 ---
 
 ##### `isolatedSubnets`<sup>Required</sup> <a name="isolatedSubnets" id="@condensetech/cdk-constructs.INetworking.property.isolatedSubnets"></a>
@@ -9590,6 +9811,8 @@ public readonly isolatedSubnets: SubnetSelection;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
+
+Returns the isolated subnets of the VPC (without access to internet).
 
 ---
 
@@ -9601,6 +9824,8 @@ public readonly publicSubnets: SubnetSelection;
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
 
+Returns the public subnets of the VPC.
+
 ---
 
 ##### `vpc`<sup>Required</sup> <a name="vpc" id="@condensetech/cdk-constructs.INetworking.property.vpc"></a>
@@ -9610,6 +9835,8 @@ public readonly vpc: IVpc;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.IVpc
+
+The VPC where the networking resources are created.
 
 ---
 
@@ -9621,6 +9848,8 @@ public readonly bastionHost: BastionHostLinux;
 
 - *Type:* aws-cdk-lib.aws_ec2.BastionHostLinux
 
+Returns the bastion host instance of the VPC, if any.
+
 ---
 
 ##### `privateSubnets`<sup>Optional</sup> <a name="privateSubnets" id="@condensetech/cdk-constructs.INetworking.property.privateSubnets"></a>
@@ -9630,6 +9859,8 @@ public readonly privateSubnets: SubnetSelection;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
+
+Returns the private subnets of the VPC (with access to internet through a NAT gateway).
 
 ---
 
