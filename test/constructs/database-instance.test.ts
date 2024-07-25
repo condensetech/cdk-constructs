@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_rds as rds } from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Template } from 'aws-cdk-lib/assertions';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { DatabaseInstance, DatabaseInstanceProps } from '../../lib/constructs/database-instance';
 import { Networking } from '../../lib/constructs/networking';
 
@@ -12,9 +12,7 @@ describe('Constructs/DatabaseInstance', () => {
     testTarget: DatabaseInstance;
   }
 
-  const createTestStack = (
-    additionalProps: Partial<DatabaseInstanceProps> = {},
-  ): TestStackOutput => {
+  const createTestStack = (additionalProps: Partial<DatabaseInstanceProps> = {}): TestStackOutput => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, 'TestStack');
     const networking = new Networking(stack, 'Networking', {

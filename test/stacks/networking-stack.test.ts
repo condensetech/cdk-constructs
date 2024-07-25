@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Template } from 'aws-cdk-lib/assertions';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NetworkingStack } from '../../lib/stacks/networking-stack';
 
 describe('Stacks/NetworkingStack', () => {

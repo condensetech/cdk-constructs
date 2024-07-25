@@ -1,8 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 as ec2, aws_rds as rds } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { NetworkingStack } from '../../lib/stacks/networking-stack';
 import { DatabaseInstanceStack } from '../../lib/stacks/database-instance-stack';
+import { NetworkingStack } from '../../lib/stacks/networking-stack';
 
 describe('Stacks/PostgresInstanceStack', () => {
   test('do not set the DBInstanceIdentifier by default', () => {
