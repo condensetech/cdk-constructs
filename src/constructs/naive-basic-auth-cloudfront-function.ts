@@ -4,6 +4,9 @@ import { Construct } from 'constructs';
 function serializeExcludePaths(paths: Array<NaiveBasicAuthCloudfrontFunctionExcludedPath>): string {
   const serializedValues = paths.map(({ path, matchMode }) => {
     if (matchMode === 'regex') {
+      if (!path.startsWith('/')) {
+        return `/${path}/`;
+      }
       return path.toString();
     }
     return `"${path}"`;
@@ -11,8 +14,24 @@ function serializeExcludePaths(paths: Array<NaiveBasicAuthCloudfrontFunctionExcl
   return `[${serializedValues.join(', ')}]`;
 }
 
+/**
+ * Exclusion path for the NaiveBasicAuthCloudfrontFunction
+ */
 export interface NaiveBasicAuthCloudfrontFunctionExcludedPath {
+  /**
+   * The path to exclude from basic auth.
+   * @example
+   * "/admin"
+   * "/\/admin\\/.+/"
+   */
   readonly path: string;
+
+  /**
+   * The match mode to use for the path:
+   * - 'exact' for exact string match
+   * - 'regex' for regex match
+   * @default 'exact'
+   */
   readonly matchMode?: 'exact' | 'regex';
 }
 
@@ -32,6 +51,12 @@ export interface NaiveBasicAuthCloudfrontFunctionProps {
   readonly excludePaths?: Array<NaiveBasicAuthCloudfrontFunctionExcludedPath>;
 }
 
+/**
+ * A CloudFront function that implements a naive basic auth mechanism.
+ * The function is naive because the basic auth string isn't treated as a secret and it's hardcoded in the function code.
+ *
+ * This function is useful for simple use cases where you need to protect a CloudFront distribution with basic auth. A typical use case is to ensure that a staging environment isn't indexed by crawlers (just in case robots.txt is totally ignored).
+ */
 export class NaiveBasicAuthCloudfrontFunction extends cloudfront.Function {
   constructor(scope: Construct, id: string, props: NaiveBasicAuthCloudfrontFunctionProps) {
     super(scope, id, {

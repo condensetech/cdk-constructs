@@ -4183,6 +4183,12 @@ The domain name to which the entrypoint is associated.
 
 ### NaiveBasicAuthCloudfrontFunction <a name="NaiveBasicAuthCloudfrontFunction" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction"></a>
 
+A CloudFront function that implements a naive basic auth mechanism.
+
+The function is naive because the basic auth string isn't treated as a secret and it's hardcoded in the function code.
+
+This function is useful for simple use cases where you need to protect a CloudFront distribution with basic auth. A typical use case is to ensure that a staging environment isn't indexed by crawlers (just in case robots.txt is totally ignored).
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.Initializer"></a>
 
 ```typescript
@@ -8154,6 +8160,8 @@ public readonly dashboardName: string;
 
 ### NaiveBasicAuthCloudfrontFunctionExcludedPath <a name="NaiveBasicAuthCloudfrontFunctionExcludedPath" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath"></a>
 
+Exclusion path for the NaiveBasicAuthCloudfrontFunction.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath.Initializer"></a>
 
 ```typescript
@@ -8166,8 +8174,8 @@ const naiveBasicAuthCloudfrontFunctionExcludedPath: NaiveBasicAuthCloudfrontFunc
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath.property.path">path</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath.property.matchMode">matchMode</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath.property.path">path</a></code> | <code>string</code> | The path to exclude from basic auth. |
+| <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath.property.matchMode">matchMode</a></code> | <code>string</code> | The match mode to use for the path: - 'exact' for exact string match - 'regex' for regex match. |
 
 ---
 
@@ -8179,7 +8187,17 @@ public readonly path: string;
 
 - *Type:* string
 
+The path to exclude from basic auth.
+
 ---
+
+*Example*
+
+```typescript
+"/admin"
+"/\/admin\\/.+/"
+```
+
 
 ##### `matchMode`<sup>Optional</sup> <a name="matchMode" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunctionExcludedPath.property.matchMode"></a>
 
@@ -8188,6 +8206,9 @@ public readonly matchMode: string;
 ```
 
 - *Type:* string
+- *Default:* 'exact'
+
+The match mode to use for the path: - 'exact' for exact string match - 'regex' for regex match.
 
 ---
 
