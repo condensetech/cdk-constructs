@@ -5,17 +5,54 @@ import { buildAlarms } from '../alarms';
 import { ICondenseMonitoringFacade } from '../interfaces';
 import { alertAnnotations, dashboardGenericAxis, dashboardPercentAxis, dashboardSectionTitle } from '../widgets';
 
+/**
+ * The RdsInstanceMonitoringConfig defines the thresholds for the RDS instance monitoring.
+ */
 export interface RdsInstanceMonitoringConfig {
+  /**
+   * The CPU Utilization (%) threshold.
+   * @default 90
+   */
   readonly cpuUtilizationThreshold?: number;
+
+  /**
+   * The Max Connections threshold.
+   * @default 50
+   */
   readonly maxConnectionsThreshold?: number;
+
+  /**
+   * The EBS Byte Balance (%) threshold.
+   * @default 10
+   */
   readonly ebsByteBalanceThreshold?: number;
+
+  /**
+   * The EBS IO Balance (%) threshold.
+   * @default 10
+   */
   readonly ebsIoBalanceThreshold?: number;
+
+  /**
+   * The Freeable Memory threshold.
+   * @default 100 MiB
+   */
   readonly freeableMemoryThreshold?: cdk.Size;
+
+  /**
+   * The Free Storage Space threshold.
+   * @default 100 MiB
+   */
   readonly freeStorageSpaceThreshold?: cdk.Size;
+
+  /**
+   * The Read Latency threshold.
+   * @default 20
+   */
   readonly readLatencyThreshold?: number;
 }
 
-export interface RdsInstanceMonitoringMetrics {
+interface RdsInstanceMonitoringMetrics {
   readonly cpuUtilization: cw.IMetric;
   readonly maxConnections: cw.IMetric;
   readonly freeableMemory: cw.IMetric;
@@ -25,6 +62,9 @@ export interface RdsInstanceMonitoringMetrics {
   readonly ebsByteBalance: cw.IMetric;
 }
 
+/**
+ * The RdsInstanceMonitoringAspect iterates over the RDS instances and adds monitoring widgets and alarms.
+ */
 export class RdsInstanceMonitoringAspect implements cdk.IAspect {
   private readonly overriddenConfig: Record<string, RdsInstanceMonitoringConfig> = {};
   private readonly defaultConfig: RdsInstanceMonitoringConfig = {
@@ -49,6 +89,11 @@ export class RdsInstanceMonitoringAspect implements cdk.IAspect {
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
+  /**
+   * Overrides the default configuration for the RDS instance.
+   * @param node The RDS instance to monitor.
+   * @param config The configuration to apply.
+   */
   overrideConfig(node: rds.DatabaseInstance, config: RdsInstanceMonitoringConfig) {
     this.overriddenConfig[node.node.path] = config;
   }

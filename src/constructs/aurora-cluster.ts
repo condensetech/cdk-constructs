@@ -79,6 +79,7 @@ export interface AuroraClusterProps {
 
 /**
  * The AuroraCluster Construct creates an opinionated Aurora Cluster. Under the hood, it creates a [rds.DatabaseCluster](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#starting-a-clustered-database) construct.
+ * It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  *
  * It also applies the following changes to the default behavior:
  * - A [rds.ParameterGroup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds-readme.html#parameter-groups) specific for the cluster is always defined.
@@ -126,7 +127,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     });
 
     this.databaseCluster = new rds.DatabaseCluster(this, 'DB', {
-      clusterIdentifier: props.clusterName,
+      clusterIdentifier: props.clusterIdentifier ?? props.clusterName,
       engine: props.engine,
       credentials,
       writer:

@@ -93,8 +93,26 @@ export interface IDatabase extends ec2.IConnectable {
   fetchSecret(scope: Construct, id?: string): sm.ISecret;
 }
 
+/**
+ * The Entrypoint LoadBalancer is an Application Load Balancer (ALB) that serves as the centralized entry point for all applications.
+ * This ALB is shared across multiple applications, primarily to optimize infrastructure costs by reducing the need for multiple load balancers.
+ *
+ * The IEntrypoint interface defines the common behaviors and properties that various implementations must adhere to.
+ * This allows stacks and constructs to interact with the entry point without being dependent on a specific implementation, ensuring greater flexibility and maintainability.
+ */
 export interface IEntrypoint {
+  /**
+   * The domain name to which the entrypoint is associated.
+   */
   readonly domainName: string;
+
+  /**
+   * The ALB that serves as the entrypoint.
+   */
   readonly alb: elb.IApplicationLoadBalancer;
+
+  /**
+   * Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way.
+   */
   referenceListener(scope: Construct, id: string): elb.IApplicationListener;
 }

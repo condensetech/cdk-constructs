@@ -4,8 +4,15 @@ import { Construct } from 'constructs';
 import { Networking, NetworkingProps } from '../constructs/networking';
 import { INetworking } from '../interfaces';
 
+/**
+ * Properties for the NetworkingStack.
+ */
 export interface NetworkingStackProps extends NetworkingProps, cdk.StackProps {}
 
+/**
+ * The NetworkingStack creates a [Networking](#@condensetech/cdk-constructs.Networking) construct.
+ * It implements the INetworking interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
+ */
 export class NetworkingStack extends cdk.Stack implements INetworking {
   private readonly construct: INetworking;
 

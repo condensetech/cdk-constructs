@@ -5,16 +5,31 @@ import { buildAlarms } from '../alarms';
 import { ICondenseMonitoringFacade } from '../interfaces';
 import { alertAnnotations, dashboardGenericAxis, dashboardSecondsAxis, dashboardSectionTitle } from '../widgets';
 
-export interface TargetGroupMonitoringMetrics {
+interface TargetGroupMonitoringMetrics {
   readonly responseTime: cw.IMetric;
   readonly minHealthyHosts: cw.IMetric;
 }
 
+/**
+ * The TargetGroupMonitoringConfig defines the thresholds for the target group monitoring.
+ */
 export interface TargetGroupMonitoringConfig {
+  /**
+   * The Response Time threshold.
+   * @default - No threshold.
+   */
   readonly responseTimeThreshold?: cdk.Duration;
+
+  /**
+   * The Min Healthy Hosts threshold.
+   * @default 1
+   */
   readonly minHealthyHostsThreshold?: number;
 }
 
+/**
+ * The TargetGroupMonitoringAspect iterates over the target groups and adds monitoring widgets and alarms.
+ */
 export class TargetGroupMonitoringAspect implements cdk.IAspect {
   private readonly overriddenConfig: Record<string, TargetGroupMonitoringConfig> = {};
   private readonly defaultConfig: TargetGroupMonitoringConfig = {
@@ -33,6 +48,11 @@ export class TargetGroupMonitoringAspect implements cdk.IAspect {
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
+  /**
+   * Overrides the default configuration for a specific target group.
+   * @param node The target group to monitor.
+   * @param config The configuration to apply.
+   */
   overrideConfig(node: elbv2.ApplicationTargetGroup, config: TargetGroupMonitoringConfig) {
     this.overriddenConfig[node.node.path] = config;
   }

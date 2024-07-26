@@ -1,8 +1,19 @@
 import { aws_cloudwatch as cw } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
+/**
+ * The ICondenseMonitoringFacade interface defines the methods that the monitoring facade must implement.
+ */
 export interface ICondenseMonitoringFacade {
-  dashboard: cw.Dashboard;
+  /**
+   * Returns the Cloudwatch dashboard to be used for this stack monitoring.
+   */
+  readonly dashboard: cw.Dashboard;
+
+  /**
+   * Add an alarm to the monitoring facade, by linking it to the alarms topic.
+   * @param alarm The alarm to add.
+   */
   addAlarm(alarm: cw.Alarm): void;
 }
 

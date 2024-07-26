@@ -5,7 +5,7 @@ import { buildAlarms } from '../alarms';
 import { ICondenseMonitoringFacade } from '../interfaces';
 import { alertAnnotations, dashboardGenericAxis, dashboardSecondsAxis, dashboardSectionTitle } from '../widgets';
 
-export interface ApplicationLoadBalancerMonitoringMetrics {
+interface ApplicationLoadBalancerMonitoringMetrics {
   readonly responseTime: cw.IMetric;
   readonly redirectUrlLimitExceeded: cw.IMetric;
   readonly rejectedConnections: cw.IMetric;
@@ -14,14 +14,44 @@ export interface ApplicationLoadBalancerMonitoringMetrics {
   readonly target5xxErrors: cw.IMetric;
 }
 
+/**
+ * The ApplicationLoadBalancerMonitoringConfig defines the thresholds for the Application Load Balancer monitoring.
+ */
 export interface ApplicationLoadBalancerMonitoringConfig {
+  /**
+   * The Response Time threshold.
+   * @default - No threshold.
+   */
   readonly responseTimeThreshold?: cdk.Duration;
+
+  /**
+   * The Redirect URL Limit Exceeded threshold.
+   * @default 0
+   */
   readonly redirectUrlLimitExceededThreshold?: number;
+
+  /**
+   * The Rejected Connections threshold.
+   * @default 0
+   */
   readonly rejectedConnectionsThreshold?: number;
+
+  /**
+   * The Target Connection Errors threshold.
+   * @default 0
+   */
   readonly targetConnectionErrorsThreshold?: number;
+
+  /**
+   * The 5xx Errors threshold.
+   * @default 0
+   */
   readonly target5xxErrorsThreshold?: number;
 }
 
+/**
+ * The ApplicationLoadBalancerMonitoringAspect iterates over the Application Load Balancers and adds monitoring widgets and alarms.
+ */
 export class ApplicationLoadBalancerMonitoringAspect implements cdk.IAspect {
   private readonly overriddenConfig: Record<string, ApplicationLoadBalancerMonitoringConfig> = {};
   private readonly defaultConfig: ApplicationLoadBalancerMonitoringConfig = {
@@ -42,6 +72,11 @@ export class ApplicationLoadBalancerMonitoringAspect implements cdk.IAspect {
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
+  /**
+   * Overrides the default configuration for a specific Application Load Balancer.
+   * @param node The Application Load Balancer to monitor.
+   * @param config The configuration to apply.
+   */
   overrideConfig(node: elbv2.ApplicationLoadBalancer, config: ApplicationLoadBalancerMonitoringConfig) {
     this.overriddenConfig[node.node.path] = config;
   }
