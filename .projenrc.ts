@@ -34,6 +34,16 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
 
   devDeps: ['husky'],
+
+  publishToPypi: {
+    distName: 'condensetech.cdk-constructs',
+    module: 'condensetech.cdk_constructs',
+  },
+  publishToMaven: {
+    javaPackage: 'tech.condense.cdk-constructs',
+    mavenGroupId: 'tech.condense',
+    mavenArtifactId: 'cdk-constructs',
+  },
 });
 //+ See: https://github.com/projen/projen/issues/3070
 project.package.addField('packageManager', `pnpm@${PNPM_VERSION}`);
