@@ -7,17 +7,45 @@ import {
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
+/**
+ * Discord configuration for the Cloudwatch Alarms Topic.
+ */
 export interface CloudwatchAlarmsDiscordConfig {
   readonly username?: string;
   readonly webhook: string;
 }
 
+/**
+ * Properties for the CloudwatchAlarmsTopicStack.
+ */
 export interface CloudwatchAlarmsTopicStackProps extends cdk.StackProps {
+  /**
+   * Discord webhook configuration. If provided, the alarms will be sent to the Discord channel.
+   */
   readonly discord?: CloudwatchAlarmsDiscordConfig;
+
+  /**
+   * Jira subscription webhook. If provided, the alarms will be sent to Jira.
+   * @deprecated Use `urlSubscriptionWebhooks` instead.
+   */
   readonly jiraSubscriptionWebhook?: string;
+
+  /**
+   * Subscription webhooks. If provided, an HTTP request is made against the provided url with alarm details.
+   */
+  readonly urlSubscriptionWebhooks?: string[];
+
+  /**
+   * The name of the alarms topic. It is recommended to set a name.
+   */
   readonly topicName?: string;
 }
 
+/**
+ * The CloudwatchAlarmsTopicStack creates an SNS topic for Cloudwatch alarms.
+ *
+ * The stack  and optionally sends the alarms to Discord or Jira.
+ */
 export class CloudwatchAlarmsTopicStack extends cdk.Stack {
   readonly alarmsTopic: sns.Topic;
 
@@ -34,6 +62,9 @@ export class CloudwatchAlarmsTopicStack extends cdk.Stack {
     }));
     if (props.jiraSubscriptionWebhook) {
       topic.addSubscription(new snsSubscriptions.UrlSubscription(props.jiraSubscriptionWebhook));
+    }
+    if (props.urlSubscriptionWebhooks) {
+      props.urlSubscriptionWebhooks.forEach((url) => topic.addSubscription(new snsSubscriptions.UrlSubscription(url)));
     }
 
     if (props.discord) {

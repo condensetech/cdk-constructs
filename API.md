@@ -1101,6 +1101,10 @@ The endpoint of the database.
 
 ### CloudwatchAlarmsTopicStack <a name="CloudwatchAlarmsTopicStack" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack"></a>
 
+The CloudwatchAlarmsTopicStack creates an SNS topic for Cloudwatch alarms.
+
+The stack  and optionally sends the alarms to Discord or Jira.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.Initializer"></a>
 
 ```typescript
@@ -4461,6 +4465,13 @@ the deployment stage of the CloudFront function.
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
+The Networking construct creates a VPC which can have public, private, and isolated subnets.
+
+If the `natGateways` property is set to a positive integer, the VPC will be created with private subnets that have access to the internet through NAT gateways.
+If instead the `natGateways` property is set to 0, the VPC will have only public and isolated subnets. In this case, the subnets will anyway use a cidrMask of `24`, so that changing the number of NAT gateways will not require to re-provision the VPC.
+
+In addition, this construct can also take care of creating a bastion host in the VPC by using the latest Amazon Linux AMI with the smallest available instance (t4g.nano), if the `bastionHostEnabled` property is set to `true`.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.Networking.Initializer"></a>
 
 ```typescript
@@ -6650,6 +6661,8 @@ public readonly replicationLag: IMetric;
 
 ### CloudwatchAlarmsDiscordConfig <a name="CloudwatchAlarmsDiscordConfig" id="@condensetech/cdk-constructs.CloudwatchAlarmsDiscordConfig"></a>
 
+Discord configuration for the Cloudwatch Alarms Topic.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.CloudwatchAlarmsDiscordConfig.Initializer"></a>
 
 ```typescript
@@ -6689,6 +6702,8 @@ public readonly username: string;
 
 ### CloudwatchAlarmsTopicStackProps <a name="CloudwatchAlarmsTopicStackProps" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps"></a>
 
+Properties for the CloudwatchAlarmsTopicStack.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.Initializer"></a>
 
 ```typescript
@@ -6711,9 +6726,10 @@ const cloudwatchAlarmsTopicStackProps: CloudwatchAlarmsTopicStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.synthesizer">synthesizer</a></code> | <code>aws-cdk-lib.IStackSynthesizer</code> | Synthesis method to use while deploying this stack. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Stack tags that will be applied to all the taggable resources and the stack itself. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
-| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.discord">discord</a></code> | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsDiscordConfig">CloudwatchAlarmsDiscordConfig</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.jiraSubscriptionWebhook">jiraSubscriptionWebhook</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.topicName">topicName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.discord">discord</a></code> | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsDiscordConfig">CloudwatchAlarmsDiscordConfig</a></code> | Discord webhook configuration. |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.jiraSubscriptionWebhook">jiraSubscriptionWebhook</a></code> | <code>string</code> | Jira subscription webhook. |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.topicName">topicName</a></code> | <code>string</code> | The name of the alarms topic. |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.urlSubscriptionWebhooks">urlSubscriptionWebhooks</a></code> | <code>string[]</code> | Subscription webhooks. |
 
 ---
 
@@ -6935,15 +6951,25 @@ public readonly discord: CloudwatchAlarmsDiscordConfig;
 
 - *Type:* <a href="#@condensetech/cdk-constructs.CloudwatchAlarmsDiscordConfig">CloudwatchAlarmsDiscordConfig</a>
 
+Discord webhook configuration.
+
+If provided, the alarms will be sent to the Discord channel.
+
 ---
 
-##### `jiraSubscriptionWebhook`<sup>Optional</sup> <a name="jiraSubscriptionWebhook" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.jiraSubscriptionWebhook"></a>
+##### ~~`jiraSubscriptionWebhook`~~<sup>Optional</sup> <a name="jiraSubscriptionWebhook" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.jiraSubscriptionWebhook"></a>
+
+- *Deprecated:* Use `urlSubscriptionWebhooks` instead.
 
 ```typescript
 public readonly jiraSubscriptionWebhook: string;
 ```
 
 - *Type:* string
+
+Jira subscription webhook.
+
+If provided, the alarms will be sent to Jira.
 
 ---
 
@@ -6954,6 +6980,24 @@ public readonly topicName: string;
 ```
 
 - *Type:* string
+
+The name of the alarms topic.
+
+It is recommended to set a name.
+
+---
+
+##### `urlSubscriptionWebhooks`<sup>Optional</sup> <a name="urlSubscriptionWebhooks" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.urlSubscriptionWebhooks"></a>
+
+```typescript
+public readonly urlSubscriptionWebhooks: string[];
+```
+
+- *Type:* string[]
+
+Subscription webhooks.
+
+If provided, an HTTP request is made against the provided url with alarm details.
 
 ---
 
@@ -8261,6 +8305,8 @@ Pass a string or regex to match the path. Strings are checked using === operator
 ---
 
 ### NetworkingProps <a name="NetworkingProps" id="@condensetech/cdk-constructs.NetworkingProps"></a>
+
+Properties for the Networking construct.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.NetworkingProps.Initializer"></a>
 

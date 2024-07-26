@@ -3,6 +3,9 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { INetworking } from '../interfaces';
 
+/**
+ * Properties for the Networking construct.
+ */
 export interface NetworkingProps {
   readonly ipAddresses: ec2.IIpAddresses;
   readonly vpcName?: string;
@@ -14,6 +17,14 @@ export interface NetworkingProps {
   readonly maxAzs?: number;
 }
 
+/**
+ * The Networking construct creates a VPC which can have public, private, and isolated subnets.
+ *
+ * If the `natGateways` property is set to a positive integer, the VPC will be created with private subnets that have access to the internet through NAT gateways.
+ * If instead the `natGateways` property is set to 0, the VPC will have only public and isolated subnets. In this case, the subnets will anyway use a cidrMask of `24`, so that changing the number of NAT gateways will not require to re-provision the VPC.
+ *
+ * In addition, this construct can also take care of creating a bastion host in the VPC by using the latest Amazon Linux AMI with the smallest available instance (t4g.nano), if the `bastionHostEnabled` property is set to `true`.
+ */
 export class Networking extends Construct implements INetworking {
   readonly vpc: ec2.IVpc;
   readonly bastionHost?: ec2.BastionHostLinux;
