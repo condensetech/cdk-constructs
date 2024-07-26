@@ -5,16 +5,48 @@ import { buildAlarms } from '../alarms';
 import { ICondenseMonitoringFacade } from '../interfaces';
 import { alertAnnotations, dashboardGenericAxis, dashboardPercentAxis, dashboardSectionTitle } from '../widgets';
 
+/**
+ * The RdsClusterMonitoringConfig defines the thresholds for the RDS cluster monitoring.
+ */
 export interface RdsClusterMonitoringConfig {
+  /**
+   * The CPU Utilization (%) threshold.
+   * @default 90
+   */
   readonly cpuUtilizationThreshold?: number;
+
+  /**
+   * The Max Connections threshold.
+   * @default 50
+   */
   readonly maxConnectionsThreshold?: number;
+
+  /**
+   * The EBS Byte Balance (%) threshold.
+   * @default 10
+   */
   readonly ebsByteBalanceThreshold?: number;
+
+  /**
+   * The EBS IO Balance (%) threshold.
+   * @default 10
+   */
   readonly ebsIoBalanceThreshold?: number;
+
+  /**
+   * The Freeable Memory threshold.
+   * @default 100 MiB
+   */
   readonly freeableMemoryThreshold?: cdk.Size;
+
+  /**
+   * The Read Latency threshold.
+   * @default 20
+   */
   readonly readLatencyThreshold?: number;
 }
 
-export interface RdsClusterMonitoringMetrics {
+interface RdsClusterMonitoringMetrics {
   readonly cpuUtilization: cw.IMetric;
   readonly maxConnections: cw.IMetric;
   readonly freeableMemory: cw.IMetric;
@@ -23,6 +55,9 @@ export interface RdsClusterMonitoringMetrics {
   readonly ebsByteBalance: cw.IMetric;
 }
 
+/**
+ * The RdsClusterMonitoringAspect iterates over the RDS clusters and adds monitoring widgets and alarms.
+ */
 export class RdsClusterMonitoringAspect implements cdk.IAspect {
   private readonly overriddenConfig: Record<string, Partial<RdsClusterMonitoringConfig>> = {};
   private readonly defaultConfig: RdsClusterMonitoringConfig = {
@@ -46,6 +81,11 @@ export class RdsClusterMonitoringAspect implements cdk.IAspect {
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
+  /**
+   * Overrides the default configuration for a specific RDS cluster.
+   * @param node The RDS cluster to monitor.
+   * @param config The configuration to apply.
+   */
   overrideConfig(node: rds.DatabaseCluster, config: RdsClusterMonitoringConfig) {
     this.overriddenConfig[node.node.path] = config;
   }

@@ -5,16 +5,31 @@ import { buildAlarms } from '../alarms';
 import { ICondenseMonitoringFacade } from '../interfaces';
 import { alertAnnotations, dashboardGenericAxis, dashboardSecondsAxis, dashboardSectionTitle } from '../widgets';
 
-export interface FargateServiceMonitoringMetrics {
+interface FargateServiceMonitoringMetrics {
   readonly cpuUtilization: cw.IMetric;
   readonly memoryUtilization: cw.IMetric;
 }
 
+/**
+ * The FargateServiceMonitoringConfig defines the thresholds for the Fargate service monitoring.
+ */
 export interface FargateServiceMonitoringConfig {
+  /**
+   * The CPU Utilization (%) threshold.
+   * @default 90
+   */
   readonly cpuUtilizationThreshold?: number;
+
+  /**
+   * The Memory Utilization (%) threshold.
+   * @default 90
+   */
   readonly memoryUtilization?: number;
 }
 
+/**
+ * The FargateServiceMonitoringAspect iterates over the Fargate services and adds monitoring widgets and alarms.
+ */
 export class FargateServiceMonitoringAspect implements cdk.IAspect {
   private readonly overriddenConfig: Record<string, FargateServiceMonitoringConfig> = {};
   private readonly defaultConfig: FargateServiceMonitoringConfig = {
@@ -34,6 +49,11 @@ export class FargateServiceMonitoringAspect implements cdk.IAspect {
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
+  /**
+   * Overrides the default configuration for a specific Fargate service.
+   * @param node The Fargate service to monitor.
+   * @param config The configuration to apply.
+   */
   overrideConfig(node: ecs.FargateService, config: FargateServiceMonitoringConfig) {
     this.overriddenConfig[node.node.path] = config;
   }

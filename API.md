@@ -4467,6 +4467,8 @@ the deployment stage of the CloudFront function.
 
 The Networking construct creates a VPC which can have public, private, and isolated subnets.
 
+It enforces to define a CIDR block for the VPC, which is a best practice.
+
 If the `natGateways` property is set to a positive integer, the VPC will be created with private subnets that have access to the internet through NAT gateways.
 If instead the `natGateways` property is set to 0, the VPC will have only public and isolated subnets. In this case, the subnets will anyway use a cidrMask of `24`, so that changing the number of NAT gateways will not require to re-provision the VPC.
 
@@ -4650,6 +4652,8 @@ Returns the private subnets of the VPC (with access to internet through a NAT ga
 ### NetworkingStack <a name="NetworkingStack" id="@condensetech/cdk-constructs.NetworkingStack"></a>
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
+
+The NetworkingStack creates a [Networking](#@condensetech/cdk-constructs.Networking) construct. It implements the INetworking interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.NetworkingStack.Initializer"></a>
 
@@ -5700,6 +5704,8 @@ public readonly threshold: number;
 
 ### ApplicationLoadBalancerMonitoringConfig <a name="ApplicationLoadBalancerMonitoringConfig" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig"></a>
 
+The ApplicationLoadBalancerMonitoringConfig defines the thresholds for the Application Load Balancer monitoring.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.Initializer"></a>
 
 ```typescript
@@ -5712,11 +5718,11 @@ const applicationLoadBalancerMonitoringConfig: ApplicationLoadBalancerMonitoring
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.redirectUrlLimitExceededThreshold">redirectUrlLimitExceededThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.rejectedConnectionsThreshold">rejectedConnectionsThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.responseTimeThreshold">responseTimeThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.target5xxErrorsThreshold">target5xxErrorsThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.targetConnectionErrorsThreshold">targetConnectionErrorsThreshold</a></code> | <code>number</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.redirectUrlLimitExceededThreshold">redirectUrlLimitExceededThreshold</a></code> | <code>number</code> | The Redirect URL Limit Exceeded threshold. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.rejectedConnectionsThreshold">rejectedConnectionsThreshold</a></code> | <code>number</code> | The Rejected Connections threshold. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.responseTimeThreshold">responseTimeThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The Response Time threshold. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.target5xxErrorsThreshold">target5xxErrorsThreshold</a></code> | <code>number</code> | The 5xx Errors threshold. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig.property.targetConnectionErrorsThreshold">targetConnectionErrorsThreshold</a></code> | <code>number</code> | The Target Connection Errors threshold. |
 
 ---
 
@@ -5727,6 +5733,9 @@ public readonly redirectUrlLimitExceededThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 0
+
+The Redirect URL Limit Exceeded threshold.
 
 ---
 
@@ -5737,6 +5746,9 @@ public readonly rejectedConnectionsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 0
+
+The Rejected Connections threshold.
 
 ---
 
@@ -5747,6 +5759,9 @@ public readonly responseTimeThreshold: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* No threshold.
+
+The Response Time threshold.
 
 ---
 
@@ -5757,6 +5772,9 @@ public readonly target5xxErrorsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 0
+
+The 5xx Errors threshold.
 
 ---
 
@@ -5767,89 +5785,9 @@ public readonly targetConnectionErrorsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 0
 
----
-
-### ApplicationLoadBalancerMonitoringMetrics <a name="ApplicationLoadBalancerMonitoringMetrics" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics"></a>
-
-#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.Initializer"></a>
-
-```typescript
-import { ApplicationLoadBalancerMonitoringMetrics } from '@condensetech/cdk-constructs'
-
-const applicationLoadBalancerMonitoringMetrics: ApplicationLoadBalancerMonitoringMetrics = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.activeConnections">activeConnections</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.redirectUrlLimitExceeded">redirectUrlLimitExceeded</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.rejectedConnections">rejectedConnections</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.responseTime">responseTime</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.target5xxErrors">target5xxErrors</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.targetConnectionErrors">targetConnectionErrors</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-
----
-
-##### `activeConnections`<sup>Required</sup> <a name="activeConnections" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.activeConnections"></a>
-
-```typescript
-public readonly activeConnections: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `redirectUrlLimitExceeded`<sup>Required</sup> <a name="redirectUrlLimitExceeded" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.redirectUrlLimitExceeded"></a>
-
-```typescript
-public readonly redirectUrlLimitExceeded: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `rejectedConnections`<sup>Required</sup> <a name="rejectedConnections" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.rejectedConnections"></a>
-
-```typescript
-public readonly rejectedConnections: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `responseTime`<sup>Required</sup> <a name="responseTime" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.responseTime"></a>
-
-```typescript
-public readonly responseTime: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `target5xxErrors`<sup>Required</sup> <a name="target5xxErrors" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.target5xxErrors"></a>
-
-```typescript
-public readonly target5xxErrors: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `targetConnectionErrors`<sup>Required</sup> <a name="targetConnectionErrors" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringMetrics.property.targetConnectionErrors"></a>
-
-```typescript
-public readonly targetConnectionErrors: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
+The Target Connection Errors threshold.
 
 ---
 
@@ -6517,6 +6455,8 @@ public readonly nodeIdentifier: string;
 
 ### CacheClusterMonitoringConfig <a name="CacheClusterMonitoringConfig" id="@condensetech/cdk-constructs.CacheClusterMonitoringConfig"></a>
 
+The CacheClusterMonitoringConfig defines the thresholds for the cache cluster monitoring.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.CacheClusterMonitoringConfig.Initializer"></a>
 
 ```typescript
@@ -6529,11 +6469,11 @@ const cacheClusterMonitoringConfig: CacheClusterMonitoringConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.engineCpuUtilizationThreshold">engineCpuUtilizationThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.maxConnectionsThreshold">maxConnectionsThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.memoryUsageThreshold">memoryUsageThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.replicationLagThreshold">replicationLagThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | The CPU Utilization (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.engineCpuUtilizationThreshold">engineCpuUtilizationThreshold</a></code> | <code>number</code> | The Engine CPU Utilization (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.maxConnectionsThreshold">maxConnectionsThreshold</a></code> | <code>number</code> | The Max Connections threshold. |
+| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.memoryUsageThreshold">memoryUsageThreshold</a></code> | <code>number</code> | The Memory Usage (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig.property.replicationLagThreshold">replicationLagThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The Replication Lag threshold. |
 
 ---
 
@@ -6544,6 +6484,9 @@ public readonly cpuUtilizationThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 90
+
+The CPU Utilization (%) threshold.
 
 ---
 
@@ -6554,6 +6497,9 @@ public readonly engineCpuUtilizationThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 95
+
+The Engine CPU Utilization (%) threshold.
 
 ---
 
@@ -6564,6 +6510,9 @@ public readonly maxConnectionsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 60,000
+
+The Max Connections threshold.
 
 ---
 
@@ -6574,6 +6523,9 @@ public readonly memoryUsageThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 90
+
+The Memory Usage (%) threshold.
 
 ---
 
@@ -6584,78 +6536,9 @@ public readonly replicationLagThreshold: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* No threshold.
 
----
-
-### CacheClusterMonitoringMetrics <a name="CacheClusterMonitoringMetrics" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics"></a>
-
-#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.Initializer"></a>
-
-```typescript
-import { CacheClusterMonitoringMetrics } from '@condensetech/cdk-constructs'
-
-const cacheClusterMonitoringMetrics: CacheClusterMonitoringMetrics = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.cpuUtilization">cpuUtilization</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric[]</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.engineCpuUtilization">engineCpuUtilization</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.maxConnections">maxConnections</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric[]</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.memoryUsage">memoryUsage</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.replicationLag">replicationLag</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-
----
-
-##### `cpuUtilization`<sup>Required</sup> <a name="cpuUtilization" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.cpuUtilization"></a>
-
-```typescript
-public readonly cpuUtilization: IMetric[];
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric[]
-
----
-
-##### `engineCpuUtilization`<sup>Required</sup> <a name="engineCpuUtilization" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.engineCpuUtilization"></a>
-
-```typescript
-public readonly engineCpuUtilization: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `maxConnections`<sup>Required</sup> <a name="maxConnections" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.maxConnections"></a>
-
-```typescript
-public readonly maxConnections: IMetric[];
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric[]
-
----
-
-##### `memoryUsage`<sup>Required</sup> <a name="memoryUsage" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.memoryUsage"></a>
-
-```typescript
-public readonly memoryUsage: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `replicationLag`<sup>Required</sup> <a name="replicationLag" id="@condensetech/cdk-constructs.CacheClusterMonitoringMetrics.property.replicationLag"></a>
-
-```typescript
-public readonly replicationLag: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
+The Replication Lag threshold.
 
 ---
 
@@ -8087,6 +7970,8 @@ The monitoring configuration to apply to this stack.
 
 ### FargateServiceMonitoringConfig <a name="FargateServiceMonitoringConfig" id="@condensetech/cdk-constructs.FargateServiceMonitoringConfig"></a>
 
+The FargateServiceMonitoringConfig defines the thresholds for the Fargate service monitoring.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.FargateServiceMonitoringConfig.Initializer"></a>
 
 ```typescript
@@ -8099,8 +7984,8 @@ const fargateServiceMonitoringConfig: FargateServiceMonitoringConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringConfig.property.memoryUtilization">memoryUtilization</a></code> | <code>number</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | The CPU Utilization (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringConfig.property.memoryUtilization">memoryUtilization</a></code> | <code>number</code> | The Memory Utilization (%) threshold. |
 
 ---
 
@@ -8111,6 +7996,9 @@ public readonly cpuUtilizationThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 90
+
+The CPU Utilization (%) threshold.
 
 ---
 
@@ -8121,49 +8009,15 @@ public readonly memoryUtilization: number;
 ```
 
 - *Type:* number
+- *Default:* 90
 
----
-
-### FargateServiceMonitoringMetrics <a name="FargateServiceMonitoringMetrics" id="@condensetech/cdk-constructs.FargateServiceMonitoringMetrics"></a>
-
-#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.FargateServiceMonitoringMetrics.Initializer"></a>
-
-```typescript
-import { FargateServiceMonitoringMetrics } from '@condensetech/cdk-constructs'
-
-const fargateServiceMonitoringMetrics: FargateServiceMonitoringMetrics = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringMetrics.property.cpuUtilization">cpuUtilization</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringMetrics.property.memoryUtilization">memoryUtilization</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-
----
-
-##### `cpuUtilization`<sup>Required</sup> <a name="cpuUtilization" id="@condensetech/cdk-constructs.FargateServiceMonitoringMetrics.property.cpuUtilization"></a>
-
-```typescript
-public readonly cpuUtilization: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `memoryUtilization`<sup>Required</sup> <a name="memoryUtilization" id="@condensetech/cdk-constructs.FargateServiceMonitoringMetrics.property.memoryUtilization"></a>
-
-```typescript
-public readonly memoryUtilization: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
+The Memory Utilization (%) threshold.
 
 ---
 
 ### MonitoringFacadeProps <a name="MonitoringFacadeProps" id="@condensetech/cdk-constructs.MonitoringFacadeProps"></a>
+
+Properties for the MonitoringFacade.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.MonitoringFacadeProps.Initializer"></a>
 
@@ -8177,8 +8031,8 @@ const monitoringFacadeProps: MonitoringFacadeProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps.property.topicArn">topicArn</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps.property.dashboardName">dashboardName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps.property.topicArn">topicArn</a></code> | <code>string</code> | The ARN of the SNS topic to use for alarms. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacadeProps.property.dashboardName">dashboardName</a></code> | <code>string</code> | The name of the Cloudwatch dashboard to create. |
 
 ---
 
@@ -8190,6 +8044,8 @@ public readonly topicArn: string;
 
 - *Type:* string
 
+The ARN of the SNS topic to use for alarms.
+
 ---
 
 ##### `dashboardName`<sup>Optional</sup> <a name="dashboardName" id="@condensetech/cdk-constructs.MonitoringFacadeProps.property.dashboardName"></a>
@@ -8199,6 +8055,9 @@ public readonly dashboardName: string;
 ```
 
 - *Type:* string
+- *Default:* A name is generated by CDK.
+
+The name of the Cloudwatch dashboard to create.
 
 ---
 
@@ -8412,6 +8271,8 @@ public readonly vpcName: string;
 ---
 
 ### NetworkingStackProps <a name="NetworkingStackProps" id="@condensetech/cdk-constructs.NetworkingStackProps"></a>
+
+Properties for the NetworkingStack.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.NetworkingStackProps.Initializer"></a>
 
@@ -8738,6 +8599,8 @@ Whether to enable termination protection for this stack.
 
 ### RdsClusterMonitoringConfig <a name="RdsClusterMonitoringConfig" id="@condensetech/cdk-constructs.RdsClusterMonitoringConfig"></a>
 
+The RdsClusterMonitoringConfig defines the thresholds for the RDS cluster monitoring.
+
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.RdsClusterMonitoringConfig.Initializer"></a>
 
 ```typescript
@@ -8750,12 +8613,12 @@ const rdsClusterMonitoringConfig: RdsClusterMonitoringConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.ebsByteBalanceThreshold">ebsByteBalanceThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.ebsIoBalanceThreshold">ebsIoBalanceThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.freeableMemoryThreshold">freeableMemoryThreshold</a></code> | <code>aws-cdk-lib.Size</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.maxConnectionsThreshold">maxConnectionsThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.readLatencyThreshold">readLatencyThreshold</a></code> | <code>number</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | The CPU Utilization (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.ebsByteBalanceThreshold">ebsByteBalanceThreshold</a></code> | <code>number</code> | The EBS Byte Balance (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.ebsIoBalanceThreshold">ebsIoBalanceThreshold</a></code> | <code>number</code> | The EBS IO Balance (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.freeableMemoryThreshold">freeableMemoryThreshold</a></code> | <code>aws-cdk-lib.Size</code> | The Freeable Memory threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.maxConnectionsThreshold">maxConnectionsThreshold</a></code> | <code>number</code> | The Max Connections threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig.property.readLatencyThreshold">readLatencyThreshold</a></code> | <code>number</code> | The Read Latency threshold. |
 
 ---
 
@@ -8766,6 +8629,9 @@ public readonly cpuUtilizationThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 90
+
+The CPU Utilization (%) threshold.
 
 ---
 
@@ -8776,6 +8642,9 @@ public readonly ebsByteBalanceThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 10
+
+The EBS Byte Balance (%) threshold.
 
 ---
 
@@ -8786,6 +8655,9 @@ public readonly ebsIoBalanceThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 10
+
+The EBS IO Balance (%) threshold.
 
 ---
 
@@ -8796,6 +8668,9 @@ public readonly freeableMemoryThreshold: Size;
 ```
 
 - *Type:* aws-cdk-lib.Size
+- *Default:* 100 MiB
+
+The Freeable Memory threshold.
 
 ---
 
@@ -8806,6 +8681,9 @@ public readonly maxConnectionsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 50
+
+The Max Connections threshold.
 
 ---
 
@@ -8816,93 +8694,15 @@ public readonly readLatencyThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 20
 
----
-
-### RdsClusterMonitoringMetrics <a name="RdsClusterMonitoringMetrics" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics"></a>
-
-#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.Initializer"></a>
-
-```typescript
-import { RdsClusterMonitoringMetrics } from '@condensetech/cdk-constructs'
-
-const rdsClusterMonitoringMetrics: RdsClusterMonitoringMetrics = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.cpuUtilization">cpuUtilization</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.ebsByteBalance">ebsByteBalance</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.ebsIOBalance">ebsIOBalance</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.freeableMemory">freeableMemory</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.maxConnections">maxConnections</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.readLatency">readLatency</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-
----
-
-##### `cpuUtilization`<sup>Required</sup> <a name="cpuUtilization" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.cpuUtilization"></a>
-
-```typescript
-public readonly cpuUtilization: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `ebsByteBalance`<sup>Required</sup> <a name="ebsByteBalance" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.ebsByteBalance"></a>
-
-```typescript
-public readonly ebsByteBalance: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `ebsIOBalance`<sup>Required</sup> <a name="ebsIOBalance" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.ebsIOBalance"></a>
-
-```typescript
-public readonly ebsIOBalance: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `freeableMemory`<sup>Required</sup> <a name="freeableMemory" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.freeableMemory"></a>
-
-```typescript
-public readonly freeableMemory: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `maxConnections`<sup>Required</sup> <a name="maxConnections" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.maxConnections"></a>
-
-```typescript
-public readonly maxConnections: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `readLatency`<sup>Required</sup> <a name="readLatency" id="@condensetech/cdk-constructs.RdsClusterMonitoringMetrics.property.readLatency"></a>
-
-```typescript
-public readonly readLatency: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
+The Read Latency threshold.
 
 ---
 
 ### RdsInstanceMonitoringConfig <a name="RdsInstanceMonitoringConfig" id="@condensetech/cdk-constructs.RdsInstanceMonitoringConfig"></a>
+
+The RdsInstanceMonitoringConfig defines the thresholds for the RDS instance monitoring.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.Initializer"></a>
 
@@ -8916,13 +8716,13 @@ const rdsInstanceMonitoringConfig: RdsInstanceMonitoringConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.ebsByteBalanceThreshold">ebsByteBalanceThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.ebsIoBalanceThreshold">ebsIoBalanceThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.freeableMemoryThreshold">freeableMemoryThreshold</a></code> | <code>aws-cdk-lib.Size</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.freeStorageSpaceThreshold">freeStorageSpaceThreshold</a></code> | <code>aws-cdk-lib.Size</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.maxConnectionsThreshold">maxConnectionsThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.readLatencyThreshold">readLatencyThreshold</a></code> | <code>number</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.cpuUtilizationThreshold">cpuUtilizationThreshold</a></code> | <code>number</code> | The CPU Utilization (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.ebsByteBalanceThreshold">ebsByteBalanceThreshold</a></code> | <code>number</code> | The EBS Byte Balance (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.ebsIoBalanceThreshold">ebsIoBalanceThreshold</a></code> | <code>number</code> | The EBS IO Balance (%) threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.freeableMemoryThreshold">freeableMemoryThreshold</a></code> | <code>aws-cdk-lib.Size</code> | The Freeable Memory threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.freeStorageSpaceThreshold">freeStorageSpaceThreshold</a></code> | <code>aws-cdk-lib.Size</code> | The Free Storage Space threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.maxConnectionsThreshold">maxConnectionsThreshold</a></code> | <code>number</code> | The Max Connections threshold. |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig.property.readLatencyThreshold">readLatencyThreshold</a></code> | <code>number</code> | The Read Latency threshold. |
 
 ---
 
@@ -8933,6 +8733,9 @@ public readonly cpuUtilizationThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 90
+
+The CPU Utilization (%) threshold.
 
 ---
 
@@ -8943,6 +8746,9 @@ public readonly ebsByteBalanceThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 10
+
+The EBS Byte Balance (%) threshold.
 
 ---
 
@@ -8953,6 +8759,9 @@ public readonly ebsIoBalanceThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 10
+
+The EBS IO Balance (%) threshold.
 
 ---
 
@@ -8963,6 +8772,9 @@ public readonly freeableMemoryThreshold: Size;
 ```
 
 - *Type:* aws-cdk-lib.Size
+- *Default:* 100 MiB
+
+The Freeable Memory threshold.
 
 ---
 
@@ -8973,6 +8785,9 @@ public readonly freeStorageSpaceThreshold: Size;
 ```
 
 - *Type:* aws-cdk-lib.Size
+- *Default:* 100 MiB
+
+The Free Storage Space threshold.
 
 ---
 
@@ -8983,6 +8798,9 @@ public readonly maxConnectionsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 50
+
+The Max Connections threshold.
 
 ---
 
@@ -8993,104 +8811,15 @@ public readonly readLatencyThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 20
 
----
-
-### RdsInstanceMonitoringMetrics <a name="RdsInstanceMonitoringMetrics" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics"></a>
-
-#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.Initializer"></a>
-
-```typescript
-import { RdsInstanceMonitoringMetrics } from '@condensetech/cdk-constructs'
-
-const rdsInstanceMonitoringMetrics: RdsInstanceMonitoringMetrics = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.cpuUtilization">cpuUtilization</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.ebsByteBalance">ebsByteBalance</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.ebsIOBalance">ebsIOBalance</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.freeableMemory">freeableMemory</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.freeStorageSpace">freeStorageSpace</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.maxConnections">maxConnections</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.readLatency">readLatency</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-
----
-
-##### `cpuUtilization`<sup>Required</sup> <a name="cpuUtilization" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.cpuUtilization"></a>
-
-```typescript
-public readonly cpuUtilization: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `ebsByteBalance`<sup>Required</sup> <a name="ebsByteBalance" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.ebsByteBalance"></a>
-
-```typescript
-public readonly ebsByteBalance: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `ebsIOBalance`<sup>Required</sup> <a name="ebsIOBalance" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.ebsIOBalance"></a>
-
-```typescript
-public readonly ebsIOBalance: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `freeableMemory`<sup>Required</sup> <a name="freeableMemory" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.freeableMemory"></a>
-
-```typescript
-public readonly freeableMemory: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `freeStorageSpace`<sup>Required</sup> <a name="freeStorageSpace" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.freeStorageSpace"></a>
-
-```typescript
-public readonly freeStorageSpace: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `maxConnections`<sup>Required</sup> <a name="maxConnections" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.maxConnections"></a>
-
-```typescript
-public readonly maxConnections: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `readLatency`<sup>Required</sup> <a name="readLatency" id="@condensetech/cdk-constructs.RdsInstanceMonitoringMetrics.property.readLatency"></a>
-
-```typescript
-public readonly readLatency: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
+The Read Latency threshold.
 
 ---
 
 ### TargetGroupMonitoringConfig <a name="TargetGroupMonitoringConfig" id="@condensetech/cdk-constructs.TargetGroupMonitoringConfig"></a>
+
+The TargetGroupMonitoringConfig defines the thresholds for the target group monitoring.
 
 #### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.TargetGroupMonitoringConfig.Initializer"></a>
 
@@ -9104,8 +8833,8 @@ const targetGroupMonitoringConfig: TargetGroupMonitoringConfig = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringConfig.property.minHealthyHostsThreshold">minHealthyHostsThreshold</a></code> | <code>number</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringConfig.property.responseTimeThreshold">responseTimeThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringConfig.property.minHealthyHostsThreshold">minHealthyHostsThreshold</a></code> | <code>number</code> | The Min Healthy Hosts threshold. |
+| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringConfig.property.responseTimeThreshold">responseTimeThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The Response Time threshold. |
 
 ---
 
@@ -9116,6 +8845,9 @@ public readonly minHealthyHostsThreshold: number;
 ```
 
 - *Type:* number
+- *Default:* 1
+
+The Min Healthy Hosts threshold.
 
 ---
 
@@ -9126,45 +8858,9 @@ public readonly responseTimeThreshold: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
+- *Default:* No threshold.
 
----
-
-### TargetGroupMonitoringMetrics <a name="TargetGroupMonitoringMetrics" id="@condensetech/cdk-constructs.TargetGroupMonitoringMetrics"></a>
-
-#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.TargetGroupMonitoringMetrics.Initializer"></a>
-
-```typescript
-import { TargetGroupMonitoringMetrics } from '@condensetech/cdk-constructs'
-
-const targetGroupMonitoringMetrics: TargetGroupMonitoringMetrics = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringMetrics.property.minHealthyHosts">minHealthyHosts</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringMetrics.property.responseTime">responseTime</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IMetric</code> | *No description.* |
-
----
-
-##### `minHealthyHosts`<sup>Required</sup> <a name="minHealthyHosts" id="@condensetech/cdk-constructs.TargetGroupMonitoringMetrics.property.minHealthyHosts"></a>
-
-```typescript
-public readonly minHealthyHosts: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
-
----
-
-##### `responseTime`<sup>Required</sup> <a name="responseTime" id="@condensetech/cdk-constructs.TargetGroupMonitoringMetrics.property.responseTime"></a>
-
-```typescript
-public readonly responseTime: IMetric;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IMetric
+The Response Time threshold.
 
 ---
 
@@ -9224,6 +8920,8 @@ public readonly value: number;
 
 - *Implements:* aws-cdk-lib.IAspect
 
+The ApplicationLoadBalancerMonitoringAspect iterates over the Application Load Balancers and adds monitoring widgets and alarms.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringAspect.Initializer"></a>
 
 ```typescript
@@ -9248,7 +8946,7 @@ new ApplicationLoadBalancerMonitoringAspect(monitoringFacade: ICondenseMonitorin
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringAspect.overrideConfig">overrideConfig</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringAspect.overrideConfig">overrideConfig</a></code> | Overrides the default configuration for a specific Application Load Balancer. |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringAspect.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
@@ -9259,15 +8957,21 @@ new ApplicationLoadBalancerMonitoringAspect(monitoringFacade: ICondenseMonitorin
 public overrideConfig(node: ApplicationLoadBalancer, config: ApplicationLoadBalancerMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific Application Load Balancer.
+
 ###### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringAspect.overrideConfig.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer
+
+The Application Load Balancer to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringAspect.overrideConfig.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig">ApplicationLoadBalancerMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9291,6 +8995,8 @@ All aspects can visit an IConstruct.
 ### CacheClusterMonitoringAspect <a name="CacheClusterMonitoringAspect" id="@condensetech/cdk-constructs.CacheClusterMonitoringAspect"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The CacheClusterMonitoringAspect iterates over the Elasticache clusters and adds monitoring widgets and alarms.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.CacheClusterMonitoringAspect.Initializer"></a>
 
@@ -9316,7 +9022,7 @@ new CacheClusterMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringAspect.overrideConfig">overrideConfig</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringAspect.overrideConfig">overrideConfig</a></code> | Overrides the default configuration for a specific Elasticache cluster. |
 | <code><a href="#@condensetech/cdk-constructs.CacheClusterMonitoringAspect.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
@@ -9327,15 +9033,21 @@ new CacheClusterMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 public overrideConfig(node: CfnCacheCluster, config: CacheClusterMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific Elasticache cluster.
+
 ###### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.CacheClusterMonitoringAspect.overrideConfig.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.aws_elasticache.CfnCacheCluster
+
+The elasticache cluster to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.CacheClusterMonitoringAspect.overrideConfig.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig">CacheClusterMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9377,6 +9089,8 @@ public readonly monitoringFacade: ICondenseMonitoringFacade;
 
 - *Implements:* aws-cdk-lib.IAspect
 
+The FargateServiceMonitoringAspect iterates over the Fargate services and adds monitoring widgets and alarms.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.FargateServiceMonitoringAspect.Initializer"></a>
 
 ```typescript
@@ -9401,7 +9115,7 @@ new FargateServiceMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringAspect.overrideConfig">overrideConfig</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringAspect.overrideConfig">overrideConfig</a></code> | Overrides the default configuration for a specific Fargate service. |
 | <code><a href="#@condensetech/cdk-constructs.FargateServiceMonitoringAspect.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
@@ -9412,15 +9126,21 @@ new FargateServiceMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 public overrideConfig(node: FargateService, config: FargateServiceMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific Fargate service.
+
 ###### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.FargateServiceMonitoringAspect.overrideConfig.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.aws_ecs.FargateService
+
+The Fargate service to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.FargateServiceMonitoringAspect.overrideConfig.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.FargateServiceMonitoringConfig">FargateServiceMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9442,6 +9162,38 @@ All aspects can visit an IConstruct.
 
 
 ### MonitoringFacade <a name="MonitoringFacade" id="@condensetech/cdk-constructs.MonitoringFacade"></a>
+
+- *Implements:* <a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade">ICondenseMonitoringFacade</a>
+
+The MonitoringFacade creates a Cloudwatch dashboard and applies monitoring aspects to resources.
+
+These aspects will scan for resources, create alarms and add metrics to the MonitoringFacade dashboard.
+
+This allow to have a centralized monitoring configuration for all resources in the stack.
+
+Additionally, the `config*` methods allow to override the default configuration for a specific resource.
+
+*Example*
+
+```typescript
+class MyStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: cdk.StackProps) {
+    super(scope, id, props);
+
+    const cluster = new AuroraCluster(this, 'DatabaseCluster', { ... });
+
+    // Even if the MonitoringFacade is built after the AuroraCluster, the cluster will be monitored, because the aspects are executed after the stack is built.
+    const monitoring = new MonitoringFacade(this, { topicArn: 'arn:aws:sns:us-east-1:123456789012:MyTopic' });
+
+    const cluster2 = new AuroraCluster(this, 'DatabaseCluster2', { ... });
+    // The monitoring configuration for the second cluster is modified so that the CPU utilization alarm is triggered when the utilization is over the 10%.
+    monitoring.configRdsCluster(cluster2, {
+      cpuUtilizationThreshold: 0.1,
+    });
+  }
+}
+```
+
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.MonitoringFacade.Initializer"></a>
 
@@ -9474,13 +9226,13 @@ new MonitoringFacade(scope: Stack, props: MonitoringFacadeProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.addAlarm">addAlarm</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configApplicationLoadBalancer">configApplicationLoadBalancer</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configCacheCluster">configCacheCluster</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configFargateService">configFargateService</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configRdsCluster">configRdsCluster</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configRdsInstance">configRdsInstance</a></code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configTargetGroup">configTargetGroup</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.addAlarm">addAlarm</a></code> | Add an alarm to the monitoring facade, by linking it to the alarms topic. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configApplicationLoadBalancer">configApplicationLoadBalancer</a></code> | Overrides the default configuration for a specific Application Load Balancer. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configCacheCluster">configCacheCluster</a></code> | Overrides the default configuration for a specific Elasticache cluster. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configFargateService">configFargateService</a></code> | Overrides the default configuration for a specific ECS Fargate service. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configRdsCluster">configRdsCluster</a></code> | Overrides the default configuration for a specific RDS cluster. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configRdsInstance">configRdsInstance</a></code> | Overrides the default configuration for a specific RDS instance. |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.configTargetGroup">configTargetGroup</a></code> | Overrides the default configuration for a specific ELBv2 Target Group. |
 
 ---
 
@@ -9489,6 +9241,8 @@ new MonitoringFacade(scope: Stack, props: MonitoringFacadeProps)
 ```typescript
 public addAlarm(alarm: Alarm): void
 ```
+
+Add an alarm to the monitoring facade, by linking it to the alarms topic.
 
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="@condensetech/cdk-constructs.MonitoringFacade.addAlarm.parameter.alarm"></a>
 
@@ -9502,15 +9256,21 @@ public addAlarm(alarm: Alarm): void
 public configApplicationLoadBalancer(resource: ApplicationLoadBalancer, config: ApplicationLoadBalancerMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific Application Load Balancer.
+
 ###### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.MonitoringFacade.configApplicationLoadBalancer.parameter.resource"></a>
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer
+
+The ALB to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.MonitoringFacade.configApplicationLoadBalancer.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig">ApplicationLoadBalancerMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9520,15 +9280,21 @@ public configApplicationLoadBalancer(resource: ApplicationLoadBalancer, config: 
 public configCacheCluster(resource: CfnCacheCluster, config: CacheClusterMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific Elasticache cluster.
+
 ###### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.MonitoringFacade.configCacheCluster.parameter.resource"></a>
 
 - *Type:* aws-cdk-lib.aws_elasticache.CfnCacheCluster
+
+The elasticache cluster to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.MonitoringFacade.configCacheCluster.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.CacheClusterMonitoringConfig">CacheClusterMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9538,9 +9304,13 @@ public configCacheCluster(resource: CfnCacheCluster, config: CacheClusterMonitor
 public configFargateService(resource: FargateService, config: FargateServiceMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific ECS Fargate service.
+
 ###### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.MonitoringFacade.configFargateService.parameter.resource"></a>
 
 - *Type:* aws-cdk-lib.aws_ecs.FargateService
+
+The Fargate service to monitor.
 
 ---
 
@@ -9548,23 +9318,31 @@ public configFargateService(resource: FargateService, config: FargateServiceMoni
 
 - *Type:* <a href="#@condensetech/cdk-constructs.FargateServiceMonitoringConfig">FargateServiceMonitoringConfig</a>
 
+The configuration to apply.
+
 ---
 
 ##### `configRdsCluster` <a name="configRdsCluster" id="@condensetech/cdk-constructs.MonitoringFacade.configRdsCluster"></a>
 
 ```typescript
-public configRdsCluster(resource: DatabaseCluster, config: RdsInstanceMonitoringConfig): void
+public configRdsCluster(resource: DatabaseCluster, config: RdsClusterMonitoringConfig): void
 ```
+
+Overrides the default configuration for a specific RDS cluster.
 
 ###### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.MonitoringFacade.configRdsCluster.parameter.resource"></a>
 
 - *Type:* aws-cdk-lib.aws_rds.DatabaseCluster
 
+The RDS cluster to monitor.
+
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.MonitoringFacade.configRdsCluster.parameter.config"></a>
 
-- *Type:* <a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig">RdsInstanceMonitoringConfig</a>
+- *Type:* <a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig">RdsClusterMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9574,15 +9352,21 @@ public configRdsCluster(resource: DatabaseCluster, config: RdsInstanceMonitoring
 public configRdsInstance(resource: DatabaseInstance, config: RdsInstanceMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific RDS instance.
+
 ###### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.MonitoringFacade.configRdsInstance.parameter.resource"></a>
 
 - *Type:* aws-cdk-lib.aws_rds.DatabaseInstance
+
+The RDS instance to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.MonitoringFacade.configRdsInstance.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig">RdsInstanceMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9592,15 +9376,21 @@ public configRdsInstance(resource: DatabaseInstance, config: RdsInstanceMonitori
 public configTargetGroup(resource: ApplicationTargetGroup, config: TargetGroupMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific ELBv2 Target Group.
+
 ###### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.MonitoringFacade.configTargetGroup.parameter.resource"></a>
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationTargetGroup
+
+The target group to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.MonitoringFacade.configTargetGroup.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.TargetGroupMonitoringConfig">TargetGroupMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9631,7 +9421,7 @@ MonitoringFacade.of(scope: Construct)
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.property.alarmTopic">alarmTopic</a></code> | <code>aws-cdk-lib.aws_sns.ITopic</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.property.dashboard">dashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.MonitoringFacade.property.dashboard">dashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | Returns the Cloudwatch dashboard to be used for this stack monitoring. |
 
 ---
 
@@ -9653,12 +9443,16 @@ public readonly dashboard: Dashboard;
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard
 
+Returns the Cloudwatch dashboard to be used for this stack monitoring.
+
 ---
 
 
 ### RdsClusterMonitoringAspect <a name="RdsClusterMonitoringAspect" id="@condensetech/cdk-constructs.RdsClusterMonitoringAspect"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The RdsClusterMonitoringAspect iterates over the RDS clusters and adds monitoring widgets and alarms.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.RdsClusterMonitoringAspect.Initializer"></a>
 
@@ -9684,7 +9478,7 @@ new RdsClusterMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringAspect.overrideConfig">overrideConfig</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringAspect.overrideConfig">overrideConfig</a></code> | Overrides the default configuration for a specific RDS cluster. |
 | <code><a href="#@condensetech/cdk-constructs.RdsClusterMonitoringAspect.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
@@ -9695,15 +9489,21 @@ new RdsClusterMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 public overrideConfig(node: DatabaseCluster, config: RdsClusterMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific RDS cluster.
+
 ###### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.RdsClusterMonitoringAspect.overrideConfig.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.aws_rds.DatabaseCluster
+
+The RDS cluster to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.RdsClusterMonitoringAspect.overrideConfig.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.RdsClusterMonitoringConfig">RdsClusterMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9727,6 +9527,8 @@ All aspects can visit an IConstruct.
 ### RdsInstanceMonitoringAspect <a name="RdsInstanceMonitoringAspect" id="@condensetech/cdk-constructs.RdsInstanceMonitoringAspect"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The RdsInstanceMonitoringAspect iterates over the RDS instances and adds monitoring widgets and alarms.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.RdsInstanceMonitoringAspect.Initializer"></a>
 
@@ -9752,7 +9554,7 @@ new RdsInstanceMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringAspect.overrideConfig">overrideConfig</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringAspect.overrideConfig">overrideConfig</a></code> | Overrides the default configuration for the RDS instance. |
 | <code><a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringAspect.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
@@ -9763,15 +9565,21 @@ new RdsInstanceMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 public overrideConfig(node: DatabaseInstance, config: RdsInstanceMonitoringConfig): void
 ```
 
+Overrides the default configuration for the RDS instance.
+
 ###### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.RdsInstanceMonitoringAspect.overrideConfig.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.aws_rds.DatabaseInstance
+
+The RDS instance to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.RdsInstanceMonitoringAspect.overrideConfig.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.RdsInstanceMonitoringConfig">RdsInstanceMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9795,6 +9603,8 @@ All aspects can visit an IConstruct.
 ### TargetGroupMonitoringAspect <a name="TargetGroupMonitoringAspect" id="@condensetech/cdk-constructs.TargetGroupMonitoringAspect"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+The TargetGroupMonitoringAspect iterates over the target groups and adds monitoring widgets and alarms.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.TargetGroupMonitoringAspect.Initializer"></a>
 
@@ -9820,7 +9630,7 @@ new TargetGroupMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringAspect.overrideConfig">overrideConfig</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringAspect.overrideConfig">overrideConfig</a></code> | Overrides the default configuration for a specific target group. |
 | <code><a href="#@condensetech/cdk-constructs.TargetGroupMonitoringAspect.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
@@ -9831,15 +9641,21 @@ new TargetGroupMonitoringAspect(monitoringFacade: ICondenseMonitoringFacade)
 public overrideConfig(node: ApplicationTargetGroup, config: TargetGroupMonitoringConfig): void
 ```
 
+Overrides the default configuration for a specific target group.
+
 ###### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.TargetGroupMonitoringAspect.overrideConfig.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationTargetGroup
+
+The target group to monitor.
 
 ---
 
 ###### `config`<sup>Required</sup> <a name="config" id="@condensetech/cdk-constructs.TargetGroupMonitoringAspect.overrideConfig.parameter.config"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.TargetGroupMonitoringConfig">TargetGroupMonitoringConfig</a>
+
+The configuration to apply.
 
 ---
 
@@ -9881,13 +9697,15 @@ public readonly monitoringFacade: ICondenseMonitoringFacade;
 
 ### ICondenseMonitoringFacade <a name="ICondenseMonitoringFacade" id="@condensetech/cdk-constructs.ICondenseMonitoringFacade"></a>
 
-- *Implemented By:* <a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade">ICondenseMonitoringFacade</a>
+- *Implemented By:* <a href="#@condensetech/cdk-constructs.MonitoringFacade">MonitoringFacade</a>, <a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade">ICondenseMonitoringFacade</a>
+
+The ICondenseMonitoringFacade interface defines the methods that the monitoring facade must implement.
 
 #### Methods <a name="Methods" id="Methods"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade.addAlarm">addAlarm</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade.addAlarm">addAlarm</a></code> | Add an alarm to the monitoring facade, by linking it to the alarms topic. |
 
 ---
 
@@ -9897,9 +9715,13 @@ public readonly monitoringFacade: ICondenseMonitoringFacade;
 public addAlarm(alarm: Alarm): void
 ```
 
+Add an alarm to the monitoring facade, by linking it to the alarms topic.
+
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="@condensetech/cdk-constructs.ICondenseMonitoringFacade.addAlarm.parameter.alarm"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.Alarm
+
+The alarm to add.
 
 ---
 
@@ -9907,7 +9729,7 @@ public addAlarm(alarm: Alarm): void
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade.property.dashboard">dashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.ICondenseMonitoringFacade.property.dashboard">dashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | Returns the Cloudwatch dashboard to be used for this stack monitoring. |
 
 ---
 
@@ -9918,6 +9740,8 @@ public readonly dashboard: Dashboard;
 ```
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard
+
+Returns the Cloudwatch dashboard to be used for this stack monitoring.
 
 ---
 

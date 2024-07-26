@@ -19,6 +19,7 @@ export interface NetworkingProps {
 
 /**
  * The Networking construct creates a VPC which can have public, private, and isolated subnets.
+ * It enforces to define a CIDR block for the VPC, which is a best practice.
  *
  * If the `natGateways` property is set to a positive integer, the VPC will be created with private subnets that have access to the internet through NAT gateways.
  * If instead the `natGateways` property is set to 0, the VPC will have only public and isolated subnets. In this case, the subnets will anyway use a cidrMask of `24`, so that changing the number of NAT gateways will not require to re-provision the VPC.

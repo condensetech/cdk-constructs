@@ -11,7 +11,7 @@ import {
   dashboardSectionTitle,
 } from '../widgets';
 
-export interface CacheClusterMonitoringMetrics {
+interface CacheClusterMonitoringMetrics {
   readonly cpuUtilization: cw.IMetric[];
   readonly maxConnections: cw.IMetric[];
   readonly memoryUsage: cw.IMetric;
@@ -19,14 +19,44 @@ export interface CacheClusterMonitoringMetrics {
   readonly replicationLag: cw.IMetric;
 }
 
+/**
+ * The CacheClusterMonitoringConfig defines the thresholds for the cache cluster monitoring.
+ */
 export interface CacheClusterMonitoringConfig {
+  /**
+   * The CPU Utilization (%) threshold.
+   * @default 90
+   */
   readonly cpuUtilizationThreshold?: number;
+
+  /**
+   * The Max Connections threshold.
+   * @default 60,000
+   */
   readonly maxConnectionsThreshold?: number;
+
+  /**
+   * The Memory Usage (%) threshold.
+   * @default 90
+   */
   readonly memoryUsageThreshold?: number;
+
+  /**
+   * The Engine CPU Utilization (%) threshold.
+   * @default 95
+   */
   readonly engineCpuUtilizationThreshold?: number;
+
+  /**
+   * The Replication Lag threshold.
+   * @default - No threshold.
+   */
   readonly replicationLagThreshold?: cdk.Duration;
 }
 
+/**
+ * The CacheClusterMonitoringAspect iterates over the Elasticache clusters and adds monitoring widgets and alarms.
+ */
 export class CacheClusterMonitoringAspect implements cdk.IAspect {
   private readonly overriddenConfig: Record<string, CacheClusterMonitoringConfig> = {};
   private readonly defaultConfig: CacheClusterMonitoringConfig = {
@@ -48,6 +78,11 @@ export class CacheClusterMonitoringAspect implements cdk.IAspect {
     this.alarms(node, config, metrics).forEach((a) => this.monitoringFacade.addAlarm(a));
   }
 
+  /**
+   * Overrides the default configuration for a specific Elasticache cluster.
+   * @param node The elasticache cluster to monitor
+   * @param config The configuration to apply
+   */
   overrideConfig(node: elasticache.CfnCacheCluster, config: CacheClusterMonitoringConfig) {
     this.overriddenConfig[node.node.path] = config;
   }
