@@ -24,7 +24,7 @@ class MyDatabaseStack extends cdk.Stack {
 
     const db = new rds.DatabaseInstance(this, 'Database', {
       vpc: props.networking.vpc,
-      securityGroup: props.networking.bastionHost.securityGroup,
+      ...
     });
     if (props.networking.bastionHost) {
       db.connections.allowDefaultPortFrom(props.networking.bastionHost);
