@@ -71,6 +71,7 @@
   "pnpm": {},
   "keywords": [
     "aws",
+    "aws-cdk",
     "cdk",
     "cloudwatch",
     "constructs",

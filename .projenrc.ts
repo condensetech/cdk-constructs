@@ -7,7 +7,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   license: 'MIT',
   repositoryUrl: 'https://github.com/cdklabs/cdk-monitoring-constructs',
   description: "Condense's opinionated constructs and stacks for AWS CDK",
-  keywords: ['aws', 'cdk', 'constructs', 'monitoring', 'cloudwatch', 'networking'],
+  keywords: ['aws', 'aws-cdk', 'cdk', 'constructs', 'monitoring', 'cloudwatch', 'networking'],
   author: 'Condense s.r.l.',
   authorAddress: 'tech@condense.tech',
   authorOrganization: true,
