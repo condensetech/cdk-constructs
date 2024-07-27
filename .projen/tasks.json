@@ -239,8 +239,7 @@
       "description": "Prepare a release from \"main\" branch",
       "env": {
         "RELEASE": "true",
-        "MAJOR": "0",
-        "PRERELEASE": "rc"
+        "MAJOR": "0"
       },
       "steps": [
         {
