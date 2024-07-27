@@ -65,7 +65,7 @@ This library contains constructs and stacks we use across our projects.
 
 ## Usage
 
-All API docs can be found in the [API.md](./API.md#struct-nagpackprops).
+All API docs can be found in the [API.md](./API.md).
 
 ### Composable Infrastructure Constructs and Stacks
 
