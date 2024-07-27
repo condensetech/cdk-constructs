@@ -52,4 +52,5 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+/condensetechcdkconstructs
 !/.projenrc.ts
