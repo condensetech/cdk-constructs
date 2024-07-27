@@ -3,7 +3,7 @@
   "description": "Condense's opinionated constructs and stacks for AWS CDK",
   "repository": {
     "type": "git",
-    "url": "git@github.com:condensetech/cdk-constructs.git"
+    "url": "https://github.com/cdklabs/cdk-monitoring-constructs"
   },
   "scripts": {
     "build": "npx projen build",

@@ -5,7 +5,7 @@ const PNPM_VERSION = '9.6.0';
 const project = new awscdk.AwsCdkConstructLibrary({
   name: '@condensetech/cdk-constructs',
   license: 'MIT',
-  repositoryUrl: 'git@github.com:condensetech/cdk-constructs.git',
+  repositoryUrl: 'https://github.com/cdklabs/cdk-monitoring-constructs',
   description: "Condense's opinionated constructs and stacks for AWS CDK",
   keywords: ['aws', 'cdk', 'constructs', 'monitoring', 'cloudwatch', 'networking'],
   author: 'Condense s.r.l.',
