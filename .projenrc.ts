@@ -34,6 +34,25 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
 
   devDeps: ['husky'],
+
+  publishToPypi: {
+    distName: 'condensetech.cdk-constructs',
+    module: 'condensetech.cdk_constructs',
+  },
+  // waiting for account created on ossrh
+  // publishToMaven: {
+  //   javaPackage: 'tech.condense.cdkconstructs',
+  //   mavenGroupId: 'tech.condense',
+  //   mavenArtifactId: 'cdkconstructs',
+  //   mavenEndpoint: 'https://s01.oss.sonatype.org',
+  // },
+  publishToNuget: {
+    packageId: 'CondenseTech.CdkConstructs',
+    dotNetNamespace: 'CondenseTech.CdkConstructs',
+  },
+  publishToGo: {
+    moduleName: 'github.com/condensetech/cdk-constructs',
+  },
 });
 //+ See: https://github.com/projen/projen/issues/3070
 project.package.addField('packageManager', `pnpm@${PNPM_VERSION}`);
