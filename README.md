@@ -2,13 +2,72 @@
 
 This library contains constructs and stacks we use across our projects.
 
-## Installation
+## Setup
 
-```bash
-npm install @condensetech/cdk-constructs
-```
+<details>
+  <summary>Node.js</summary>
+  Install the package:
 
-## Composable Infrastructure Constructs and Stacks
+  ```bash
+  npm install @condensetech/cdk-constructs # or
+  yarn add @condensetech/cdk-constructs # or
+  pnpm add @condensetech/cdk-constructs
+  ```
+
+  Import it:
+
+  ```ts
+  import * as condense from '@condensetech/cdk-constructs';
+  ```
+</details>
+<details>
+  <summary>Python</summary>
+  Install the package:
+
+  ```bash
+  pip install condensetech.cdk-constructs
+  ```
+
+  Import it:
+
+  ```py
+  from condensetech import cdk_constructs
+  ```
+</details>
+<details>
+  <summary>.NET</summary>
+  Install the package:
+
+  ```bash
+  dotnet add package CondenseTech.CdkConstructs
+  ```
+
+  Import it:
+
+  ```csharp
+  using CondenseTech.CdkConstructs;
+  ```
+</details>
+<details>
+  <summary>Go</summary>
+  Install the package:
+
+  ```bash
+  go get github.com/condensetech/cdk-constructs
+  ```
+
+  Import it:
+
+  ```go
+  import "github.com/condensetech/cdk-constructs"
+  ```
+</details>
+
+## Usage
+
+All API docs can be found in the [API.md](./API.md#struct-nagpackprops).
+
+### Composable Infrastructure Constructs and Stacks
 
 Readability and maintainability are key factors when writing IaC. By defining some high level interfaces, we can easily write constructs which don't need to be tied to the specific implementation of a resource.
 
@@ -40,18 +99,20 @@ Constructs and Stacks in this area:
 - [Aurora Cluster](lib/constructs/aurora-cluster.ts) and [AuroraClusterStack](lib/stacks/aurora-cluster.ts)
 - [RDS Instance](lib/constructs/database-instance.ts) and [DatabaseInstanceStack](lib/stacks/database-instance.ts)
 
-## Entrypoint
+### Entrypoint
 
 A typical scenario is to have one single Application Load Balancer in a VPC, which routes traffic to different services. The [Entrypoint Construct](lib/constructs/entrypoint.ts) and the [Entrypoint Stack](lib/stacks/entrypoint-stack.ts) allow to easily define this entrypoint load balancer.
 
-## Cloudwatch Alarms Topic
+TODO: Add a method to allow consumers to add rules without having to know the right priority order in advance.
+
+### Cloudwatch Alarms Topic
 
 The [CloudwatchAlarmsTopicStack](lib/stacks/cloudwatch-alarms-topic-stack.ts) creates an SNS Topic which can be used as a target for Cloudwatch Alarms. In addition to link the topic to HTTPS endpoints, it can also create a Lambda function which can be used to send messages to Discord.
 
-## Naive BasicAuth Cloudfront Function
+### Naive BasicAuth Cloudfront Function
 
 [NaiveBasicAuthCloudfrontFunction](lib/constructs/naive-basic-auth-cloudfront-function.ts) is useful when a basic protection layer must be added to Cloudfront (for SPAs or static sites) and you just need to avoid crawlers and unwanted visitors.
 
-## Monitoring
+### Monitoring
 
 By instantiating a [MonitoringFacade](lib/constructs/monitoring/monitoring-facade.ts) in your stack, you can easily add monitoring to your resources. The facade will create a Cloudwatch Dashboard, and will add alarms to the resources you want to monitor.
