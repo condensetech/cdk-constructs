@@ -1,7 +1,10 @@
-import { CertificateValidation, Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as r53 from 'aws-cdk-lib/aws-route53';
+import * as cdk from 'aws-cdk-lib';
+import {
+  aws_certificatemanager as acm,
+  aws_ec2 as ec2,
+  aws_elasticloadbalancingv2 as elbv2,
+  aws_route53 as r53,
+} from 'aws-cdk-lib';
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
@@ -70,11 +73,15 @@ export interface EntrypointProps {
  * - an HTTPS listener that returns a 403 Forbidden response by default.
  * - a custom security group. This allows to expose the security group as a property of the entrypoint construct, making it easier to reference it in other constructs.
  * Finally, it creates the Route 53 A and AAAA record that point to the ALB.
+ *
+ * When an `entrypointName` is provided, this is used as the name of the ALB and as the prefix for the security group.
+ * It is also used to add an additional "Name" tag to the load balancer.
+ * This helps to use [ApplicationLoadBalancer#lookup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer.html#static-fromwbrlookupscope-id-options) to find the load balancer by name.
  */
 export class Entrypoint extends Construct implements IEntrypoint {
-  readonly listener: elb.IApplicationListener;
+  readonly listener: elbv2.IApplicationListener;
   readonly domainName: string;
-  readonly alb: elb.IApplicationLoadBalancer;
+  readonly alb: elbv2.IApplicationLoadBalancer;
   readonly securityGroup: ec2.ISecurityGroup;
 
   constructor(scope: Construct, id: string, props: EntrypointProps) {
@@ -85,10 +92,10 @@ export class Entrypoint extends Construct implements IEntrypoint {
 
     const subjectAlternativeNames = props.wildcardCertificate === false ? undefined : [`*.${hostedZone.zoneName}`];
 
-    const albCertificate = new Certificate(this, 'Certificate', {
+    const albCertificate = new acm.Certificate(this, 'Certificate', {
       domainName: this.domainName,
       subjectAlternativeNames,
-      validation: CertificateValidation.fromDns(hostedZone),
+      validation: acm.CertificateValidation.fromDns(hostedZone),
     });
 
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
@@ -100,29 +107,32 @@ export class Entrypoint extends Construct implements IEntrypoint {
         (props.entrypointName ? `${props.entrypointName}-sg` : undefined),
     });
 
-    const alb = new elb.ApplicationLoadBalancer(this, 'Alb', {
+    const alb = new elbv2.ApplicationLoadBalancer(this, 'Alb', {
       vpc: props.networking.vpc,
       internetFacing: true,
       securityGroup: this.securityGroup,
       loadBalancerName: props.entrypointName,
     });
+    if (props.entrypointName) {
+      cdk.Tags.of(alb).add('Name', props.entrypointName);
+    }
     if (props.logsBucket) {
       alb.logAccessLogs(props.logsBucket);
     }
     this.alb = alb;
 
     this.alb.addListener('HTTP', {
-      protocol: elb.ApplicationProtocol.HTTP,
-      defaultAction: elb.ListenerAction.redirect({
+      protocol: elbv2.ApplicationProtocol.HTTP,
+      defaultAction: elbv2.ListenerAction.redirect({
         port: '443',
         protocol: 'HTTPS',
       }),
     });
 
     const httpsListner = this.alb.addListener('HTTPS', {
-      protocol: elb.ApplicationProtocol.HTTPS,
+      protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [albCertificate],
-      defaultAction: elb.ListenerAction.fixedResponse(403, {
+      defaultAction: elbv2.ListenerAction.fixedResponse(403, {
         messageBody: 'Forbidden',
       }),
     });
@@ -141,8 +151,8 @@ export class Entrypoint extends Construct implements IEntrypoint {
     this.listener = httpsListner;
   }
 
-  referenceListener(scope: Construct, id: string): elb.IApplicationListener {
-    return elb.ApplicationListener.fromApplicationListenerAttributes(scope, id, {
+  referenceListener(scope: Construct, id: string): elbv2.IApplicationListener {
+    return elbv2.ApplicationListener.fromApplicationListenerAttributes(scope, id, {
       listenerArn: this.listener.listenerArn,
       securityGroup: ec2.SecurityGroup.fromSecurityGroupId(scope, `${id}-SG`, this.securityGroup.securityGroupId),
     });

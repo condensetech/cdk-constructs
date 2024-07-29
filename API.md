@@ -3093,6 +3093,10 @@ It creates an ALB with:
 - a custom security group. This allows to expose the security group as a property of the entrypoint construct, making it easier to reference it in other constructs.
 Finally, it creates the Route 53 A and AAAA record that point to the ALB.
 
+When an `entrypointName` is provided, this is used as the name of the ALB and as the prefix for the security group.
+It is also used to add an additional "Name" tag to the load balancer.
+This helps to use [ApplicationLoadBalancer#lookup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer.html#static-fromwbrlookupscope-id-options) to find the load balancer by name.
+
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.Entrypoint.Initializer"></a>
 
 ```typescript
@@ -5814,7 +5818,6 @@ const auroraClusterProps: AuroraClusterProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the Aurora cluster is multi-AZ. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
@@ -5915,19 +5918,6 @@ The name of the database.
 
 ---
 
-##### `multiAz`<sup>Optional</sup> <a name="multiAz" id="@condensetech/cdk-constructs.AuroraClusterProps.property.multiAz"></a>
-
-```typescript
-public readonly multiAz: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false
-
-If the Aurora cluster is multi-AZ.
-
----
-
 ##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.AuroraClusterProps.property.parameters"></a>
 
 ```typescript
@@ -6003,7 +5993,6 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the Aurora cluster is multi-AZ. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
@@ -6112,19 +6101,6 @@ public readonly databaseName: string;
 - *Default:* No default database is created.
 
 The name of the database.
-
----
-
-##### `multiAz`<sup>Optional</sup> <a name="multiAz" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.multiAz"></a>
-
-```typescript
-public readonly multiAz: boolean;
-```
-
-- *Type:* boolean
-- *Default:* false
-
-If the Aurora cluster is multi-AZ.
 
 ---
 

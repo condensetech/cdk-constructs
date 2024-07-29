@@ -41,12 +41,6 @@ export interface AuroraClusterProps {
   readonly credentialsSecretName?: string;
 
   /**
-   * If the Aurora cluster is multi-AZ.
-   * @default false
-   */
-  readonly multiAz?: boolean;
-
-  /**
    * The backup retention period.
    * @default - It uses the default applied by [rds.DatabaseClusterProps#backup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseClusterProps.html#backup).
    */
