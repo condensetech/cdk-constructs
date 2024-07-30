@@ -5819,6 +5819,7 @@ const auroraClusterProps: AuroraClusterProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
@@ -5904,6 +5905,19 @@ public readonly credentialsSecretName: string;
 - *Default:* `${construct.node.path}/secret`
 
 The name of the secret that stores the credentials of the database.
+
+---
+
+##### `credentialsUsername`<sup>Optional</sup> <a name="credentialsUsername" id="@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsUsername"></a>
+
+```typescript
+public readonly credentialsUsername: string;
+```
+
+- *Type:* string
+- *Default:* db_user
+
+The username of the database.
 
 ---
 
@@ -5994,6 +6008,7 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
@@ -6090,6 +6105,19 @@ public readonly credentialsSecretName: string;
 - *Default:* `${construct.node.path}/secret`
 
 The name of the secret that stores the credentials of the database.
+
+---
+
+##### `credentialsUsername`<sup>Optional</sup> <a name="credentialsUsername" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsUsername"></a>
+
+```typescript
+public readonly credentialsUsername: string;
+```
+
+- *Type:* string
+- *Default:* db_user
+
+The username of the database.
 
 ---
 

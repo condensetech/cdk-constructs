@@ -35,6 +35,12 @@ export interface AuroraClusterProps {
   readonly databaseName?: string;
 
   /**
+   * The username of the database.
+   * @default db_user
+   */
+  readonly credentialsUsername?: string;
+
+  /**
    * The name of the secret that stores the credentials of the database.
    * @default `${construct.node.path}/secret`
    */
@@ -116,7 +122,7 @@ export class AuroraCluster extends Construct implements IDatabase {
 
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;
 
-    const credentials = rds.Credentials.fromUsername('db_user', {
+    const credentials = rds.Credentials.fromUsername(props.credentialsUsername ?? 'db_user', {
       secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
     });
 
