@@ -3086,12 +3086,14 @@ The Entrypoint construct creates an Application Load Balancer (ALB) that serves 
 This ALB is shared across multiple applications, primarily to optimize infrastructure costs by reducing the need for multiple load balancers.
 It implements the IEntrypoint interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
 
-It creates an HTTPS certificate, bound to the domain name and all subdomains (unless wildcardCertificate is set to false).
 It creates an ALB with:
 - an HTTP listener that redirects all traffic to HTTPS.
 - an HTTPS listener that returns a 403 Forbidden response by default.
 - a custom security group. This allows to expose the security group as a property of the entrypoint construct, making it easier to reference it in other constructs.
 Finally, it creates the Route 53 A and AAAA record that point to the ALB.
+
+When hostedZoneProps is provided, by default this construct creates an HTTPS certificate, bound to the domain name and all subdomains (unless wildcardCertificate is set to false).
+You can also provide an existing certificate ARN through certificate.certificateArn.
 
 When an `entrypointName` is provided, this is used as the name of the ALB and as the prefix for the security group.
 It is also used to add an additional "Name" tag to the load balancer.
@@ -7440,6 +7442,51 @@ The monitoring configuration to apply to this stack.
 
 ---
 
+### EntrypointCertificateProps <a name="EntrypointCertificateProps" id="@condensetech/cdk-constructs.EntrypointCertificateProps"></a>
+
+#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.EntrypointCertificateProps.Initializer"></a>
+
+```typescript
+import { EntrypointCertificateProps } from '@condensetech/cdk-constructs'
+
+const entrypointCertificateProps: EntrypointCertificateProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificateArn">certificateArn</a></code> | <code>string</code> | The ARN of the existing certificate to use. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | Indicates whether the HTTPS certificate should be bound to all subdomains. |
+
+---
+
+##### `certificateArn`<sup>Optional</sup> <a name="certificateArn" id="@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificateArn"></a>
+
+```typescript
+public readonly certificateArn: string;
+```
+
+- *Type:* string
+- *Default:* A new certificate is created through ACM.
+
+The ARN of the existing certificate to use.
+
+---
+
+##### `wildcardCertificate`<sup>Optional</sup> <a name="wildcardCertificate" id="@condensetech/cdk-constructs.EntrypointCertificateProps.property.wildcardCertificate"></a>
+
+```typescript
+public readonly wildcardCertificate: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Indicates whether the HTTPS certificate should be bound to all subdomains.
+
+---
+
 ### EntrypointProps <a name="EntrypointProps" id="@condensetech/cdk-constructs.EntrypointProps"></a>
 
 Properties for the Entrypoint construct.
@@ -7457,13 +7504,13 @@ const entrypointProps: EntrypointProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.certificate">certificate</a></code> | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a></code> | Certificate properties for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The name of the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket to store the logs of the ALB. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | Indicates whether the HTTPS certificate should be bound to all subdomains. |
 
 ---
 
@@ -7479,18 +7526,6 @@ The domain name to which the entrypoint is associated.
 
 ---
 
-##### `hostedZoneProps`<sup>Required</sup> <a name="hostedZoneProps" id="@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps"></a>
-
-```typescript
-public readonly hostedZoneProps: HostedZoneAttributes;
-```
-
-- *Type:* aws-cdk-lib.aws_route53.HostedZoneAttributes
-
-The Route 53 hosted zone attributes for the domain name.
-
----
-
 ##### `networking`<sup>Required</sup> <a name="networking" id="@condensetech/cdk-constructs.EntrypointProps.property.networking"></a>
 
 ```typescript
@@ -7500,6 +7535,19 @@ public readonly networking: INetworking;
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
 The networking configuration for the entrypoint.
+
+---
+
+##### `certificate`<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointProps.property.certificate"></a>
+
+```typescript
+public readonly certificate: EntrypointCertificateProps;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>
+- *Default:* A new certificate is created through ACM, bound to domainName, *.domainName.
+
+Certificate properties for the entrypoint.
 
 ---
 
@@ -7534,6 +7582,18 @@ The name of the security group for the entrypoint.
 
 ---
 
+##### `hostedZoneProps`<sup>Optional</sup> <a name="hostedZoneProps" id="@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps"></a>
+
+```typescript
+public readonly hostedZoneProps: HostedZoneAttributes;
+```
+
+- *Type:* aws-cdk-lib.aws_route53.HostedZoneAttributes
+
+The Route 53 hosted zone attributes for the domain name.
+
+---
+
 ##### `logsBucket`<sup>Optional</sup> <a name="logsBucket" id="@condensetech/cdk-constructs.EntrypointProps.property.logsBucket"></a>
 
 ```typescript
@@ -7562,19 +7622,6 @@ The name of the security group for the entrypoint.
 
 ---
 
-##### `wildcardCertificate`<sup>Optional</sup> <a name="wildcardCertificate" id="@condensetech/cdk-constructs.EntrypointProps.property.wildcardCertificate"></a>
-
-```typescript
-public readonly wildcardCertificate: boolean;
-```
-
-- *Type:* boolean
-- *Default:* true
-
-Indicates whether the HTTPS certificate should be bound to all subdomains.
-
----
-
 ### EntrypointStackProps <a name="EntrypointStackProps" id="@condensetech/cdk-constructs.EntrypointStackProps"></a>
 
 Properties for the EntrypointStack.
@@ -7592,13 +7639,13 @@ const entrypointStackProps: EntrypointStackProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.certificate">certificate</a></code> | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a></code> | Certificate properties for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The name of the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket to store the logs of the ALB. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | Indicates whether the HTTPS certificate should be bound to all subdomains. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.description">description</a></code> | <code>string</code> | A description of the stack. |
@@ -7625,18 +7672,6 @@ The domain name to which the entrypoint is associated.
 
 ---
 
-##### `hostedZoneProps`<sup>Required</sup> <a name="hostedZoneProps" id="@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps"></a>
-
-```typescript
-public readonly hostedZoneProps: HostedZoneAttributes;
-```
-
-- *Type:* aws-cdk-lib.aws_route53.HostedZoneAttributes
-
-The Route 53 hosted zone attributes for the domain name.
-
----
-
 ##### `networking`<sup>Required</sup> <a name="networking" id="@condensetech/cdk-constructs.EntrypointStackProps.property.networking"></a>
 
 ```typescript
@@ -7646,6 +7681,19 @@ public readonly networking: INetworking;
 - *Type:* <a href="#@condensetech/cdk-constructs.INetworking">INetworking</a>
 
 The networking configuration for the entrypoint.
+
+---
+
+##### `certificate`<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointStackProps.property.certificate"></a>
+
+```typescript
+public readonly certificate: EntrypointCertificateProps;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>
+- *Default:* A new certificate is created through ACM, bound to domainName, *.domainName.
+
+Certificate properties for the entrypoint.
 
 ---
 
@@ -7680,6 +7728,18 @@ The name of the security group for the entrypoint.
 
 ---
 
+##### `hostedZoneProps`<sup>Optional</sup> <a name="hostedZoneProps" id="@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps"></a>
+
+```typescript
+public readonly hostedZoneProps: HostedZoneAttributes;
+```
+
+- *Type:* aws-cdk-lib.aws_route53.HostedZoneAttributes
+
+The Route 53 hosted zone attributes for the domain name.
+
+---
+
 ##### `logsBucket`<sup>Optional</sup> <a name="logsBucket" id="@condensetech/cdk-constructs.EntrypointStackProps.property.logsBucket"></a>
 
 ```typescript
@@ -7705,19 +7765,6 @@ public readonly securityGroupName: string;
 - *Default:* `${entrypointName}-sg` if `entrypointName` is specified, otherwise no name is specified.
 
 The name of the security group for the entrypoint.
-
----
-
-##### `wildcardCertificate`<sup>Optional</sup> <a name="wildcardCertificate" id="@condensetech/cdk-constructs.EntrypointStackProps.property.wildcardCertificate"></a>
-
-```typescript
-public readonly wildcardCertificate: boolean;
-```
-
-- *Type:* boolean
-- *Default:* true
-
-Indicates whether the HTTPS certificate should be bound to all subdomains.
 
 ---
 

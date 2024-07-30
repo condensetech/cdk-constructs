@@ -10,6 +10,20 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { IEntrypoint, INetworking } from '../interfaces';
 
+export interface EntrypointCertificateProps {
+  /**
+   * The ARN of the existing certificate to use.
+   * @default - A new certificate is created through ACM.
+   */
+  readonly certificateArn?: string;
+
+  /**
+   * Indicates whether the HTTPS certificate should be bound to all subdomains.
+   * @default true
+   */
+  readonly wildcardCertificate?: boolean;
+}
+
 /**
  * Properties for the Entrypoint construct.
  */
@@ -29,7 +43,7 @@ export interface EntrypointProps {
   /**
    * The Route 53 hosted zone attributes for the domain name.
    */
-  readonly hostedZoneProps: r53.HostedZoneAttributes;
+  readonly hostedZoneProps?: r53.HostedZoneAttributes;
 
   /**
    * The domain name to which the entrypoint is associated.
@@ -37,10 +51,10 @@ export interface EntrypointProps {
   readonly domainName: string;
 
   /**
-   * Indicates whether the HTTPS certificate should be bound to all subdomains.
-   * @default true
+   * Certificate properties for the entrypoint.
+   * @default - A new certificate is created through ACM, bound to domainName, *.domainName.
    */
-  readonly wildcardCertificate?: boolean;
+  readonly certificate?: EntrypointCertificateProps;
 
   /**
    * The name of the security group for the entrypoint.
@@ -67,12 +81,14 @@ export interface EntrypointProps {
  * This ALB is shared across multiple applications, primarily to optimize infrastructure costs by reducing the need for multiple load balancers.
  * It implements the IEntrypoint interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  *
- * It creates an HTTPS certificate, bound to the domain name and all subdomains (unless wildcardCertificate is set to false).
  * It creates an ALB with:
  * - an HTTP listener that redirects all traffic to HTTPS.
  * - an HTTPS listener that returns a 403 Forbidden response by default.
  * - a custom security group. This allows to expose the security group as a property of the entrypoint construct, making it easier to reference it in other constructs.
  * Finally, it creates the Route 53 A and AAAA record that point to the ALB.
+ *
+ * When hostedZoneProps is provided, by default this construct creates an HTTPS certificate, bound to the domain name and all subdomains (unless wildcardCertificate is set to false).
+ * You can also provide an existing certificate ARN through certificate.certificateArn.
  *
  * When an `entrypointName` is provided, this is used as the name of the ALB and as the prefix for the security group.
  * It is also used to add an additional "Name" tag to the load balancer.
@@ -84,19 +100,17 @@ export class Entrypoint extends Construct implements IEntrypoint {
   readonly alb: elbv2.IApplicationLoadBalancer;
   readonly securityGroup: ec2.ISecurityGroup;
 
+  private readonly hostedZone?: r53.IHostedZone;
+
   constructor(scope: Construct, id: string, props: EntrypointProps) {
     super(scope, id);
 
-    const hostedZone = r53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', props.hostedZoneProps);
+    this.hostedZone = props.hostedZoneProps
+      ? r53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', props.hostedZoneProps)
+      : undefined;
     this.domainName = props.domainName;
 
-    const subjectAlternativeNames = props.wildcardCertificate === false ? undefined : [`*.${hostedZone.zoneName}`];
-
-    const albCertificate = new acm.Certificate(this, 'Certificate', {
-      domainName: this.domainName,
-      subjectAlternativeNames,
-      validation: acm.CertificateValidation.fromDns(hostedZone),
-    });
+    const albCertificate = this.createCertificate(props.certificate ?? {});
 
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.networking.vpc,
@@ -129,7 +143,7 @@ export class Entrypoint extends Construct implements IEntrypoint {
       }),
     });
 
-    const httpsListner = this.alb.addListener('HTTPS', {
+    this.listener = this.alb.addListener('HTTPS', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [albCertificate],
       defaultAction: elbv2.ListenerAction.fixedResponse(403, {
@@ -137,18 +151,18 @@ export class Entrypoint extends Construct implements IEntrypoint {
       }),
     });
 
-    new r53.ARecord(this, 'AlbRecord', {
-      target: r53.RecordTarget.fromAlias(new LoadBalancerTarget(this.alb)),
-      zone: hostedZone,
-      recordName: this.domainName.replace(`.${props.hostedZoneProps.zoneName}`, ''),
-    });
-    new r53.AaaaRecord(this, 'AlbRecordIPv6', {
-      target: r53.RecordTarget.fromAlias(new LoadBalancerTarget(this.alb)),
-      zone: hostedZone,
-      recordName: this.domainName.replace(`.${props.hostedZoneProps.zoneName}`, ''),
-    });
-
-    this.listener = httpsListner;
+    if (this.hostedZone) {
+      new r53.ARecord(this, 'AlbRecord', {
+        target: r53.RecordTarget.fromAlias(new LoadBalancerTarget(this.alb)),
+        zone: this.hostedZone,
+        recordName: this.domainName.replace(`.${this.hostedZone.zoneName}`, ''),
+      });
+      new r53.AaaaRecord(this, 'AlbRecordIPv6', {
+        target: r53.RecordTarget.fromAlias(new LoadBalancerTarget(this.alb)),
+        zone: this.hostedZone,
+        recordName: this.domainName.replace(`.${this.hostedZone.zoneName}`, ''),
+      });
+    }
   }
 
   referenceListener(scope: Construct, id: string): elbv2.IApplicationListener {
@@ -156,5 +170,23 @@ export class Entrypoint extends Construct implements IEntrypoint {
       listenerArn: this.listener.listenerArn,
       securityGroup: ec2.SecurityGroup.fromSecurityGroupId(scope, `${id}-SG`, this.securityGroup.securityGroupId),
     });
+  }
+
+  private createCertificate(props: EntrypointCertificateProps): acm.ICertificate {
+    if (props.certificateArn) {
+      return acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
+    }
+    if (this.hostedZone) {
+      const subjectAlternativeNames =
+        props.wildcardCertificate === false ? undefined : [`*.${this.hostedZone.zoneName}`];
+      return new acm.Certificate(this, 'Certificate', {
+        domainName: this.domainName,
+        subjectAlternativeNames,
+        validation: acm.CertificateValidation.fromDns(this.hostedZone),
+      });
+    }
+    throw new Error(
+      'Hosted Zone Props are required when certificate must be automatically provisioned. Please provide the hostedZoneProps or certificate.certificateArn.',
+    );
   }
 }
