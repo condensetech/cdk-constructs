@@ -1,7 +1,20 @@
 {
   "dependencies": [
     {
+      "name": "@aws-sdk/client-dynamodb",
+      "type": "build"
+    },
+    {
+      "name": "@shelf/jest-dynamodb",
+      "type": "build"
+    },
+    {
+      "name": "@types/aws-lambda",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
+      "version": "^29",
       "type": "build"
     },
     {
@@ -45,12 +58,13 @@
       "type": "build"
     },
     {
-      "name": "jest",
+      "name": "jest-junit",
+      "version": "^15",
       "type": "build"
     },
     {
-      "name": "jest-junit",
-      "version": "^15",
+      "name": "jest",
+      "version": "^29",
       "type": "build"
     },
     {
@@ -76,6 +90,10 @@
       "type": "build"
     },
     {
+      "name": "merge",
+      "type": "build"
+    },
+    {
       "name": "prettier",
       "type": "build"
     },
@@ -90,6 +108,7 @@
     },
     {
       "name": "ts-jest",
+      "version": "^29",
       "type": "build"
     },
     {

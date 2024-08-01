@@ -2,6 +2,174 @@
 
 ## Constructs <a name="Constructs" id="Constructs"></a>
 
+### ApplicationListenerPriorityAllocator <a name="ApplicationListenerPriorityAllocator" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator"></a>
+
+This custom resource allows to generate unique priorities for application listener rules.
+
+Consumers can allocate a priority to a listener rule by calling the `allocatePriority` method, ensuring that:
+- if no priority is set, one will be generated
+- if a priority is set, an error will be thrown if the priority is already taken
+
+#### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer"></a>
+
+```typescript
+import { ApplicationListenerPriorityAllocator } from '@condensetech/cdk-constructs'
+
+new ApplicationListenerPriorityAllocator(scope: Construct, id: string, props?: ApplicationListenerPriorityAllocatorProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer.parameter.props">props</a></code> | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps">ApplicationListenerPriorityAllocatorProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Optional</sup> <a name="props" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps">ApplicationListenerPriorityAllocatorProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority">allocatePriority</a></code> | Allocates a priority to an application listener rule. |
+
+---
+
+##### `toString` <a name="toString" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+##### `allocatePriority` <a name="allocatePriority" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority"></a>
+
+```typescript
+public allocatePriority(scope: Construct, id: string, props: AllocatePriorityProps): number
+```
+
+Allocates a priority to an application listener rule.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The scope of the construct.
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority.parameter.id"></a>
+
+- *Type:* string
+
+The ID of the listener rule to allocate the priority to.
+
+---
+
+###### `props`<sup>Required</sup> <a name="props" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority.parameter.props"></a>
+
+- *Type:* <a href="#@condensetech/cdk-constructs.AllocatePriorityProps">AllocatePriorityProps</a>
+
+---
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.of">of</a></code> | Returns the singleton instance of the ApplicationListenerPriorityAllocator for the stack. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct"></a>
+
+```typescript
+import { ApplicationListenerPriorityAllocator } from '@condensetech/cdk-constructs'
+
+ApplicationListenerPriorityAllocator.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+##### `of` <a name="of" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.of"></a>
+
+```typescript
+import { ApplicationListenerPriorityAllocator } from '@condensetech/cdk-constructs'
+
+ApplicationListenerPriorityAllocator.of(scope: Construct)
+```
+
+Returns the singleton instance of the ApplicationListenerPriorityAllocator for the stack.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.of.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The scope of the construct.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.property.serviceToken">serviceToken</a></code> | <code>string</code> | The service token to use to reference the custom resource. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `serviceToken`<sup>Required</sup> <a name="serviceToken" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.property.serviceToken"></a>
+
+```typescript
+public readonly serviceToken: string;
+```
+
+- *Type:* string
+
+The service token to use to reference the custom resource.
+
+---
+
+
 ### AuroraCluster <a name="AuroraCluster" id="@condensetech/cdk-constructs.AuroraCluster"></a>
 
 - *Implements:* <a href="#@condensetech/cdk-constructs.IDatabase">IDatabase</a>
@@ -3138,6 +3306,7 @@ new Entrypoint(scope: Construct, id: string, props: EntrypointProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.allocateListenerRule">allocateListenerRule</a></code> | It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
 
 ---
@@ -3149,6 +3318,34 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `allocateListenerRule` <a name="allocateListenerRule" id="@condensetech/cdk-constructs.Entrypoint.allocateListenerRule"></a>
+
+```typescript
+public allocateListenerRule(scope: Construct, id: string, props: AllocateApplicationListenerRuleProps): ApplicationListenerRule
+```
+
+It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint.
+
+This method doesn't require a priority to be explicitly set, and tracks the allocated priorities on a DynamoDB table to avoid conflicts.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.Entrypoint.allocateListenerRule.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.Entrypoint.allocateListenerRule.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+###### `props`<sup>Required</sup> <a name="props" id="@condensetech/cdk-constructs.Entrypoint.allocateListenerRule.parameter.props"></a>
+
+- *Type:* <a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps">AllocateApplicationListenerRuleProps</a>
+
+---
 
 ##### `referenceListener` <a name="referenceListener" id="@condensetech/cdk-constructs.Entrypoint.referenceListener"></a>
 
@@ -3324,6 +3521,7 @@ new EntrypointStack(scope: Construct, id: string, props: EntrypointStackProps)
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.splitArn">splitArn</a></code> | Splits the provided ARN into its components. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.toJsonString">toJsonString</a></code> | Convert an object, potentially containing tokens, to a JSON string. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.toYamlString">toYamlString</a></code> | Convert an object, potentially containing tokens, to a YAML string. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.allocateListenerRule">allocateListenerRule</a></code> | It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
 
 ---
@@ -3717,6 +3915,34 @@ Convert an object, potentially containing tokens, to a YAML string.
 ###### `obj`<sup>Required</sup> <a name="obj" id="@condensetech/cdk-constructs.EntrypointStack.toYamlString.parameter.obj"></a>
 
 - *Type:* any
+
+---
+
+##### `allocateListenerRule` <a name="allocateListenerRule" id="@condensetech/cdk-constructs.EntrypointStack.allocateListenerRule"></a>
+
+```typescript
+public allocateListenerRule(scope: Construct, id: string, props: AllocateApplicationListenerRuleProps): ApplicationListenerRule
+```
+
+It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint.
+
+This method doesn't require a priority to be explicitly set, and tracks the allocated priorities on a DynamoDB table to avoid conflicts.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.EntrypointStack.allocateListenerRule.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.EntrypointStack.allocateListenerRule.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+###### `props`<sup>Required</sup> <a name="props" id="@condensetech/cdk-constructs.EntrypointStack.allocateListenerRule.parameter.props"></a>
+
+- *Type:* <a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps">AllocateApplicationListenerRuleProps</a>
 
 ---
 
@@ -5708,6 +5934,170 @@ public readonly threshold: number;
 
 ---
 
+### AllocateApplicationListenerRuleProps <a name="AllocateApplicationListenerRuleProps" id="@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps"></a>
+
+Properties for the ApplicationListenerRule.
+
+#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.Initializer"></a>
+
+```typescript
+import { AllocateApplicationListenerRuleProps } from '@condensetech/cdk-constructs'
+
+const allocateApplicationListenerRuleProps: AllocateApplicationListenerRuleProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.action">action</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ListenerAction</code> | Action to perform when requests are received. |
+| <code><a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.conditions">conditions</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ListenerCondition[]</code> | Rule applies if matches the conditions. |
+| <code><a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.priority">priority</a></code> | <code>number</code> | Priority of the rule. |
+| <code><a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.targetGroups">targetGroups</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationTargetGroup[]</code> | Target groups to forward requests to. |
+
+---
+
+##### `action`<sup>Optional</sup> <a name="action" id="@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.action"></a>
+
+```typescript
+public readonly action: ListenerAction;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ListenerAction
+- *Default:* No action
+
+Action to perform when requests are received.
+
+Only one of `action`, `fixedResponse`, `redirectResponse` or `targetGroups` can be specified.
+
+---
+
+##### `conditions`<sup>Optional</sup> <a name="conditions" id="@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.conditions"></a>
+
+```typescript
+public readonly conditions: ListenerCondition[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ListenerCondition[]
+- *Default:* No conditions.
+
+Rule applies if matches the conditions.
+
+> [https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html)
+
+---
+
+##### `priority`<sup>Optional</sup> <a name="priority" id="@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.priority"></a>
+
+```typescript
+public readonly priority: number;
+```
+
+- *Type:* number
+- *Default:* The rule will be assigned a priority automatically.
+
+Priority of the rule.
+
+The rule with the lowest priority will be used for every request.
+
+---
+
+##### `targetGroups`<sup>Optional</sup> <a name="targetGroups" id="@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps.property.targetGroups"></a>
+
+```typescript
+public readonly targetGroups: IApplicationTargetGroup[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationTargetGroup[]
+- *Default:* No target groups.
+
+Target groups to forward requests to.
+
+Only one of `action`, `fixedResponse`, `redirectResponse` or `targetGroups` can be specified.
+
+Implies a `forward` action.
+
+---
+
+### AllocatePriorityProps <a name="AllocatePriorityProps" id="@condensetech/cdk-constructs.AllocatePriorityProps"></a>
+
+Properties for allocating a priority to an application listener rule.
+
+#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.AllocatePriorityProps.Initializer"></a>
+
+```typescript
+import { AllocatePriorityProps } from '@condensetech/cdk-constructs'
+
+const allocatePriorityProps: AllocatePriorityProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.AllocatePriorityProps.property.listener">listener</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationListener</code> | The listener to allocate the priority to. |
+| <code><a href="#@condensetech/cdk-constructs.AllocatePriorityProps.property.priority">priority</a></code> | <code>number</code> | The priority to allocate. |
+
+---
+
+##### `listener`<sup>Required</sup> <a name="listener" id="@condensetech/cdk-constructs.AllocatePriorityProps.property.listener"></a>
+
+```typescript
+public readonly listener: IApplicationListener;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationListener
+
+The listener to allocate the priority to.
+
+---
+
+##### `priority`<sup>Optional</sup> <a name="priority" id="@condensetech/cdk-constructs.AllocatePriorityProps.property.priority"></a>
+
+```typescript
+public readonly priority: number;
+```
+
+- *Type:* number
+- *Default:* a priority will be allocated automatically.
+
+The priority to allocate.
+
+---
+
+### ApplicationListenerPriorityAllocatorProps <a name="ApplicationListenerPriorityAllocatorProps" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps"></a>
+
+Properties for the ApplicationListenerPriorityAllocator construct.
+
+#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.Initializer"></a>
+
+```typescript
+import { ApplicationListenerPriorityAllocatorProps } from '@condensetech/cdk-constructs'
+
+const applicationListenerPriorityAllocatorProps: ApplicationListenerPriorityAllocatorProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.priorityInitialValue">priorityInitialValue</a></code> | <code>number</code> | The initial priority value to start from. |
+
+---
+
+##### `priorityInitialValue`<sup>Optional</sup> <a name="priorityInitialValue" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.priorityInitialValue"></a>
+
+```typescript
+public readonly priorityInitialValue: number;
+```
+
+- *Type:* number
+- *Default:* 1
+
+The initial priority value to start from.
+
+---
+
 ### ApplicationLoadBalancerMonitoringConfig <a name="ApplicationLoadBalancerMonitoringConfig" id="@condensetech/cdk-constructs.ApplicationLoadBalancerMonitoringConfig"></a>
 
 The ApplicationLoadBalancerMonitoringConfig defines the thresholds for the Application Load Balancer monitoring.
@@ -7538,6 +7928,7 @@ const entrypointProps: EntrypointProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket to store the logs of the ALB. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.priorityAllocator">priorityAllocator</a></code> | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps">ApplicationListenerPriorityAllocatorProps</a></code> | Customize the priority allocator for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
 
 ---
@@ -7637,6 +8028,18 @@ Setting this will enable the access logs for the ALB.
 
 ---
 
+##### `priorityAllocator`<sup>Optional</sup> <a name="priorityAllocator" id="@condensetech/cdk-constructs.EntrypointProps.property.priorityAllocator"></a>
+
+```typescript
+public readonly priorityAllocator: ApplicationListenerPriorityAllocatorProps;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps">ApplicationListenerPriorityAllocatorProps</a>
+
+Customize the priority allocator for the entrypoint.
+
+---
+
 ##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.EntrypointProps.property.securityGroupName"></a>
 
 ```typescript
@@ -7673,6 +8076,7 @@ const entrypointStackProps: EntrypointStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.logsBucket">logsBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket to store the logs of the ALB. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.priorityAllocator">priorityAllocator</a></code> | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps">ApplicationListenerPriorityAllocatorProps</a></code> | Customize the priority allocator for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
@@ -7780,6 +8184,18 @@ public readonly logsBucket: IBucket;
 The S3 bucket to store the logs of the ALB.
 
 Setting this will enable the access logs for the ALB.
+
+---
+
+##### `priorityAllocator`<sup>Optional</sup> <a name="priorityAllocator" id="@condensetech/cdk-constructs.EntrypointStackProps.property.priorityAllocator"></a>
+
+```typescript
+public readonly priorityAllocator: ApplicationListenerPriorityAllocatorProps;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps">ApplicationListenerPriorityAllocatorProps</a>
+
+Customize the priority allocator for the entrypoint.
 
 ---
 
@@ -9920,7 +10336,42 @@ This allows stacks and constructs to interact with the entry point without being
 
 | **Name** | **Description** |
 | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.allocateListenerRule">allocateListenerRule</a></code> | It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.IEntrypoint.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
+
+---
+
+##### `allocateListenerRule` <a name="allocateListenerRule" id="@condensetech/cdk-constructs.IEntrypoint.allocateListenerRule"></a>
+
+```typescript
+public allocateListenerRule(scope: Construct, id: string, props: AllocateApplicationListenerRuleProps): ApplicationListenerRule
+```
+
+It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint.
+
+This method doesn't require a priority to be explicitly set, and tracks the allocated priorities on a DynamoDB table to avoid conflicts.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.IEntrypoint.allocateListenerRule.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The scope of the construct.
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.IEntrypoint.allocateListenerRule.parameter.id"></a>
+
+- *Type:* string
+
+The application listener rule.
+
+---
+
+###### `props`<sup>Required</sup> <a name="props" id="@condensetech/cdk-constructs.IEntrypoint.allocateListenerRule.parameter.props"></a>
+
+- *Type:* <a href="#@condensetech/cdk-constructs.AllocateApplicationListenerRuleProps">AllocateApplicationListenerRuleProps</a>
+
+Application Listener rule properties.
 
 ---
 

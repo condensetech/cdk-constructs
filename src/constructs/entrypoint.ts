@@ -8,7 +8,11 @@ import {
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import { IEntrypoint, INetworking } from '../interfaces';
+import {
+  ApplicationListenerPriorityAllocator,
+  ApplicationListenerPriorityAllocatorProps,
+} from './application-listener-priority-allocator';
+import { AllocateApplicationListenerRuleProps, IEntrypoint, INetworking } from '../interfaces';
 
 export interface EntrypointCertificateProps {
   /**
@@ -74,6 +78,11 @@ export interface EntrypointProps {
    * @default - Logging is disabled.
    */
   readonly logsBucket?: s3.IBucket;
+
+  /**
+   * Customize the priority allocator for the entrypoint.
+   */
+  readonly priorityAllocator?: ApplicationListenerPriorityAllocatorProps;
 }
 
 /**
@@ -99,8 +108,8 @@ export class Entrypoint extends Construct implements IEntrypoint {
   readonly domainName: string;
   readonly alb: elbv2.IApplicationLoadBalancer;
   readonly securityGroup: ec2.ISecurityGroup;
-
   private readonly hostedZone?: r53.IHostedZone;
+  private readonly localPriorityAllocator?: ApplicationListenerPriorityAllocator;
 
   constructor(scope: Construct, id: string, props: EntrypointProps) {
     super(scope, id);
@@ -163,12 +172,41 @@ export class Entrypoint extends Construct implements IEntrypoint {
         recordName: this.domainName.replace(`.${this.hostedZone.zoneName}`, ''),
       });
     }
+
+    if (props.priorityAllocator) {
+      this.localPriorityAllocator = new ApplicationListenerPriorityAllocator(
+        this,
+        'PriorityAllocator',
+        props.priorityAllocator,
+      );
+    }
   }
 
   referenceListener(scope: Construct, id: string): elbv2.IApplicationListener {
     return elbv2.ApplicationListener.fromApplicationListenerAttributes(scope, id, {
       listenerArn: this.listener.listenerArn,
       securityGroup: ec2.SecurityGroup.fromSecurityGroupId(scope, `${id}-SG`, this.securityGroup.securityGroupId),
+    });
+  }
+
+  allocateListenerRule(
+    scope: Construct,
+    id: string,
+    props: AllocateApplicationListenerRuleProps,
+  ): elbv2.ApplicationListenerRule {
+    const listener = this.referenceListener(scope, `${id}-Listener`);
+    const priority = (this.localPriorityAllocator || ApplicationListenerPriorityAllocator.of(this)).allocatePriority(
+      scope,
+      `${id}-Priority`,
+      {
+        listener,
+        priority: props.priority,
+      },
+    );
+    return new elbv2.ApplicationListenerRule(scope, id, {
+      ...props,
+      listener,
+      priority,
     });
   }
 

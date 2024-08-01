@@ -3,7 +3,7 @@ import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { Entrypoint, EntrypointProps } from '../constructs/entrypoint';
 import { MonitoringFacade, MonitoringFacadeProps } from '../constructs/monitoring/monitoring-facade';
-import { IEntrypoint } from '../interfaces';
+import { AllocateApplicationListenerRuleProps, IEntrypoint } from '../interfaces';
 
 /**
  * Properties for the EntrypointStack.
@@ -29,6 +29,14 @@ export class EntrypointStack extends Stack implements IEntrypoint {
     if (props.monitoring) {
       new MonitoringFacade(this, props.monitoring);
     }
+  }
+
+  allocateListenerRule(
+    scope: Construct,
+    id: string,
+    props: AllocateApplicationListenerRuleProps,
+  ): elb.ApplicationListenerRule {
+    return this.construct.allocateListenerRule(scope, id, props);
   }
 
   get alb(): elb.IApplicationLoadBalancer {

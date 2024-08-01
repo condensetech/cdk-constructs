@@ -103,7 +103,7 @@ Constructs and Stacks in this area:
 
 A typical scenario is to have one single Application Load Balancer in a VPC, which routes traffic to different services. The [Entrypoint Construct](lib/constructs/entrypoint.ts) and the [Entrypoint Stack](lib/stacks/entrypoint-stack.ts) allow to easily define this entrypoint load balancer.
 
-TODO: Add a method to allow consumers to add rules without having to know the right priority order in advance.
+The [Entrypoint#allocateListenerRule](API.md#@condensetech/cdk-constructs.Entrypoint.allocateListenerRule) method tracks in a DynamoDB table the priority of the listener rules that are being created and generates a unique priority if one is not provided. This allows to operate in scenarios where different stacks are creating listener rules for the same load balancer.
 
 ### Cloudwatch Alarms Topic
 

@@ -1,7 +1,9 @@
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as rds from 'aws-cdk-lib/aws-rds';
-import * as sm from 'aws-cdk-lib/aws-secretsmanager';
+import {
+  aws_ec2 as ec2,
+  aws_elasticloadbalancingv2 as elbv2,
+  aws_rds as rds,
+  aws_secretsmanager as secrets,
+} from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 /**
@@ -90,7 +92,46 @@ export interface IDatabase extends ec2.IConnectable {
   /**
    * Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way.
    */
-  fetchSecret(scope: Construct, id?: string): sm.ISecret;
+  fetchSecret(scope: Construct, id?: string): secrets.ISecret;
+}
+
+/**
+ * Properties for the ApplicationListenerRule
+ */
+export interface AllocateApplicationListenerRuleProps {
+  /**
+   * Priority of the rule
+   *
+   * The rule with the lowest priority will be used for every request.
+   * @default - The rule will be assigned a priority automatically.
+   */
+  readonly priority?: number;
+  /**
+   * Target groups to forward requests to.
+   *
+   * Only one of `action`, `fixedResponse`, `redirectResponse` or `targetGroups` can be specified.
+   *
+   * Implies a `forward` action.
+   *
+   * @default - No target groups.
+   */
+  readonly targetGroups?: elbv2.IApplicationTargetGroup[];
+  /**
+   * Action to perform when requests are received
+   *
+   * Only one of `action`, `fixedResponse`, `redirectResponse` or `targetGroups` can be specified.
+   *
+   * @default - No action
+   */
+  readonly action?: elbv2.ListenerAction;
+  /**
+   * Rule applies if matches the conditions.
+   *
+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html
+   *
+   * @default - No conditions.
+   */
+  readonly conditions?: elbv2.ListenerCondition[];
 }
 
 /**
@@ -109,10 +150,24 @@ export interface IEntrypoint {
   /**
    * The ALB that serves as the entrypoint.
    */
-  readonly alb: elb.IApplicationLoadBalancer;
+  readonly alb: elbv2.IApplicationLoadBalancer;
 
   /**
    * Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way.
    */
-  referenceListener(scope: Construct, id: string): elb.IApplicationListener;
+  referenceListener(scope: Construct, id: string): elbv2.IApplicationListener;
+
+  /**
+   * It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint.
+   * This method doesn't require a priority to be explicitly set, and tracks the allocated priorities on a DynamoDB table to avoid conflicts.
+   *
+   * @param scope The scope of the construct.
+   * @param id The application listener rule
+   * @param props Application Listener rule properties
+   */
+  allocateListenerRule(
+    scope: Construct,
+    id: string,
+    props: AllocateApplicationListenerRuleProps,
+  ): elbv2.ApplicationListenerRule;
 }

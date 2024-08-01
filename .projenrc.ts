@@ -32,7 +32,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
     prettier: true,
   },
 
-  devDeps: ['husky'],
+  devDeps: ['husky', '@types/aws-lambda', '@aws-sdk/client-dynamodb', '@shelf/jest-dynamodb', 'merge'],
+  jestOptions: {
+    jestVersion: '^29',
+    jestConfig: {
+      preset: './jest-preset.js',
+    },
+  },
 
   publishToPypi: {
     distName: 'condensetech.cdk-constructs',
