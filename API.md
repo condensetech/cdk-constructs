@@ -185,6 +185,7 @@ It also applies the following changes to the default behavior:
 - The credentials secret name is created after the construct's path. This way, the secret name is more readable and, when working with multiple stacks, can be easily inferred without having to rely on Cloudformation exports.
 - The default instance type for the writer instance is set to a minimum instance type based on the engine type.
 - The storage is always encrypted.
+- If the networking configuration includes a bastion host, the cluster allows connections from the bastion host.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.AuroraCluster.Initializer"></a>
 
@@ -2174,6 +2175,7 @@ It also applies the following changes to the default behavior:
 - It defaults the allocated storage to the minimum storage of 20 GB when not specified.
 - The default instance type is set to t3.small.
 - The storage is always encrypted.
+- If the networking configuration includes a bastion host, the database allows connections from the bastion host.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.DatabaseInstance.Initializer"></a>
 

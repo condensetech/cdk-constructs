@@ -87,6 +87,7 @@ export interface AuroraClusterProps {
  * - The credentials secret name is created after the construct's path. This way, the secret name is more readable and, when working with multiple stacks, can be easily inferred without having to rely on Cloudformation exports.
  * - The default instance type for the writer instance is set to a minimum instance type based on the engine type.
  * - The storage is always encrypted.
+ * - If the networking configuration includes a bastion host, the cluster allows connections from the bastion host.
  */
 export class AuroraCluster extends Construct implements IDatabase {
   /**
@@ -143,6 +144,9 @@ export class AuroraCluster extends Construct implements IDatabase {
       storageEncrypted: true,
       backup,
     });
+    if (props.networking.bastionHost) {
+      this.databaseCluster.connections.allowDefaultPortFrom(props.networking.bastionHost);
+    }
     this.endpoint = this.databaseCluster.clusterEndpoint;
   }
 

@@ -86,6 +86,7 @@ export interface DatabaseInstanceProps {
  * - It defaults the allocated storage to the minimum storage of 20 GB when not specified.
  * - The default instance type is set to t3.small.
  * - The storage is always encrypted.
+ * - If the networking configuration includes a bastion host, the database allows connections from the bastion host.
  */
 export class DatabaseInstance extends Construct implements IDatabase {
   private readonly databaseInstance: rds.IDatabaseInstance;
@@ -121,6 +122,9 @@ export class DatabaseInstance extends Construct implements IDatabase {
       storageEncrypted: true,
       backupRetention: props.backupRetention,
     });
+    if (props.networking.bastionHost) {
+      this.databaseInstance.connections.allowDefaultPortFrom(props.networking.bastionHost);
+    }
     this.endpoint = this.databaseInstance.instanceEndpoint;
   }
 
