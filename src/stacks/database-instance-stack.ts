@@ -21,25 +21,28 @@ export interface DatabaseInstanceStackProps extends DatabaseInstanceProps, cdk.S
  * It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  */
 export class DatabaseInstanceStack extends cdk.Stack implements IDatabase {
-  private readonly construct: IDatabase;
+  /**
+   * Underlying DatabaseInstance construct.
+   */
+  readonly resource: DatabaseInstance;
 
   constructor(scope: Construct, id: string, props: DatabaseInstanceStackProps) {
     super(scope, id, props);
-    this.construct = new DatabaseInstance(this, 'Database', props);
+    this.resource = new DatabaseInstance(this, 'Database', props);
     if (props.monitoring) {
       new MonitoringFacade(this, props.monitoring);
     }
   }
 
   get endpoint(): rds.Endpoint {
-    return this.construct.endpoint;
+    return this.resource.endpoint;
   }
 
   get connections(): ec2.Connections {
-    return this.construct.connections;
+    return this.resource.connections;
   }
 
   public fetchSecret(scope: Construct, id?: string | undefined): sm.ISecret {
-    return this.construct.fetchSecret(scope, id);
+    return this.resource.fetchSecret(scope, id);
   }
 }

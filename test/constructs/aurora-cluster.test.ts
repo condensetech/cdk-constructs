@@ -85,9 +85,9 @@ describe('Constructs/PostgresInstance', () => {
     const template = Template.fromStack(stack);
     template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
     template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
-      Description: 'to TestStackDatabaseClusterDBSecurityGroupE4F9263A:{IndirectPort}',
+      Description: 'to TestStackDatabaseClusterSecurityGroupFD8EE03D:{IndirectPort}',
       DestinationSecurityGroupId: {
-        'Fn::GetAtt': ['DatabaseClusterDBSecurityGroup4C7601D4', 'GroupId'],
+        'Fn::GetAtt': ['DatabaseClusterSecurityGroupCBE34284', 'GroupId'],
       },
       FromPort: {
         'Fn::GetAtt': ['DatabaseClusterDB62D9423F', 'Endpoint.Port'],

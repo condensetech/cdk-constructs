@@ -18,15 +18,15 @@ export interface AuroraClusterProps {
   readonly engine: rds.IClusterEngine;
 
   /**
-   * The name of the cluster. If not specified, it relies on the underlying default naming.
-   * @deprecated Use `clusterIdentifier` instead.
-   */
-  readonly clusterName?: string;
-
-  /**
    * The identifier of the cluster. If not specified, it relies on the underlying default naming.
    */
   readonly clusterIdentifier?: string;
+
+  /**
+   * The name of the security group.
+   * @default - if clusterIdentifier is set, it uses `${clusterIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+   */
+  readonly securityGroupName?: string;
 
   /**
    * The name of the database.
@@ -88,6 +88,7 @@ export interface AuroraClusterProps {
  * - The default instance type for the writer instance is set to a minimum instance type based on the engine type.
  * - The storage is always encrypted.
  * - If the networking configuration includes a bastion host, the cluster allows connections from the bastion host.
+ * - The default security group name is set to `${clusterIdentifier}-sg` if the cluster identifier is set, otherwise, it uses `${construct.node.path}-sg`.
  */
 export class AuroraCluster extends Construct implements IDatabase {
   /**
@@ -104,9 +105,9 @@ export class AuroraCluster extends Construct implements IDatabase {
   }
 
   /**
-   * The database cluster.
+   * The underlying database cluster.
    */
-  protected readonly databaseCluster: rds.IDatabaseCluster;
+  readonly resource: rds.DatabaseCluster;
 
   readonly endpoint: rds.Endpoint;
   readonly parameterGroup: rds.ParameterGroup;
@@ -130,8 +131,15 @@ export class AuroraCluster extends Construct implements IDatabase {
       secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
     });
 
-    this.databaseCluster = new rds.DatabaseCluster(this, 'DB', {
-      clusterIdentifier: props.clusterIdentifier ?? props.clusterName,
+    const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
+      vpc: props.networking.vpc,
+      allowAllOutbound: true,
+      securityGroupName:
+        props.securityGroupName ?? (props.clusterIdentifier ? `${props.clusterIdentifier}-sg` : `${this.node.path}-sg`),
+    });
+
+    this.resource = new rds.DatabaseCluster(this, 'DB', {
+      clusterIdentifier: props.clusterIdentifier,
       engine: props.engine,
       credentials,
       writer:
@@ -145,17 +153,18 @@ export class AuroraCluster extends Construct implements IDatabase {
       defaultDatabaseName: props.databaseName,
       parameterGroup: this.parameterGroup,
       storageEncrypted: true,
+      securityGroups: [securityGroup],
       removalPolicy,
       backup,
     });
     if (props.networking.bastionHost) {
-      this.databaseCluster.connections.allowDefaultPortFrom(props.networking.bastionHost);
+      this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);
     }
-    this.endpoint = this.databaseCluster.clusterEndpoint;
+    this.endpoint = this.resource.clusterEndpoint;
   }
 
   get connections(): ec2.Connections {
-    return this.databaseCluster.connections;
+    return this.resource.connections;
   }
 
   fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {

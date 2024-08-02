@@ -18,17 +18,16 @@ export interface DatabaseInstanceProps {
   readonly engine: rds.IInstanceEngine;
 
   /**
-   * The name of the database instance.
-   * @default - No name is specified.
-   * @deprecated Use `instanceIdentifier` instead.
-   */
-  readonly instanceName?: string;
-
-  /**
    * The identifier of the database instance.
    * @default - No identifier is specified.
    */
   readonly instanceIdentifier?: string;
+
+  /**
+   * The name of the security group.
+   * @default - if instanceIdentifier is set, it uses `${instanceIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+   */
+  readonly securityGroupName?: string;
 
   /**
    * The name of the database.
@@ -99,9 +98,13 @@ export interface DatabaseInstanceProps {
  * - The default instance type is set to t3.small.
  * - The storage is always encrypted.
  * - If the networking configuration includes a bastion host, the database allows connections from the bastion host.
+ * - The security group is created with the name `${instanceIdentifier}-sg` if the instance identifier is set, otherwise, it uses `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
  */
 export class DatabaseInstance extends Construct implements IDatabase {
-  private readonly databaseInstance: rds.IDatabaseInstance;
+  /**
+   * The underlying RDS database instance.
+   */
+  readonly resource: rds.IDatabaseInstance;
   readonly endpoint: rds.Endpoint;
 
   constructor(scope: Construct, id: string, props: DatabaseInstanceProps) {
@@ -124,8 +127,16 @@ export class DatabaseInstance extends Construct implements IDatabase {
       secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
     });
 
-    this.databaseInstance = new rds.DatabaseInstance(this, 'DB', {
-      instanceIdentifier: props.instanceIdentifier ?? props.instanceName,
+    const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
+      vpc: props.networking.vpc,
+      allowAllOutbound: true,
+      securityGroupName:
+        props.securityGroupName ??
+        (props.instanceIdentifier ? `${props.instanceIdentifier}-sg` : `${this.node.path}-sg`),
+    });
+
+    this.resource = new rds.DatabaseInstance(this, 'DB', {
+      instanceIdentifier: props.instanceIdentifier,
       vpc: props.networking.vpc,
       vpcSubnets: props.networking.isolatedSubnets,
       engine: props.engine,
@@ -136,18 +147,19 @@ export class DatabaseInstance extends Construct implements IDatabase {
       allocatedStorage: props.allocatedStorage ?? 20,
       storageType: props.storageType ?? rds.StorageType.GP3,
       multiAz: props.multiAz ?? false,
+      securityGroups: [securityGroup],
       storageEncrypted: true,
       backupRetention: props.backupRetention,
       removalPolicy,
     });
     if (props.networking.bastionHost) {
-      this.databaseInstance.connections.allowDefaultPortFrom(props.networking.bastionHost);
+      this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);
     }
-    this.endpoint = this.databaseInstance.instanceEndpoint;
+    this.endpoint = this.resource.instanceEndpoint;
   }
 
   get connections(): ec2.Connections {
-    return this.databaseInstance.connections;
+    return this.resource.connections;
   }
 
   public fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {

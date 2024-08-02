@@ -108,8 +108,8 @@ describe('Constructs/DatabaseInstance', () => {
     const template = Template.fromStack(stack);
     template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
     template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
-      Description: 'to TestStackDatabaseDBSecurityGroup90F50C71:{IndirectPort}',
-      DestinationSecurityGroupId: { 'Fn::GetAtt': ['DatabaseDBSecurityGroup217C76CD', 'GroupId'] },
+      Description: 'to TestStackDatabaseSecurityGroup3A325A86:{IndirectPort}',
+      DestinationSecurityGroupId: { 'Fn::GetAtt': ['DatabaseSecurityGroup5C91FDCB', 'GroupId'] },
       FromPort: { 'Fn::GetAtt': ['DatabaseDBB23F3D83', 'Endpoint.Port'] },
       GroupId: { 'Fn::GetAtt': ['TestSecurityGroup880B57C0', 'GroupId'] },
       IpProtocol: 'tcp',

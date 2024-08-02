@@ -186,6 +186,7 @@ It also applies the following changes to the default behavior:
 - The default instance type for the writer instance is set to a minimum instance type based on the engine type.
 - The storage is always encrypted.
 - If the networking configuration includes a bastion host, the cluster allows connections from the bastion host.
+- The default security group name is set to `${clusterIdentifier}-sg` if the cluster identifier is set, otherwise, it uses `${construct.node.path}-sg`.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.AuroraCluster.Initializer"></a>
 
@@ -292,6 +293,7 @@ Any object.
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup">parameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.resource">resource</a></code> | <code>aws-cdk-lib.aws_rds.DatabaseCluster</code> | The underlying database cluster. |
 
 ---
 
@@ -338,6 +340,18 @@ public readonly parameterGroup: ParameterGroup;
 ```
 
 - *Type:* aws-cdk-lib.aws_rds.ParameterGroup
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.AuroraCluster.property.resource"></a>
+
+```typescript
+public readonly resource: DatabaseCluster;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.DatabaseCluster
+
+The underlying database cluster.
 
 ---
 
@@ -910,6 +924,7 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.property.resource">resource</a></code> | <code><a href="#@condensetech/cdk-constructs.AuroraCluster">AuroraCluster</a></code> | Underlying AuroraCluster construct. |
 
 ---
 
@@ -1264,6 +1279,18 @@ public readonly endpoint: Endpoint;
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
 
 The endpoint of the database.
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.AuroraClusterStack.property.resource"></a>
+
+```typescript
+public readonly resource: AuroraCluster;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.AuroraCluster">AuroraCluster</a>
+
+Underlying AuroraCluster construct.
 
 ---
 
@@ -2176,6 +2203,7 @@ It also applies the following changes to the default behavior:
 - The default instance type is set to t3.small.
 - The storage is always encrypted.
 - If the networking configuration includes a bastion host, the database allows connections from the bastion host.
+- The security group is created with the name `${instanceIdentifier}-sg` if the instance identifier is set, otherwise, it uses `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.DatabaseInstance.Initializer"></a>
 
@@ -2281,6 +2309,7 @@ Any object.
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.property.resource">resource</a></code> | <code>aws-cdk-lib.aws_rds.IDatabaseInstance</code> | The underlying RDS database instance. |
 
 ---
 
@@ -2317,6 +2346,18 @@ public readonly endpoint: Endpoint;
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
 
 The endpoint of the database.
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.DatabaseInstance.property.resource"></a>
+
+```typescript
+public readonly resource: IDatabaseInstance;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.IDatabaseInstance
+
+The underlying RDS database instance.
 
 ---
 
@@ -2889,6 +2930,7 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.property.resource">resource</a></code> | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance">DatabaseInstance</a></code> | Underlying DatabaseInstance construct. |
 
 ---
 
@@ -3243,6 +3285,18 @@ public readonly endpoint: Endpoint;
 - *Type:* aws-cdk-lib.aws_rds.Endpoint
 
 The endpoint of the database.
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="@condensetech/cdk-constructs.DatabaseInstanceStack.property.resource"></a>
+
+```typescript
+public readonly resource: DatabaseInstance;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.DatabaseInstance">DatabaseInstance</a>
+
+Underlying DatabaseInstance construct.
 
 ---
 
@@ -6209,13 +6263,13 @@ const auroraClusterProps: AuroraClusterProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.writer">writer</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance</code> | The writer instance of the Aurora cluster. |
 
 ---
@@ -6266,22 +6320,6 @@ public readonly clusterIdentifier: string;
 - *Type:* string
 
 The identifier of the cluster.
-
-If not specified, it relies on the underlying default naming.
-
----
-
-##### ~~`clusterName`~~<sup>Optional</sup> <a name="clusterName" id="@condensetech/cdk-constructs.AuroraClusterProps.property.clusterName"></a>
-
-- *Deprecated:* Use `clusterIdentifier` instead.
-
-```typescript
-public readonly clusterName: string;
-```
-
-- *Type:* string
-
-The name of the cluster.
 
 If not specified, it relies on the underlying default naming.
 
@@ -6365,6 +6403,19 @@ The removal policy to apply when the cluster is removed.
 
 ---
 
+##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.AuroraClusterProps.property.securityGroupName"></a>
+
+```typescript
+public readonly securityGroupName: string;
+```
+
+- *Type:* string
+- *Default:* if clusterIdentifier is set, it uses `${clusterIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+
+The name of the security group.
+
+---
+
 ##### `writer`<sup>Optional</sup> <a name="writer" id="@condensetech/cdk-constructs.AuroraClusterProps.property.writer"></a>
 
 ```typescript
@@ -6398,13 +6449,13 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName">clusterName</a></code> | <code>string</code> | The name of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.writer">writer</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance</code> | The writer instance of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
@@ -6466,22 +6517,6 @@ public readonly clusterIdentifier: string;
 - *Type:* string
 
 The identifier of the cluster.
-
-If not specified, it relies on the underlying default naming.
-
----
-
-##### ~~`clusterName`~~<sup>Optional</sup> <a name="clusterName" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterName"></a>
-
-- *Deprecated:* Use `clusterIdentifier` instead.
-
-```typescript
-public readonly clusterName: string;
-```
-
-- *Type:* string
-
-The name of the cluster.
 
 If not specified, it relies on the underlying default naming.
 
@@ -6562,6 +6597,19 @@ public readonly removalPolicy: RemovalPolicy;
 - *Default:* RemovalPolicy.RETAIN
 
 The removal policy to apply when the cluster is removed.
+
+---
+
+##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.securityGroupName"></a>
+
+```typescript
+public readonly securityGroupName: string;
+```
+
+- *Type:* string
+- *Default:* if clusterIdentifier is set, it uses `${clusterIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+
+The name of the security group.
 
 ---
 
@@ -7306,10 +7354,10 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName">instanceName</a></code> | <code>string</code> | The name of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
 
 ---
@@ -7416,21 +7464,6 @@ The identifier of the database instance.
 
 ---
 
-##### ~~`instanceName`~~<sup>Optional</sup> <a name="instanceName" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName"></a>
-
-- *Deprecated:* Use `instanceIdentifier` instead.
-
-```typescript
-public readonly instanceName: string;
-```
-
-- *Type:* string
-- *Default:* No name is specified.
-
-The name of the database instance.
-
----
-
 ##### `instanceType`<sup>Optional</sup> <a name="instanceType" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType"></a>
 
 ```typescript
@@ -7467,6 +7500,19 @@ public readonly removalPolicy: RemovalPolicy;
 - *Default:* RemovalPolicy.RETAIN
 
 The removal policy to apply when the cluster is removed.
+
+---
+
+##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.securityGroupName"></a>
+
+```typescript
+public readonly securityGroupName: string;
+```
+
+- *Type:* string
+- *Default:* if instanceIdentifier is set, it uses `${instanceIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+
+The name of the security group.
 
 ---
 
@@ -7507,10 +7553,10 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
-| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName">instanceName</a></code> | <code>string</code> | The name of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
@@ -7628,21 +7674,6 @@ The identifier of the database instance.
 
 ---
 
-##### ~~`instanceName`~~<sup>Optional</sup> <a name="instanceName" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName"></a>
-
-- *Deprecated:* Use `instanceIdentifier` instead.
-
-```typescript
-public readonly instanceName: string;
-```
-
-- *Type:* string
-- *Default:* No name is specified.
-
-The name of the database instance.
-
----
-
 ##### `instanceType`<sup>Optional</sup> <a name="instanceType" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType"></a>
 
 ```typescript
@@ -7679,6 +7710,19 @@ public readonly removalPolicy: RemovalPolicy;
 - *Default:* RemovalPolicy.RETAIN
 
 The removal policy to apply when the cluster is removed.
+
+---
+
+##### `securityGroupName`<sup>Optional</sup> <a name="securityGroupName" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.securityGroupName"></a>
+
+```typescript
+public readonly securityGroupName: string;
+```
+
+- *Type:* string
+- *Default:* if instanceIdentifier is set, it uses `${instanceIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+
+The name of the security group.
 
 ---
 

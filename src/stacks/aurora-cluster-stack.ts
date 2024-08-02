@@ -21,25 +21,28 @@ export interface AuroraClusterStackProps extends AuroraClusterProps, cdk.StackPr
  * It implements the IDatabase interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  */
 export class AuroraClusterStack extends cdk.Stack implements IDatabase {
-  private readonly construct: IDatabase;
+  /**
+   * Underlying AuroraCluster construct.
+   */
+  readonly resource: AuroraCluster;
 
   constructor(scope: Construct, id: string, props: AuroraClusterStackProps) {
     super(scope, id, props);
-    this.construct = new AuroraCluster(this, 'DatabaseCluster', props);
+    this.resource = new AuroraCluster(this, 'DatabaseCluster', props);
     if (props.monitoring) {
       new MonitoringFacade(this, props.monitoring);
     }
   }
 
   get endpoint(): rds.Endpoint {
-    return this.construct.endpoint;
+    return this.resource.endpoint;
   }
 
   get connections(): ec2.Connections {
-    return this.construct.connections;
+    return this.resource.connections;
   }
 
   public fetchSecret(scope: Construct, id?: string | undefined): sm.ISecret {
-    return this.construct.fetchSecret(scope, id);
+    return this.resource.fetchSecret(scope, id);
   }
 }
