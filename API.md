@@ -186,7 +186,7 @@ It also applies the following changes to the default behavior:
 - The default instance type for the writer instance is set to a minimum instance type based on the engine type.
 - The storage is always encrypted.
 - If the networking configuration includes a bastion host, the cluster allows connections from the bastion host.
-- The default security group name is set to `${clusterIdentifier}-sg` if the cluster identifier is set, otherwise, it uses `${construct.node.path}-sg`.
+- The default security group name is `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.AuroraCluster.Initializer"></a>
 
@@ -2203,7 +2203,7 @@ It also applies the following changes to the default behavior:
 - The default instance type is set to t3.small.
 - The storage is always encrypted.
 - If the networking configuration includes a bastion host, the database allows connections from the bastion host.
-- The security group is created with the name `${instanceIdentifier}-sg` if the instance identifier is set, otherwise, it uses `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
+- The default security group name is `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
 
 #### Initializers <a name="Initializers" id="@condensetech/cdk-constructs.DatabaseInstance.Initializer"></a>
 
@@ -6410,7 +6410,7 @@ public readonly securityGroupName: string;
 ```
 
 - *Type:* string
-- *Default:* if clusterIdentifier is set, it uses `${clusterIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+- *Default:* `${construct.node.path}-sg`.
 
 The name of the security group.
 
@@ -6607,7 +6607,7 @@ public readonly securityGroupName: string;
 ```
 
 - *Type:* string
-- *Default:* if clusterIdentifier is set, it uses `${clusterIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+- *Default:* `${construct.node.path}-sg`.
 
 The name of the security group.
 
@@ -7510,7 +7510,7 @@ public readonly securityGroupName: string;
 ```
 
 - *Type:* string
-- *Default:* if instanceIdentifier is set, it uses `${instanceIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+- *Default:* `${construct.node.path}-sg`.
 
 The name of the security group.
 
@@ -7720,7 +7720,7 @@ public readonly securityGroupName: string;
 ```
 
 - *Type:* string
-- *Default:* if instanceIdentifier is set, it uses `${instanceIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+- *Default:* `${construct.node.path}-sg`.
 
 The name of the security group.
 

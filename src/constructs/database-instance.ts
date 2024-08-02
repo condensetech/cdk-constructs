@@ -25,7 +25,7 @@ export interface DatabaseInstanceProps {
 
   /**
    * The name of the security group.
-   * @default - if instanceIdentifier is set, it uses `${instanceIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+   * @default - `${construct.node.path}-sg`.
    */
   readonly securityGroupName?: string;
 
@@ -98,7 +98,7 @@ export interface DatabaseInstanceProps {
  * - The default instance type is set to t3.small.
  * - The storage is always encrypted.
  * - If the networking configuration includes a bastion host, the database allows connections from the bastion host.
- * - The security group is created with the name `${instanceIdentifier}-sg` if the instance identifier is set, otherwise, it uses `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
+ * - The default security group name is `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
  */
 export class DatabaseInstance extends Construct implements IDatabase {
   /**

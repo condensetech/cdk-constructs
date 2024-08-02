@@ -24,7 +24,7 @@ export interface AuroraClusterProps {
 
   /**
    * The name of the security group.
-   * @default - if clusterIdentifier is set, it uses `${clusterIdentifier}-sg`, otherwise, it uses `${construct.node.path}-sg`.
+   * @default - `${construct.node.path}-sg`.
    */
   readonly securityGroupName?: string;
 
@@ -88,7 +88,7 @@ export interface AuroraClusterProps {
  * - The default instance type for the writer instance is set to a minimum instance type based on the engine type.
  * - The storage is always encrypted.
  * - If the networking configuration includes a bastion host, the cluster allows connections from the bastion host.
- * - The default security group name is set to `${clusterIdentifier}-sg` if the cluster identifier is set, otherwise, it uses `${construct.node.path}-sg`.
+ * - The default security group name is `${construct.node.path}-sg`. This allows for easier lookups when working with multiple stacks.
  */
 export class AuroraCluster extends Construct implements IDatabase {
   /**
@@ -134,8 +134,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.networking.vpc,
       allowAllOutbound: true,
-      securityGroupName:
-        props.securityGroupName ?? (props.clusterIdentifier ? `${props.clusterIdentifier}-sg` : `${this.node.path}-sg`),
+      securityGroupName: props.securityGroupName ?? `${this.node.path.toLowerCase().replace(/\//g, '-')}-sg`,
     });
 
     this.resource = new rds.DatabaseCluster(this, 'DB', {
