@@ -114,10 +114,13 @@ export class AuroraCluster extends Construct implements IDatabase {
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
 
+    const removalPolicy = props.removalPolicy ?? cdk.RemovalPolicy.RETAIN;
     this.parameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
       engine: props.engine,
       description: this.node.path,
-      removalPolicy: props.removalPolicy,
+      removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
+        ? removalPolicy
+        : cdk.RemovalPolicy.RETAIN,
       parameters: props.parameters,
     });
 
@@ -142,6 +145,7 @@ export class AuroraCluster extends Construct implements IDatabase {
       defaultDatabaseName: props.databaseName,
       parameterGroup: this.parameterGroup,
       storageEncrypted: true,
+      removalPolicy,
       backup,
     });
     if (props.networking.bastionHost) {

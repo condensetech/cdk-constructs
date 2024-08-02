@@ -71,6 +71,12 @@ export interface DatabaseInstanceProps {
    * @default - It uses the default applied by [rds.DatabaseInstanceProps#backupRetention]https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseInstanceProps.html#backupretention).
    */
   readonly backupRetention?: cdk.Duration;
+
+  /**
+   * The removal policy to apply when the cluster is removed.
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly removalPolicy?: cdk.RemovalPolicy;
 }
 
 /**
@@ -95,9 +101,14 @@ export class DatabaseInstance extends Construct implements IDatabase {
   constructor(scope: Construct, id: string, props: DatabaseInstanceProps) {
     super(scope, id);
 
+    const removalPolicy = props.removalPolicy ?? cdk.RemovalPolicy.RETAIN;
+
     const parameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
       engine: props.engine,
       description: this.node.path,
+      removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
+        ? removalPolicy
+        : cdk.RemovalPolicy.RETAIN,
     });
 
     const instanceType =
@@ -121,6 +132,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       multiAz: props.multiAz ?? false,
       storageEncrypted: true,
       backupRetention: props.backupRetention,
+      removalPolicy,
     });
     if (props.networking.bastionHost) {
       this.databaseInstance.connections.allowDefaultPortFrom(props.networking.bastionHost);
