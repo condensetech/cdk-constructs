@@ -108,7 +108,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       description: this.node.path,
       removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
         ? removalPolicy
-        : cdk.RemovalPolicy.RETAIN,
+        : cdk.RemovalPolicy.DESTROY,
     });
 
     const instanceType =
