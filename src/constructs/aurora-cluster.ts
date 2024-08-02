@@ -134,7 +134,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.networking.vpc,
       allowAllOutbound: true,
-      securityGroupName: props.securityGroupName ?? `${this.node.path.toLowerCase().replace(/\//g, '-')}-sg`,
+      securityGroupName: props.securityGroupName ?? `${this.node.path.replace(/\//g, '-')}-sg`,
     });
 
     this.resource = new rds.DatabaseCluster(this, 'DB', {

@@ -130,9 +130,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
     const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.networking.vpc,
       allowAllOutbound: true,
-      securityGroupName:
-        props.securityGroupName ??
-        (props.instanceIdentifier ? `${props.instanceIdentifier}-sg` : `${this.node.path}-sg`),
+      securityGroupName: props.securityGroupName ?? `${this.node.path.replace(/\//g, '-')}-sg`,
     });
 
     this.resource = new rds.DatabaseInstance(this, 'DB', {
