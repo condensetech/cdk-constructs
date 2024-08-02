@@ -43,6 +43,12 @@ export interface DatabaseInstanceProps {
   readonly credentialsSecretName?: string;
 
   /**
+   * The username of the database.
+   * @default db_user
+   */
+  readonly credentialsUsername?: string;
+
+  /**
    * The instance type of the database instance.
    * @default - db.t3.small.
    */
@@ -114,7 +120,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
     const instanceType =
       props.instanceType ?? ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
 
-    const credentials = rds.Credentials.fromUsername('db_user', {
+    const credentials = rds.Credentials.fromUsername(props.credentialsUsername ?? 'db_user', {
       secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
     });
 

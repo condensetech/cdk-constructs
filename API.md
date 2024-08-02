@@ -7303,11 +7303,13 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceName">instanceName</a></code> | <code>string</code> | The name of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
 
 ---
@@ -7372,6 +7374,19 @@ public readonly credentialsSecretName: string;
 - *Default:* `${construct.node.path}/secret`
 
 The name of the secret that stores the credentials of the database.
+
+---
+
+##### `credentialsUsername`<sup>Optional</sup> <a name="credentialsUsername" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsUsername"></a>
+
+```typescript
+public readonly credentialsUsername: string;
+```
+
+- *Type:* string
+- *Default:* db_user
+
+The username of the database.
 
 ---
 
@@ -7442,6 +7457,19 @@ If the database instance is multi-AZ.
 
 ---
 
+##### `removalPolicy`<sup>Optional</sup> <a name="removalPolicy" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.removalPolicy"></a>
+
+```typescript
+public readonly removalPolicy: RemovalPolicy;
+```
+
+- *Type:* aws-cdk-lib.RemovalPolicy
+- *Default:* RemovalPolicy.RETAIN
+
+The removal policy to apply when the cluster is removed.
+
+---
+
 ##### `storageType`<sup>Optional</sup> <a name="storageType" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.storageType"></a>
 
 ```typescript
@@ -7476,11 +7504,13 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceName">instanceName</a></code> | <code>string</code> | The name of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.analyticsReporting">analyticsReporting</a></code> | <code>boolean</code> | Include runtime versioning information in this Stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.crossRegionReferences">crossRegionReferences</a></code> | <code>boolean</code> | Enable this flag to allow native cross region stack references. |
@@ -7559,6 +7589,19 @@ The name of the secret that stores the credentials of the database.
 
 ---
 
+##### `credentialsUsername`<sup>Optional</sup> <a name="credentialsUsername" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsUsername"></a>
+
+```typescript
+public readonly credentialsUsername: string;
+```
+
+- *Type:* string
+- *Default:* db_user
+
+The username of the database.
+
+---
+
 ##### `databaseName`<sup>Optional</sup> <a name="databaseName" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName"></a>
 
 ```typescript
@@ -7623,6 +7666,19 @@ public readonly multiAz: boolean;
 - *Default:* false
 
 If the database instance is multi-AZ.
+
+---
+
+##### `removalPolicy`<sup>Optional</sup> <a name="removalPolicy" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.removalPolicy"></a>
+
+```typescript
+public readonly removalPolicy: RemovalPolicy;
+```
+
+- *Type:* aws-cdk-lib.RemovalPolicy
+- *Default:* RemovalPolicy.RETAIN
+
+The removal policy to apply when the cluster is removed.
 
 ---
 
