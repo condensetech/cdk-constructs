@@ -44,13 +44,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'condensetech.cdk-constructs',
     module: 'condensetech.cdk_constructs',
   },
-  // waiting for account created on ossrh
-  // publishToMaven: {
-  //   javaPackage: 'tech.condense.cdkconstructs',
-  //   mavenGroupId: 'tech.condense',
-  //   mavenArtifactId: 'cdkconstructs',
-  //   mavenEndpoint: 'https://s01.oss.sonatype.org',
-  // },
+  publishToMaven: {
+    javaPackage: 'tech.condense.cdkconstructs',
+    mavenGroupId: 'tech.condense',
+    mavenArtifactId: 'cdkconstructs',
+  },
   publishToNuget: {
     packageId: 'CondenseTech.CdkConstructs',
     dotNetNamespace: 'CondenseTech.CdkConstructs',

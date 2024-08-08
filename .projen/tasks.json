@@ -171,6 +171,9 @@
           "spawn": "package:js"
         },
         {
+          "spawn": "package:java"
+        },
+        {
           "spawn": "package:python"
         },
         {
@@ -196,6 +199,15 @@
       "steps": [
         {
           "exec": "jsii-pacmak -v --pack-command 'pnpm pack' --target go"
+        }
+      ]
+    },
+    "package:java": {
+      "name": "package:java",
+      "description": "Create java language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --pack-command 'pnpm pack' --target java"
         }
       ]
     },

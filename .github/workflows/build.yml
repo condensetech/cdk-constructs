@@ -119,6 +119,39 @@ jobs:
         run: cd .repo && npx projen package:js
       - name: Collect js Artifact
         run: mv .repo/dist dist
+  package-java:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions: {}
+    if: "! needs.build.outputs.self_mutation_happened"
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: "11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.6.0
+      - name: Prepare Repository
+        run: mv dist .repo
+      - name: Install Dependencies
+        run: cd .repo && pnpm i --frozen-lockfile
+      - name: Create java artifact
+        run: cd .repo && npx projen package:java
+      - name: Collect java Artifact
+        run: mv .repo/dist dist
   package-python:
     needs: build
     runs-on: ubuntu-latest
