@@ -48,6 +48,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     javaPackage: 'tech.condense.cdkconstructs',
     mavenGroupId: 'tech.condense',
     mavenArtifactId: 'cdkconstructs',
+    mavenEndpoint: 'https://s01.oss.sonatype.org',
   },
   publishToNuget: {
     packageId: 'CondenseTech.CdkConstructs',
