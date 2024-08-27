@@ -22,6 +22,12 @@ export interface EntrypointCertificateProps {
   readonly certificateArn?: string;
 
   /**
+   * The certificate to use.
+   * @default - A new certificate is created through ACM
+   */
+  readonly certificate: acm.ICertificate;
+
+  /**
    * Indicates whether the HTTPS certificate should be bound to all subdomains.
    * @default true
    */
@@ -57,8 +63,15 @@ export interface EntrypointProps {
   /**
    * Certificate properties for the entrypoint.
    * @default - A new certificate is created through ACM, bound to domainName, *.domainName.
+   * @deprecated Use `certificates` instead.
    */
   readonly certificate?: EntrypointCertificateProps;
+
+  /**
+   * Certificate properties for the entrypoint.
+   * @default - A new certificate is created through ACM, bound to domainName, *.domainName.
+   */
+  readonly certificates?: EntrypointCertificateProps[];
 
   /**
    * The name of the security group for the entrypoint.
@@ -119,7 +132,9 @@ export class Entrypoint extends Construct implements IEntrypoint {
       : undefined;
     this.domainName = props.domainName;
 
-    const albCertificate = this.createCertificate(props.certificate ?? {});
+    const albCertificates = (
+      props.certificates || ([props.certificate ?? {}] as Array<EntrypointCertificateProps>)
+    ).map(this.createCertificate);
 
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.networking.vpc,
@@ -154,7 +169,7 @@ export class Entrypoint extends Construct implements IEntrypoint {
 
     this.listener = this.alb.addListener('HTTPS', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
-      certificates: [albCertificate],
+      certificates: albCertificates,
       defaultAction: elbv2.ListenerAction.fixedResponse(403, {
         messageBody: 'Forbidden',
       }),
@@ -211,7 +226,25 @@ export class Entrypoint extends Construct implements IEntrypoint {
   }
 
   private createCertificate(props: EntrypointCertificateProps): acm.ICertificate {
+    if (props.certificate) {
+      if (props.certificateArn) {
+        cdk.Annotations.of(this).addError(
+          `Both certificate (${props.certificate}) and certificateArn (${props.certificateArn}) are provided. Choose one.`,
+        );
+      }
+      if (props.wildcardCertificate) {
+        cdk.Annotations.of(this).addError(
+          `wildcardCertificate cannot be set when a certificate (${props.certificate}) is provided.`,
+        );
+      }
+      return props.certificate;
+    }
     if (props.certificateArn) {
+      if (props.wildcardCertificate) {
+        cdk.Annotations.of(this).addError(
+          `wildcardCertificate cannot be set when a certificateArn (${props.certificateArn}) is provided.`,
+        );
+      }
       return acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
     }
     if (this.hostedZone) {
@@ -223,8 +256,6 @@ export class Entrypoint extends Construct implements IEntrypoint {
         validation: acm.CertificateValidation.fromDns(this.hostedZone),
       });
     }
-    throw new Error(
-      'Hosted Zone Props are required when certificate must be automatically provisioned. Please provide the hostedZoneProps or certificate.certificateArn.',
-    );
+    throw new Error('Hosted Zone Props are required when certificate must be automatically provisioned.');
   }
 }
