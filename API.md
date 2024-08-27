@@ -7976,8 +7976,22 @@ const entrypointCertificateProps: EntrypointCertificateProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificate">certificate</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The certificate to use. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificateArn">certificateArn</a></code> | <code>string</code> | The ARN of the existing certificate to use. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps.property.wildcardCertificate">wildcardCertificate</a></code> | <code>boolean</code> | Indicates whether the HTTPS certificate should be bound to all subdomains. |
+
+---
+
+##### `certificate`<sup>Required</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificate"></a>
+
+```typescript
+public readonly certificate: ICertificate;
+```
+
+- *Type:* aws-cdk-lib.aws_certificatemanager.ICertificate
+- *Default:* A new certificate is created through ACM
+
+The certificate to use.
 
 ---
 
@@ -8026,6 +8040,7 @@ const entrypointProps: EntrypointProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.certificate">certificate</a></code> | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a></code> | Certificate properties for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.certificates">certificates</a></code> | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>[]</code> | Certificate properties for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The name of the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
@@ -8059,13 +8074,28 @@ The networking configuration for the entrypoint.
 
 ---
 
-##### `certificate`<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointProps.property.certificate"></a>
+##### ~~`certificate`~~<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointProps.property.certificate"></a>
+
+- *Deprecated:* Use `certificates` instead.
 
 ```typescript
 public readonly certificate: EntrypointCertificateProps;
 ```
 
 - *Type:* <a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>
+- *Default:* A new certificate is created through ACM, bound to domainName, *.domainName.
+
+Certificate properties for the entrypoint.
+
+---
+
+##### `certificates`<sup>Optional</sup> <a name="certificates" id="@condensetech/cdk-constructs.EntrypointProps.property.certificates"></a>
+
+```typescript
+public readonly certificates: EntrypointCertificateProps[];
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>[]
 - *Default:* A new certificate is created through ACM, bound to domainName, *.domainName.
 
 Certificate properties for the entrypoint.
@@ -8174,6 +8204,7 @@ const entrypointStackProps: EntrypointStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.certificate">certificate</a></code> | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a></code> | Certificate properties for the entrypoint. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.certificates">certificates</a></code> | <code><a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>[]</code> | Certificate properties for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The name of the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.entrypointSecurityGroupName">entrypointSecurityGroupName</a></code> | <code>string</code> | The name of the security group for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStackProps.property.hostedZoneProps">hostedZoneProps</a></code> | <code>aws-cdk-lib.aws_route53.HostedZoneAttributes</code> | The Route 53 hosted zone attributes for the domain name. |
@@ -8218,13 +8249,28 @@ The networking configuration for the entrypoint.
 
 ---
 
-##### `certificate`<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointStackProps.property.certificate"></a>
+##### ~~`certificate`~~<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointStackProps.property.certificate"></a>
+
+- *Deprecated:* Use `certificates` instead.
 
 ```typescript
 public readonly certificate: EntrypointCertificateProps;
 ```
 
 - *Type:* <a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>
+- *Default:* A new certificate is created through ACM, bound to domainName, *.domainName.
+
+Certificate properties for the entrypoint.
+
+---
+
+##### `certificates`<sup>Optional</sup> <a name="certificates" id="@condensetech/cdk-constructs.EntrypointStackProps.property.certificates"></a>
+
+```typescript
+public readonly certificates: EntrypointCertificateProps[];
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.EntrypointCertificateProps">EntrypointCertificateProps</a>[]
 - *Default:* A new certificate is created through ACM, bound to domainName, *.domainName.
 
 Certificate properties for the entrypoint.
