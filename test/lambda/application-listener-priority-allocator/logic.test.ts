@@ -20,7 +20,6 @@ const client = new DynamoDBClient({
 const ctx: Context = { client, tableName };
 
 interface EventPayloadProps {
-  listenerArn: string;
   rulePath: string;
   priority?: number;
 }
@@ -78,14 +77,14 @@ describe('ApplicationListenerPriorityAllocator', () => {
     const scanResult = await client.send(
       new ScanCommand({
         TableName: tableName,
-        AttributesToGet: ['pk', 'sk'],
+        AttributesToGet: ['pk'],
         ConsistentRead: true,
       }),
     );
     const items = scanResult.Items || [];
     if (items.length > 0) {
       const deleteRequests = items.map((item) => ({
-        DeleteRequest: { Key: { pk: item.pk, sk: item.sk } },
+        DeleteRequest: { Key: { pk: item.pk } },
       }));
       await client.send(new BatchWriteItemCommand({ RequestItems: { [tableName]: deleteRequests } }));
     }
@@ -94,7 +93,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
   describe('onCreate', () => {
     it('raises an error if same rule is created twice', async () => {
       const payload = createPayload({
-        listenerArn: 'listenerArn',
         rulePath: 'rulePath',
       });
       await logic(ctx, payload);
@@ -107,7 +105,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
           await logic(
             ctx,
             createPayload({
-              listenerArn: 'listenerArn',
               rulePath: 'rulePath',
               priority: 10,
             }),
@@ -123,13 +120,12 @@ describe('ApplicationListenerPriorityAllocator', () => {
         await logic(
           ctx,
           createPayload({
-            listenerArn: 'listenerArn',
             rulePath: 'rulePath',
           }),
         );
-        await expect(
-          logic(ctx, createPayload({ listenerArn: 'listenerArn', rulePath: 'rulePath2', priority: 1 })),
-        ).rejects.toThrow(ListenerRulePriorityAlreadyTakenError);
+        await expect(logic(ctx, createPayload({ rulePath: 'rulePath2', priority: 1 }))).rejects.toThrow(
+          ListenerRulePriorityAlreadyTakenError,
+        );
       });
     });
 
@@ -139,7 +135,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
           await logic(
             ctx,
             createPayload({
-              listenerArn: 'listenerArn',
               rulePath: 'rulePath',
             }),
           ),
@@ -154,7 +149,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
         await logic(
           ctx,
           createPayload({
-            listenerArn: 'listenerArn',
             rulePath: 'rulePath',
           }),
         );
@@ -162,7 +156,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
           await logic(
             ctx,
             createPayload({
-              listenerArn: 'listenerArn',
               rulePath: 'rulePath2',
             }),
           ),
@@ -177,7 +170,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
         await logic(
           ctx,
           createPayload({
-            listenerArn: 'listenerArn',
             rulePath: 'rulePath',
             priority: 1,
           }),
@@ -185,7 +177,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
         await logic(
           ctx,
           createPayload({
-            listenerArn: 'listenerArn',
             rulePath: 'rulePath2',
             priority: 2,
           }),
@@ -194,7 +185,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
           await logic(
             ctx,
             createPayload({
-              listenerArn: 'listenerArn',
               rulePath: 'rulePath3',
             }),
           ),
@@ -209,7 +199,6 @@ describe('ApplicationListenerPriorityAllocator', () => {
         await logic(
           ctx,
           createPayload({
-            listenerArn: 'listenerArn',
             rulePath: 'rulePath',
           }),
         );
@@ -217,12 +206,11 @@ describe('ApplicationListenerPriorityAllocator', () => {
           logic(
             ctx,
             createPayload({
-              listenerArn: 'listenerArn',
               rulePath: 'rulePath',
             }),
           ),
         ).rejects.toThrow(ListenerRuleAlreadyExistsError);
-        expect(await logic(ctx, createPayload({ listenerArn: 'listenerArn', rulePath: 'rulePath2' }))).toMatchObject({
+        expect(await logic(ctx, createPayload({ rulePath: 'rulePath2' }))).toMatchObject({
           Data: { priority: 2 },
         });
       });
@@ -231,7 +219,7 @@ describe('ApplicationListenerPriorityAllocator', () => {
 
   describe('onDelete', () => {
     it('removes the listenerRule and dealloc the priority from the db', async () => {
-      const id = { listenerArn: 'listenerArn', rulePath: 'rulePath' };
+      const id = { rulePath: 'rulePath' };
       await logic(ctx, createPayload(id));
       await logic(ctx, deletePayload(id));
       expect(await logic(ctx, createPayload(id))).toMatchObject({
@@ -242,7 +230,7 @@ describe('ApplicationListenerPriorityAllocator', () => {
 
   describe('onUpdate', () => {
     it('does not do anything if priority does not actually change', async () => {
-      const id = { listenerArn: 'listenerArn', rulePath: 'rulePath' };
+      const id = { rulePath: 'rulePath' };
       expect(await logic(ctx, createPayload(id))).toMatchObject({
         Data: { priority: 1 },
       });
@@ -252,7 +240,7 @@ describe('ApplicationListenerPriorityAllocator', () => {
     });
 
     it('replaces the priority if it changes', async () => {
-      const id = { listenerArn: 'listenerArn', rulePath: 'rulePath' };
+      const id = { rulePath: 'rulePath' };
       expect(await logic(ctx, createPayload(id))).toMatchObject({
         Data: { priority: 1 },
       });
@@ -265,7 +253,7 @@ describe('ApplicationListenerPriorityAllocator', () => {
     });
 
     it('does not do anything if explicit priority is unset', async () => {
-      const id = { listenerArn: 'listenerArn', rulePath: 'rulePath' };
+      const id = { rulePath: 'rulePath' };
       expect(await logic(ctx, createPayload({ ...id, priority: 11 }))).toMatchObject({
         Data: { priority: 11 },
       });

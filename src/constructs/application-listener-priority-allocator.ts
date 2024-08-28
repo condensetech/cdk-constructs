@@ -13,11 +13,6 @@ import { Construct } from 'constructs';
  */
 export interface AllocatePriorityProps {
   /**
-   * The listener to allocate the priority to.
-   */
-  readonly listener: elbv2.IApplicationListener;
-
-  /**
    * The priority to allocate.
    * @default a priority will be allocated automatically.
    */
@@ -25,14 +20,30 @@ export interface AllocatePriorityProps {
 }
 
 /**
- * Properties for the ApplicationListenerPriorityAllocator construct.
+ * Overridden config for the ApplicationListenerPriorityAllocator construct.
  */
-export interface ApplicationListenerPriorityAllocatorProps {
+export interface ApplicationListenerPriorityAllocatorConfig {
   /**
    * The initial priority value to start from.
    * @default 1
    */
   readonly priorityInitialValue?: number;
+
+  /**
+   * The removal policy to apply to the DynamoDB table.
+   * @default - `RemovalPolicy.DESTROY`
+   */
+  readonly removalPolicy?: cdk.RemovalPolicy;
+}
+
+/**
+ * Properties for the ApplicationListenerPriorityAllocator construct.
+ */
+export interface ApplicationListenerPriorityAllocatorProps extends ApplicationListenerPriorityAllocatorConfig {
+  /**
+   * Application Load Balancer Listener to allocate priorities for.
+   */
+  readonly listener: elbv2.IApplicationListener;
 }
 
 /**
@@ -44,36 +55,24 @@ export interface ApplicationListenerPriorityAllocatorProps {
  */
 export class ApplicationListenerPriorityAllocator extends Construct {
   /**
-   * Returns the singleton instance of the ApplicationListenerPriorityAllocator for the stack.
-   * @param scope The scope of the construct.
-   * @returns The singleton instance of the ApplicationListenerPriorityAllocator for the stack.
-   */
-  static of(scope: Construct): ApplicationListenerPriorityAllocator {
-    const stack = cdk.Stack.of(scope);
-    const globallyUniqueId = 'ApplicationListenerPriorityAllocator';
-    return (
-      (stack.node.tryFindChild(globallyUniqueId) as ApplicationListenerPriorityAllocator) ??
-      new ApplicationListenerPriorityAllocator(stack, globallyUniqueId)
-    );
-  }
-
-  /**
    * The service token to use to reference the custom resource.
    */
   readonly serviceToken: string;
 
-  constructor(scope: Construct, id: string, props?: ApplicationListenerPriorityAllocatorProps) {
+  constructor(scope: Construct, id: string, props: ApplicationListenerPriorityAllocatorProps) {
     super(scope, id);
 
     const table = new ddb.Table(this, 'Table', {
+      tableName: `app_listener_priorities_${cdk.Names.uniqueResourceName(props.listener, { maxLength: 220 })}`,
       partitionKey: { name: 'pk', type: ddb.AttributeType.STRING },
-      sortKey: { name: 'sk', type: ddb.AttributeType.STRING },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.DESTROY,
     });
 
     const onEventHandler = new lambdaNode.NodejsFunction(this, 'handler', {
+      functionName: `app_listener_priority_alloc_${cdk.Names.uniqueResourceName(props.listener, { maxLength: 220 })}`,
       runtime: lambda.Runtime.NODEJS_20_X,
       environment: {
+        LISTENER_ARN: props.listener.listenerArn,
         TABLE_NAME: table.tableName,
         PRIORITY_INIT: props?.priorityInitialValue?.toString() ?? '1',
       },
@@ -87,7 +86,7 @@ export class ApplicationListenerPriorityAllocator extends Construct {
   }
 
   /**
-   * Allocates a priority to an application listener rule.
+   * Allocates the priority of an application listener rule
    * @param scope The scope of the construct.
    * @param id The ID of the listener rule to allocate the priority to.
    * @param props
@@ -98,7 +97,6 @@ export class ApplicationListenerPriorityAllocator extends Construct {
       serviceToken: this.serviceToken,
       properties: {
         rulePath: `${scope.node.path}/${id}`,
-        listenerArn: props.listener.listenerArn,
         priority: props.priority,
       },
     });

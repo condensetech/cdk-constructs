@@ -26,14 +26,13 @@ import {
 const PRIORITY_INIT = parseInt(process.env.PRIORITY_INIT || '1', 10);
 const PRIORITY_STEP = 1;
 
-async function createMaxPriority(ctx: Context, listenerArn: string): Promise<number> {
+async function createMaxPriority(ctx: Context): Promise<number> {
   try {
     await ctx.client.send(
       new PutItemCommand({
         TableName: ctx.tableName,
         Item: {
-          pk: { S: `listener#${listenerArn}` },
-          sk: { S: 'max' },
+          pk: { S: 'max' },
           priority: { N: PRIORITY_INIT.toString() },
         },
         ConditionExpression: 'attribute_not_exists(pk)',
@@ -42,19 +41,18 @@ async function createMaxPriority(ctx: Context, listenerArn: string): Promise<num
     return PRIORITY_INIT;
   } catch (e) {
     if ((e as Error).name === 'ConditionalCheckFailedException') {
-      throw new PriorityAlreadySetError(listenerArn);
+      throw new PriorityAlreadySetError();
     }
     throw e;
   }
 }
 
-async function updateMaxPriority(ctx: Context, listenerArn: string): Promise<number> {
+async function updateMaxPriority(ctx: Context): Promise<number> {
   const { Attributes } = await ctx.client.send(
     new UpdateItemCommand({
       TableName: ctx.tableName,
       Key: {
-        pk: { S: `listener#${listenerArn}` },
-        sk: { S: 'max' },
+        pk: { S: 'max' },
       },
       UpdateExpression: 'ADD priority :one',
       ExpressionAttributeValues: {
@@ -66,14 +64,13 @@ async function updateMaxPriority(ctx: Context, listenerArn: string): Promise<num
   return parseInt(Attributes?.priority.N!);
 }
 
-async function upsertFreePrioritiesList(ctx: Context, listenerArn: string): Promise<void> {
+async function upsertFreePrioritiesList(ctx: Context): Promise<void> {
   try {
     await ctx.client.send(
       new PutItemCommand({
         TableName: ctx.tableName,
         Item: {
-          pk: { S: `listener#${listenerArn}` },
-          sk: { S: 'free' },
+          pk: { S: 'free' },
           priorities: { L: [] },
         },
         ConditionExpression: 'attribute_not_exists(pk)',
@@ -87,14 +84,13 @@ async function upsertFreePrioritiesList(ctx: Context, listenerArn: string): Prom
   }
 }
 
-async function fetchFreePriorityFromList(ctx: Context, listenerArn: string): Promise<number | undefined> {
+async function fetchFreePriorityFromList(ctx: Context): Promise<number | undefined> {
   try {
     const { Attributes } = await ctx.client.send(
       new UpdateItemCommand({
         TableName: ctx.tableName,
         Key: {
-          pk: { S: `listener#${listenerArn}` },
-          sk: { S: 'free' },
+          pk: { S: 'free' },
         },
         UpdateExpression: 'REMOVE priorities[0]',
         ReturnValues: 'ALL_OLD',
@@ -111,11 +107,10 @@ async function fetchFreePriorityFromList(ctx: Context, listenerArn: string): Pro
   }
 }
 
-const deallocPriorityPayload = (ctx: Context, listenerArn: string, priority: number): Update => ({
+const deallocPriorityPayload = (ctx: Context, priority: number): Update => ({
   TableName: ctx.tableName,
   Key: {
-    pk: { S: `listener#${listenerArn}` },
-    sk: { S: 'free' },
+    pk: { S: 'free' },
   },
   UpdateExpression: 'SET priorities = list_append(priorities, :priorities)',
   ExpressionAttributeValues: {
@@ -123,36 +118,34 @@ const deallocPriorityPayload = (ctx: Context, listenerArn: string, priority: num
   },
 });
 
-export async function deallocPriority(ctx: Context, listenerArn: string, priority: number): Promise<void> {
-  await upsertFreePrioritiesList(ctx, listenerArn);
-  await ctx.client.send(new UpdateItemCommand(deallocPriorityPayload(ctx, listenerArn, priority)));
+export async function deallocPriority(ctx: Context, priority: number): Promise<void> {
+  await upsertFreePrioritiesList(ctx);
+  await ctx.client.send(new UpdateItemCommand(deallocPriorityPayload(ctx, priority)));
 }
 
-async function incrMaxPriority(ctx: Context, listenerArn: string): Promise<number> {
+async function incrMaxPriority(ctx: Context): Promise<number> {
   try {
-    return await createMaxPriority(ctx, listenerArn);
+    return await createMaxPriority(ctx);
   } catch (e) {
     if (e instanceof PriorityAlreadySetError) {
-      return updateMaxPriority(ctx, listenerArn);
+      return updateMaxPriority(ctx);
     }
     throw e;
   }
 }
 
-export async function fetchFreePriority(ctx: Context, listenerArn: string): Promise<number> {
-  return (await fetchFreePriorityFromList(ctx, listenerArn)) ?? (await incrMaxPriority(ctx, listenerArn));
+export async function fetchFreePriority(ctx: Context): Promise<number> {
+  return (await fetchFreePriorityFromList(ctx)) ?? (await incrMaxPriority(ctx));
 }
 
 const createListenerRulePriorityPayload = (ctx: Context, props: ListenerRuleAttributes): Put => ({
   TableName: ctx.tableName,
   Item: {
-    pk: { S: `listener#${props.listenerArn}` },
-    sk: { S: `priority#${props.priority}` },
-    listener: { S: props.listenerArn },
+    pk: { S: `priority#${props.priority}` },
     rule: { S: props.rulePath },
     priority: { N: props.priority.toString() },
   },
-  ConditionExpression: 'attribute_not_exists(sk)',
+  ConditionExpression: 'attribute_not_exists(pk)',
 });
 export async function createNewListenerRule(ctx: Context, props: ListenerRuleAttributes): Promise<void> {
   try {
@@ -163,13 +156,11 @@ export async function createNewListenerRule(ctx: Context, props: ListenerRuleAtt
             Put: {
               TableName: ctx.tableName,
               Item: {
-                pk: { S: `listener#${props.listenerArn}` },
-                sk: { S: `rule#${props.rulePath}` },
-                listener: { S: props.listenerArn },
+                pk: { S: `rule#${props.rulePath}` },
                 rule: { S: props.rulePath },
                 priority: { N: props.priority.toString() },
               },
-              ConditionExpression: 'attribute_not_exists(sk)',
+              ConditionExpression: 'attribute_not_exists(pk)',
             },
           },
           {
@@ -182,13 +173,10 @@ export async function createNewListenerRule(ctx: Context, props: ListenerRuleAtt
     if (e instanceof TransactionCanceledException) {
       const codes = e.CancellationReasons ? e.CancellationReasons?.map((reason) => reason?.Code) : [];
       if (codes[0] === 'ConditionalCheckFailed') {
-        throw new ListenerRuleAlreadyExistsError({ listenerArn: props.listenerArn, rulePath: props.rulePath });
+        throw new ListenerRuleAlreadyExistsError({ rulePath: props.rulePath });
       }
       if (codes[1] === 'ConditionalCheckFailed') {
-        throw new ListenerRulePriorityAlreadyTakenError(
-          { listenerArn: props.listenerArn, rulePath: props.rulePath },
-          props.priority,
-        );
+        throw new ListenerRulePriorityAlreadyTakenError({ rulePath: props.rulePath }, props.priority);
       }
       throw e;
     }
@@ -201,8 +189,7 @@ export async function fetchListenerRulePriority(ctx: Context, props: ListenerRul
     new GetItemCommand({
       TableName: ctx.tableName,
       Key: {
-        pk: { S: `listener#${props.listenerArn}` },
-        sk: { S: `rule#${props.rulePath}` },
+        pk: { S: `rule#${props.rulePath}` },
       },
     }),
   );
@@ -215,12 +202,11 @@ export async function fetchListenerRulePriority(ctx: Context, props: ListenerRul
 const deleteListenerRulePriorityPayload = (ctx: Context, props: ListenerPriorityId): Delete => ({
   TableName: ctx.tableName,
   Key: {
-    pk: { S: `listener#${props.listenerArn}` },
-    sk: { S: `priority#${props.priority}` },
+    pk: { S: `priority#${props.priority}` },
   },
 });
 export async function destroyListenerRule(ctx: Context, props: ListenerRuleAttributes): Promise<void> {
-  await upsertFreePrioritiesList(ctx, props.listenerArn);
+  await upsertFreePrioritiesList(ctx);
   await ctx.client.send(
     new TransactWriteItemsCommand({
       TransactItems: [
@@ -228,8 +214,7 @@ export async function destroyListenerRule(ctx: Context, props: ListenerRuleAttri
           Delete: {
             TableName: ctx.tableName,
             Key: {
-              pk: { S: `listener#${props.listenerArn}` },
-              sk: { S: `rule#${props.rulePath}` },
+              pk: { S: `rule#${props.rulePath}` },
             },
           },
         },
@@ -237,7 +222,7 @@ export async function destroyListenerRule(ctx: Context, props: ListenerRuleAttri
           Delete: deleteListenerRulePriorityPayload(ctx, props),
         },
         {
-          Update: deallocPriorityPayload(ctx, props.listenerArn, props.priority),
+          Update: deallocPriorityPayload(ctx, props.priority),
         },
       ],
     }),
@@ -248,7 +233,7 @@ export async function replaceListenerRulePriority(
   ctx: Context,
   props: ReplaceListenerRulePriorityProps,
 ): Promise<void> {
-  await upsertFreePrioritiesList(ctx, props.listenerArn);
+  await upsertFreePrioritiesList(ctx);
   try {
     await ctx.client.send(
       new TransactWriteItemsCommand({
@@ -257,8 +242,7 @@ export async function replaceListenerRulePriority(
             Update: {
               TableName: ctx.tableName,
               Key: {
-                pk: { S: `listener#${props.listenerArn}` },
-                sk: { S: `rule#${props.rulePath}` },
+                pk: { S: `rule#${props.rulePath}` },
               },
               UpdateExpression: 'SET priority = :priority',
               ExpressionAttributeValues: {
@@ -271,12 +255,11 @@ export async function replaceListenerRulePriority(
           },
           {
             Delete: deleteListenerRulePriorityPayload(ctx, {
-              listenerArn: props.listenerArn,
               priority: props.oldPriority,
             }),
           },
           {
-            Update: deallocPriorityPayload(ctx, props.listenerArn, props.oldPriority),
+            Update: deallocPriorityPayload(ctx, props.oldPriority),
           },
         ],
       }),
@@ -285,10 +268,7 @@ export async function replaceListenerRulePriority(
     if (e instanceof TransactionCanceledException) {
       const codes = e.CancellationReasons ? e.CancellationReasons?.map((reason) => reason?.Code) : [];
       if (codes[1] === 'ConditionalCheckFailed') {
-        throw new ListenerRulePriorityAlreadyTakenError(
-          { listenerArn: props.listenerArn, rulePath: props.rulePath },
-          props.priority,
-        );
+        throw new ListenerRulePriorityAlreadyTakenError({ rulePath: props.rulePath }, props.priority);
       }
       throw e;
     }

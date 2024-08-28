@@ -6,17 +6,14 @@ export interface Context {
 }
 
 export interface ListenerRuleId {
-  listenerArn: string;
   rulePath: string;
 }
 
 export interface ListenerPriorityId {
-  listenerArn: string;
   priority: number;
 }
 
 export interface ListenerRuleAttributes {
-  listenerArn: string;
   priority: number;
   rulePath: string;
 }

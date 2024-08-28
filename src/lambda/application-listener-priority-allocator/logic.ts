@@ -11,7 +11,6 @@ import { Context } from './interfaces';
 import { generatePhysicalResourceId } from './util';
 
 interface ResourceProperties {
-  listenerArn: string;
   priority?: number;
   rulePath: string;
 }
@@ -21,15 +20,11 @@ interface OnCreateResponse {
 }
 
 const parseResourceProperties = (event: CdkCustomResourceEvent): ResourceProperties => {
-  const { listenerArn, priority, rulePath } = event.ResourceProperties;
-  if (!listenerArn) {
-    throw new Error('Listener ARN is required.');
-  }
+  const { priority, rulePath } = event.ResourceProperties;
   if (!rulePath) {
     throw new Error('Rule path is required.');
   }
   return {
-    listenerArn,
     priority: priority ? parseInt(priority) : undefined,
     rulePath,
   };
@@ -40,7 +35,6 @@ async function onDelete(ctx: Context, event: CloudFormationCustomResourceDeleteE
   const priority =
     props.priority ??
     (await ddbRepository.fetchListenerRulePriority(ctx, {
-      listenerArn: props.listenerArn,
       rulePath: props.rulePath,
     }));
   await ddbRepository.destroyListenerRule(ctx, {
@@ -61,7 +55,7 @@ async function onCreate(
       priority,
     });
   } else {
-    priority = await ddbRepository.fetchFreePriority(ctx, props.listenerArn);
+    priority = await ddbRepository.fetchFreePriority(ctx);
     while (true) {
       try {
         await ddbRepository.createNewListenerRule(ctx, {
@@ -71,10 +65,10 @@ async function onCreate(
         break;
       } catch (e) {
         if (e instanceof ListenerRulePriorityAlreadyTakenError) {
-          priority = await ddbRepository.fetchFreePriority(ctx, props.listenerArn);
+          priority = await ddbRepository.fetchFreePriority(ctx);
         } else if (e instanceof ListenerRuleAlreadyExistsError) {
           // deallocate priority if rule already exists
-          await ddbRepository.deallocPriority(ctx, props.listenerArn, priority);
+          await ddbRepository.deallocPriority(ctx, priority);
           throw e;
         } else {
           throw e;
