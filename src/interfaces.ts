@@ -153,6 +153,11 @@ export interface IEntrypoint {
   readonly alb: elbv2.IApplicationLoadBalancer;
 
   /**
+   * The Application Listener priority allocator for the entrypoint.
+   */
+  readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+
+  /**
    * Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way.
    */
   referenceListener(scope: Construct, id: string): elbv2.IApplicationListener;
@@ -170,4 +175,31 @@ export interface IEntrypoint {
     id: string,
     props: AllocateApplicationListenerRuleProps,
   ): elbv2.ApplicationListenerRule;
+}
+
+/**
+ * Properties for allocating a priority to an application listener rule.
+ */
+export interface AllocatePriorityProps {
+  /**
+   * The priority to allocate.
+   * @default a priority will be allocated automatically.
+   */
+  readonly priority?: number;
+}
+
+export interface IApplicationListenerPriorityAllocator {
+  /**
+   * The service token to use to reference the custom resource.
+   */
+  readonly serviceToken: string;
+
+  /**
+   * Allocates the priority of an application listener rule
+   * @param scope The scope of the construct.
+   * @param id The ID of the listener rule to allocate the priority to.
+   * @param props
+   * @returns The allocated priority.
+   */
+  allocatePriority(scope: Construct, id: string, props: AllocatePriorityProps): number;
 }

@@ -7,17 +7,7 @@ import {
   custom_resources as customResources,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-
-/**
- * Properties for allocating a priority to an application listener rule.
- */
-export interface AllocatePriorityProps {
-  /**
-   * The priority to allocate.
-   * @default a priority will be allocated automatically.
-   */
-  readonly priority?: number;
-}
+import { AllocatePriorityProps, IApplicationListenerPriorityAllocator } from '../interfaces';
 
 /**
  * Overridden config for the ApplicationListenerPriorityAllocator construct.
@@ -46,6 +36,31 @@ export interface ApplicationListenerPriorityAllocatorProps extends ApplicationLi
   readonly listener: elbv2.IApplicationListener;
 }
 
+abstract class ApplicationListenerPriorityAllocatorBase
+  extends Construct
+  implements IApplicationListenerPriorityAllocator
+{
+  abstract readonly serviceToken: string;
+
+  /**
+   * Allocates the priority of an application listener rule
+   * @param scope The scope of the construct.
+   * @param id The ID of the listener rule to allocate the priority to.
+   * @param props
+   * @returns The allocated priority.
+   */
+  allocatePriority(scope: Construct, id: string, props: AllocatePriorityProps): number {
+    const cr = new cdk.CustomResource(scope, id, {
+      serviceToken: this.serviceToken,
+      properties: {
+        rulePath: `${scope.node.path}/${id}`,
+        priority: props.priority,
+      },
+    });
+    return cdk.Token.asNumber(cr.getAtt('priority'));
+  }
+}
+
 /**
  * This custom resource allows to generate unique priorities for application listener rules.
  *
@@ -53,7 +68,14 @@ export interface ApplicationListenerPriorityAllocatorProps extends ApplicationLi
  * - if no priority is set, one will be generated
  * - if a priority is set, an error will be thrown if the priority is already taken
  */
-export class ApplicationListenerPriorityAllocator extends Construct {
+export class ApplicationListenerPriorityAllocator extends ApplicationListenerPriorityAllocatorBase {
+  static fromServiceToken(scope: Construct, id: string, serviceToken: string): IApplicationListenerPriorityAllocator {
+    class Imported extends ApplicationListenerPriorityAllocatorBase {
+      readonly serviceToken = serviceToken;
+    }
+    return new Imported(scope, id);
+  }
+
   /**
    * The service token to use to reference the custom resource.
    */
@@ -83,23 +105,6 @@ export class ApplicationListenerPriorityAllocator extends Construct {
       onEventHandler,
     });
     this.serviceToken = provider.serviceToken;
-  }
-
-  /**
-   * Allocates the priority of an application listener rule
-   * @param scope The scope of the construct.
-   * @param id The ID of the listener rule to allocate the priority to.
-   * @param props
-   * @returns The allocated priority.
-   */
-  allocatePriority(scope: Construct, id: string, props: AllocatePriorityProps): number {
-    const cr = new cdk.CustomResource(scope, id, {
-      serviceToken: this.serviceToken,
-      properties: {
-        rulePath: `${scope.node.path}/${id}`,
-        priority: props.priority,
-      },
-    });
-    return cdk.Token.asNumber(cr.getAtt('priority'));
+    new cdk.CfnOutput(this, 'ServiceToken', { value: this.serviceToken });
   }
 }

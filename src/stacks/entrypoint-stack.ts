@@ -47,6 +47,10 @@ export class EntrypointStack extends Stack implements IEntrypoint {
     return this.construct.domainName;
   }
 
+  get priorityAllocator() {
+    return this.construct.priorityAllocator;
+  }
+
   referenceListener(scope: Construct, id: string): elb.IApplicationListener {
     return this.construct.referenceListener(scope, id);
   }

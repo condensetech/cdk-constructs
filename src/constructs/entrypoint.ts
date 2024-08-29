@@ -12,7 +12,12 @@ import {
   ApplicationListenerPriorityAllocator,
   ApplicationListenerPriorityAllocatorConfig,
 } from './application-listener-priority-allocator';
-import { AllocateApplicationListenerRuleProps, IEntrypoint, INetworking } from '../interfaces';
+import {
+  AllocateApplicationListenerRuleProps,
+  IApplicationListenerPriorityAllocator,
+  IEntrypoint,
+  INetworking,
+} from '../interfaces';
 
 export interface EntrypointCertificateProps {
   /**
@@ -98,6 +103,45 @@ export interface EntrypointProps {
   readonly priorityAllocator?: ApplicationListenerPriorityAllocatorConfig;
 }
 
+abstract class EntrypointBase extends Construct implements IEntrypoint {
+  abstract readonly listener: elbv2.IApplicationListener;
+  abstract readonly securityGroup: ec2.ISecurityGroup;
+  abstract readonly domainName: string;
+  abstract readonly alb: cdk.aws_elasticloadbalancingv2.IApplicationLoadBalancer;
+  abstract readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+
+  referenceListener(scope: Construct, id: string): elbv2.IApplicationListener {
+    return elbv2.ApplicationListener.fromApplicationListenerAttributes(scope, id, {
+      listenerArn: this.listener.listenerArn,
+      securityGroup: ec2.SecurityGroup.fromSecurityGroupId(scope, `${id}-SG`, this.securityGroup.securityGroupId),
+    });
+  }
+
+  allocateListenerRule(
+    scope: Construct,
+    id: string,
+    props: AllocateApplicationListenerRuleProps,
+  ): elbv2.ApplicationListenerRule {
+    const listener = this.referenceListener(scope, `${id}-Listener`);
+    const priority = this.priorityAllocator.allocatePriority(scope, `${id}-Priority`, {
+      priority: props.priority,
+    });
+    return new elbv2.ApplicationListenerRule(scope, id, {
+      ...props,
+      listener,
+      priority,
+    });
+  }
+}
+
+export interface EntrypointFromAttributes {
+  readonly loadBalancerArn: string;
+  readonly securityGroupId: string;
+  readonly listenerArn: string;
+  readonly domainName: string;
+  readonly priorityAllocatorServiceToken: string;
+}
+
 /**
  * The Entrypoint construct creates an Application Load Balancer (ALB) that serves as the centralized entry point for all applications.
  * This ALB is shared across multiple applications, primarily to optimize infrastructure costs by reducing the need for multiple load balancers.
@@ -116,13 +160,42 @@ export interface EntrypointProps {
  * It is also used to add an additional "Name" tag to the load balancer.
  * This helps to use [ApplicationLoadBalancer#lookup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer.html#static-fromwbrlookupscope-id-options) to find the load balancer by name.
  */
-export class Entrypoint extends Construct implements IEntrypoint {
+export class Entrypoint extends EntrypointBase {
+  static fromAttributes(scope: Construct, id: string, props: EntrypointFromAttributes): IEntrypoint {
+    class Import extends EntrypointBase {
+      readonly domainName: string = props.domainName;
+      readonly alb: elbv2.IApplicationLoadBalancer;
+      readonly listener: elbv2.IApplicationListener;
+      readonly securityGroup: ec2.ISecurityGroup;
+      readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+
+      constructor() {
+        super(scope, id);
+        this.securityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SecurityGroup', props.securityGroupId);
+        this.alb = elbv2.ApplicationLoadBalancer.fromApplicationLoadBalancerAttributes(this, 'Alb', {
+          loadBalancerArn: props.loadBalancerArn,
+          securityGroupId: props.securityGroupId,
+        });
+        this.listener = elbv2.ApplicationListener.fromApplicationListenerAttributes(this, 'Listener', {
+          listenerArn: props.listenerArn,
+          securityGroup: this.securityGroup,
+        });
+        this.priorityAllocator = ApplicationListenerPriorityAllocator.fromServiceToken(
+          this,
+          'PriorityAllocator',
+          props.priorityAllocatorServiceToken,
+        );
+      }
+    }
+    return new Import();
+  }
+
   readonly listener: elbv2.IApplicationListener;
   readonly domainName: string;
   readonly alb: elbv2.IApplicationLoadBalancer;
   readonly securityGroup: ec2.ISecurityGroup;
   private readonly hostedZone?: r53.IHostedZone;
-  private readonly priorityAllocator: ApplicationListenerPriorityAllocator;
+  readonly priorityAllocator: IApplicationListenerPriorityAllocator;
 
   constructor(scope: Construct, id: string, props: EntrypointProps) {
     super(scope, id);
@@ -191,29 +264,6 @@ export class Entrypoint extends Construct implements IEntrypoint {
     this.priorityAllocator = new ApplicationListenerPriorityAllocator(this, 'PriorityAllocator', {
       listener: this.listener,
       ...props.priorityAllocator,
-    });
-  }
-
-  referenceListener(scope: Construct, id: string): elbv2.IApplicationListener {
-    return elbv2.ApplicationListener.fromApplicationListenerAttributes(scope, id, {
-      listenerArn: this.listener.listenerArn,
-      securityGroup: ec2.SecurityGroup.fromSecurityGroupId(scope, `${id}-SG`, this.securityGroup.securityGroupId),
-    });
-  }
-
-  allocateListenerRule(
-    scope: Construct,
-    id: string,
-    props: AllocateApplicationListenerRuleProps,
-  ): elbv2.ApplicationListenerRule {
-    const listener = this.referenceListener(scope, `${id}-Listener`);
-    const priority = this.priorityAllocator.allocatePriority(scope, `${id}-Priority`, {
-      priority: props.priority,
-    });
-    return new elbv2.ApplicationListenerRule(scope, id, {
-      ...props,
-      listener,
-      priority,
     });
   }
 
