@@ -53,7 +53,7 @@ abstract class ApplicationListenerPriorityAllocatorBase
     const cr = new cdk.CustomResource(scope, id, {
       serviceToken: this.serviceToken,
       properties: {
-        rulePath: `${scope.node.path}/${id}`,
+        rulePath: `${cdk.Stack.of(scope).region}/${cdk.Stack.of(scope).stackName}/${scope.node.path}/${id}`,
         priority: props.priority,
       },
     });
