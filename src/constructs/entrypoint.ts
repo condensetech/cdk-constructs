@@ -207,7 +207,7 @@ export class Entrypoint extends EntrypointBase {
 
     const albCertificates = (
       props.certificates || ([props.certificate ?? {}] as Array<EntrypointCertificateProps>)
-    ).map(this.createCertificate);
+    ).map((cert) => this.createCertificate(cert));
 
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.networking.vpc,
