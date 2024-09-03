@@ -91,7 +91,7 @@ export class ApplicationListenerPriorityAllocator extends ApplicationListenerPri
     });
 
     const onEventHandler = new lambdaNode.NodejsFunction(this, 'handler', {
-      functionName: `app_listener_priority_alloc_${cdk.Names.uniqueResourceName(props.listener, { maxLength: 220 })}`,
+      functionName: `app_listener_priority_alloc_${cdk.Names.uniqueResourceName(props.listener, { maxLength: 36 })}`,
       runtime: lambda.Runtime.NODEJS_20_X,
       environment: {
         LISTENER_ARN: props.listener.listenerArn,
