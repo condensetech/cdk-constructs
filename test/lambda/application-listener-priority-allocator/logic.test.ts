@@ -1,11 +1,11 @@
 import { BatchWriteItemCommand, DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 import type { CdkCustomResourceEvent } from 'aws-lambda';
-import { logic } from './../../../src/lambda/application-listener-priority-allocator/logic';
 import {
   ListenerRuleAlreadyExistsError,
   ListenerRulePriorityAlreadyTakenError,
 } from '../../../src/lambda/application-listener-priority-allocator/errors';
 import { Context } from '../../../src/lambda/application-listener-priority-allocator/interfaces';
+import { logic } from './../../../src/lambda/application-listener-priority-allocator/logic';
 
 const tableName = 'alb_listener_priorities';
 
