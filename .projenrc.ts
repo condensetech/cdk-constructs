@@ -61,6 +61,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
 //+ See: https://github.com/projen/projen/issues/3070
 project.package.addField('packageManager', `pnpm@${PNPM_VERSION}`);
 project.npmrc.addConfig('package-manager-strict', 'false'); // allow minor/patch version updates of pnpm on dev boxes
-project.gitignore.exclude('/condensetechcdkconstructs'); // exclude the generated package directory for go
 //- See: https://github.com/projen/projen/issues/3070
+project.gitignore.exclude('/condensetechcdkconstructs'); // exclude the generated package directory for go
 project.synth();
