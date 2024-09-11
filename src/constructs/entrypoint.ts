@@ -30,7 +30,7 @@ export interface EntrypointCertificateProps {
    * The certificate to use.
    * @default - A new certificate is created through ACM
    */
-  readonly certificate: acm.ICertificate;
+  readonly certificate?: acm.ICertificate;
 
   /**
    * Indicates whether the HTTPS certificate should be bound to all subdomains.
