@@ -8106,7 +8106,7 @@ const entrypointCertificateProps: EntrypointCertificateProps = { ... }
 
 ---
 
-##### `certificate`<sup>Required</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificate"></a>
+##### `certificate`<sup>Optional</sup> <a name="certificate" id="@condensetech/cdk-constructs.EntrypointCertificateProps.property.certificate"></a>
 
 ```typescript
 public readonly certificate: ICertificate;
