@@ -8223,10 +8223,11 @@ const entrypointFromAttributes: EntrypointFromAttributes = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.listenerArn">listenerArn</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.loadBalancerArn">loadBalancerArn</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.priorityAllocatorServiceToken">priorityAllocatorServiceToken</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.securityGroupId">securityGroupId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.listenerArn">listenerArn</a></code> | <code>string</code> | ARN of the load balancer HTTPS listener. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.loadBalancerArn">loadBalancerArn</a></code> | <code>string</code> | The load balancer ARN. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.securityGroupId">securityGroupId</a></code> | <code>string</code> | The security group ID of the load balancer. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.entrypointName">entrypointName</a></code> | <code>string</code> | The entrypoint name to use for referencing the priority allocator. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.priorityAllocatorServiceToken">priorityAllocatorServiceToken</a></code> | <code>string</code> | The Priority Allocator service token to use for referencing the priority allocator. |
 
 ---
 
@@ -8238,6 +8239,8 @@ public readonly listenerArn: string;
 
 - *Type:* string
 
+ARN of the load balancer HTTPS listener.
+
 ---
 
 ##### `loadBalancerArn`<sup>Required</sup> <a name="loadBalancerArn" id="@condensetech/cdk-constructs.EntrypointFromAttributes.property.loadBalancerArn"></a>
@@ -8248,15 +8251,7 @@ public readonly loadBalancerArn: string;
 
 - *Type:* string
 
----
-
-##### `priorityAllocatorServiceToken`<sup>Required</sup> <a name="priorityAllocatorServiceToken" id="@condensetech/cdk-constructs.EntrypointFromAttributes.property.priorityAllocatorServiceToken"></a>
-
-```typescript
-public readonly priorityAllocatorServiceToken: string;
-```
-
-- *Type:* string
+The load balancer ARN.
 
 ---
 
@@ -8267,6 +8262,32 @@ public readonly securityGroupId: string;
 ```
 
 - *Type:* string
+
+The security group ID of the load balancer.
+
+---
+
+##### `entrypointName`<sup>Optional</sup> <a name="entrypointName" id="@condensetech/cdk-constructs.EntrypointFromAttributes.property.entrypointName"></a>
+
+```typescript
+public readonly entrypointName: string;
+```
+
+- *Type:* string
+
+The entrypoint name to use for referencing the priority allocator.
+
+---
+
+##### `priorityAllocatorServiceToken`<sup>Optional</sup> <a name="priorityAllocatorServiceToken" id="@condensetech/cdk-constructs.EntrypointFromAttributes.property.priorityAllocatorServiceToken"></a>
+
+```typescript
+public readonly priorityAllocatorServiceToken: string;
+```
+
+- *Type:* string
+
+The Priority Allocator service token to use for referencing the priority allocator.
 
 ---
 
@@ -8284,9 +8305,9 @@ const entrypointFromLookupProps: EntrypointFromLookupProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | *No description.* |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpcLookup">vpcLookup</a></code> | <code>aws-cdk-lib.aws_ec2.VpcLookupOptions</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | The entrypoint name to lookup. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the entrypoint is located. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpcLookup">vpcLookup</a></code> | <code>aws-cdk-lib.aws_ec2.VpcLookupOptions</code> | The VPC lookup options to find the VPC where the entrypoint is located. |
 
 ---
 
@@ -8298,6 +8319,8 @@ public readonly entrypointName: string;
 
 - *Type:* string
 
+The entrypoint name to lookup.
+
 ---
 
 ##### `vpc`<sup>Optional</sup> <a name="vpc" id="@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpc"></a>
@@ -8308,6 +8331,10 @@ public readonly vpc: IVpc;
 
 - *Type:* aws-cdk-lib.aws_ec2.IVpc
 
+The VPC where the entrypoint is located.
+
+Required if vpcLookup is not provided.
+
 ---
 
 ##### `vpcLookup`<sup>Optional</sup> <a name="vpcLookup" id="@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpcLookup"></a>
@@ -8317,6 +8344,10 @@ public readonly vpcLookup: VpcLookupOptions;
 ```
 
 - *Type:* aws-cdk-lib.aws_ec2.VpcLookupOptions
+
+The VPC lookup options to find the VPC where the entrypoint is located.
+
+Required if vpc is not provided.
 
 ---
 
