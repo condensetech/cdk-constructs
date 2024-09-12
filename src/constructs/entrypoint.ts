@@ -134,10 +134,47 @@ abstract class EntrypointBase extends Construct implements IEntrypoint {
 }
 
 export interface EntrypointFromAttributes {
+  /**
+   * The load balancer ARN.
+   */
   readonly loadBalancerArn: string;
+
+  /**
+   * The security group ID of the load balancer.
+   */
   readonly securityGroupId: string;
+
+  /**
+   * ARN of the load balancer HTTPS listener.
+   */
   readonly listenerArn: string;
-  readonly priorityAllocatorServiceToken: string;
+
+  /**
+   * The Priority Allocator service token to use for referencing the priority allocator.
+   */
+  readonly priorityAllocatorServiceToken?: string;
+
+  /**
+   * The entrypoint name to use for referencing the priority allocator.
+   */
+  readonly entrypointName?: string;
+}
+
+export interface EntrypointFromLookupProps {
+  /**
+   * The entrypoint name to lookup.
+   */
+  readonly entrypointName: string;
+
+  /**
+   * The VPC lookup options to find the VPC where the entrypoint is located. Required if vpc is not provided.
+   */
+  readonly vpcLookup?: ec2.VpcLookupOptions;
+
+  /**
+   * The VPC where the entrypoint is located. Required if vpcLookup is not provided.
+   */
+  readonly vpc?: ec2.IVpc;
 }
 
 /**
@@ -159,7 +196,46 @@ export interface EntrypointFromAttributes {
  * This helps to use [ApplicationLoadBalancer#lookup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer.html#static-fromwbrlookupscope-id-options) to find the load balancer by name.
  */
 export class Entrypoint extends EntrypointBase {
+  static fromLookup(scope: Construct, id: string, props: EntrypointFromLookupProps): IEntrypoint {
+    class Import extends EntrypointBase {
+      readonly alb: elbv2.IApplicationLoadBalancer;
+      readonly listener: elbv2.IApplicationListener;
+      readonly securityGroup: ec2.ISecurityGroup;
+      readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+
+      constructor() {
+        super(scope, id);
+        if (!props.vpc && !props.vpcLookup) {
+          throw new Error('Either vpc or vpcLookup must be provided.');
+        }
+        const vpc = props.vpc || ec2.Vpc.fromLookup(this, 'Vpc', props.vpcLookup!);
+        this.securityGroup = ec2.SecurityGroup.fromLookupByName(
+          this,
+          'SecurityGroup',
+          `${props.entrypointName}-sg`,
+          vpc,
+        );
+        this.alb = elbv2.ApplicationLoadBalancer.fromLookup(this, 'Alb', {
+          loadBalancerTags: { Name: props.entrypointName },
+        });
+        this.listener = elbv2.ApplicationListener.fromLookup(this, 'Listener', {
+          loadBalancerArn: this.alb.loadBalancerArn,
+          listenerProtocol: elbv2.ApplicationProtocol.HTTPS,
+        });
+        this.priorityAllocator = ApplicationListenerPriorityAllocator.fromPriorityAllocatorName(
+          this,
+          'PriorityAllocator',
+          props.entrypointName,
+        );
+      }
+    }
+    return new Import();
+  }
+
   static fromAttributes(scope: Construct, id: string, props: EntrypointFromAttributes): IEntrypoint {
+    if (!props.priorityAllocatorServiceToken && !props.entrypointName) {
+      throw new Error('Either entrypointName or priorityAllocatorServiceToken must be provided.');
+    }
     class Import extends EntrypointBase {
       readonly alb: elbv2.IApplicationLoadBalancer;
       readonly listener: elbv2.IApplicationListener;
@@ -177,11 +253,17 @@ export class Entrypoint extends EntrypointBase {
           listenerArn: props.listenerArn,
           securityGroup: this.securityGroup,
         });
-        this.priorityAllocator = ApplicationListenerPriorityAllocator.fromServiceToken(
-          this,
-          'PriorityAllocator',
-          props.priorityAllocatorServiceToken,
-        );
+        this.priorityAllocator = props.entrypointName
+          ? ApplicationListenerPriorityAllocator.fromPriorityAllocatorName(
+              this,
+              'PriorityAllocator',
+              props.entrypointName,
+            )
+          : ApplicationListenerPriorityAllocator.fromServiceToken(
+              this,
+              'PriorityAllocator',
+              props.priorityAllocatorServiceToken!,
+            );
       }
     }
     return new Import();
@@ -260,6 +342,7 @@ export class Entrypoint extends EntrypointBase {
 
     this.priorityAllocator = new ApplicationListenerPriorityAllocator(this, 'PriorityAllocator', {
       listener: this.listener,
+      priorityAllocatorName: props.entrypointName,
       ...props.priorityAllocator,
     });
   }

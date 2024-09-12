@@ -98,6 +98,7 @@ The ID of the listener rule to allocate the priority to.
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.fromPriorityAllocatorName">fromPriorityAllocatorName</a></code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.fromServiceToken">fromServiceToken</a></code> | *No description.* |
 
 ---
@@ -117,6 +118,32 @@ Checks if `x` is a construct.
 - *Type:* any
 
 Any object.
+
+---
+
+##### `fromPriorityAllocatorName` <a name="fromPriorityAllocatorName" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.fromPriorityAllocatorName"></a>
+
+```typescript
+import { ApplicationListenerPriorityAllocator } from '@condensetech/cdk-constructs'
+
+ApplicationListenerPriorityAllocator.fromPriorityAllocatorName(scope: Construct, id: string, priorityAllocatorName: string)
+```
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.fromPriorityAllocatorName.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.fromPriorityAllocatorName.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+###### `priorityAllocatorName`<sup>Required</sup> <a name="priorityAllocatorName" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.fromPriorityAllocatorName.parameter.priorityAllocatorName"></a>
+
+- *Type:* string
 
 ---
 
@@ -3439,6 +3466,7 @@ Utility method that returns the HTTPS listener of the entrypoint in a cross-stac
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.fromAttributes">fromAttributes</a></code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.fromLookup">fromLookup</a></code> | *No description.* |
 
 ---
 
@@ -3483,6 +3511,32 @@ Entrypoint.fromAttributes(scope: Construct, id: string, props: EntrypointFromAtt
 ###### `props`<sup>Required</sup> <a name="props" id="@condensetech/cdk-constructs.Entrypoint.fromAttributes.parameter.props"></a>
 
 - *Type:* <a href="#@condensetech/cdk-constructs.EntrypointFromAttributes">EntrypointFromAttributes</a>
+
+---
+
+##### `fromLookup` <a name="fromLookup" id="@condensetech/cdk-constructs.Entrypoint.fromLookup"></a>
+
+```typescript
+import { Entrypoint } from '@condensetech/cdk-constructs'
+
+Entrypoint.fromLookup(scope: Construct, id: string, props: EntrypointFromLookupProps)
+```
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@condensetech/cdk-constructs.Entrypoint.fromLookup.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@condensetech/cdk-constructs.Entrypoint.fromLookup.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+###### `props`<sup>Required</sup> <a name="props" id="@condensetech/cdk-constructs.Entrypoint.fromLookup.parameter.props"></a>
+
+- *Type:* <a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps">EntrypointFromLookupProps</a>
 
 ---
 
@@ -6233,6 +6287,7 @@ const applicationListenerPriorityAllocatorProps: ApplicationListenerPriorityAllo
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.priorityInitialValue">priorityInitialValue</a></code> | <code>number</code> | The initial priority value to start from. |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply to the DynamoDB table. |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.listener">listener</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationListener</code> | Application Load Balancer Listener to allocate priorities for. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.priorityAllocatorName">priorityAllocatorName</a></code> | <code>string</code> | Priority Allocator name. |
 
 ---
 
@@ -6271,6 +6326,19 @@ public readonly listener: IApplicationListener;
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationListener
 
 Application Load Balancer Listener to allocate priorities for.
+
+---
+
+##### `priorityAllocatorName`<sup>Optional</sup> <a name="priorityAllocatorName" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocatorProps.property.priorityAllocatorName"></a>
+
+```typescript
+public readonly priorityAllocatorName: string;
+```
+
+- *Type:* string
+- *Default:* Generated by the listener unique name.
+
+Priority Allocator name.
 
 ---
 
@@ -8199,6 +8267,56 @@ public readonly securityGroupId: string;
 ```
 
 - *Type:* string
+
+---
+
+### EntrypointFromLookupProps <a name="EntrypointFromLookupProps" id="@condensetech/cdk-constructs.EntrypointFromLookupProps"></a>
+
+#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.EntrypointFromLookupProps.Initializer"></a>
+
+```typescript
+import { EntrypointFromLookupProps } from '@condensetech/cdk-constructs'
+
+const entrypointFromLookupProps: EntrypointFromLookupProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.entrypointName">entrypointName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | *No description.* |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpcLookup">vpcLookup</a></code> | <code>aws-cdk-lib.aws_ec2.VpcLookupOptions</code> | *No description.* |
+
+---
+
+##### `entrypointName`<sup>Required</sup> <a name="entrypointName" id="@condensetech/cdk-constructs.EntrypointFromLookupProps.property.entrypointName"></a>
+
+```typescript
+public readonly entrypointName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `vpc`<sup>Optional</sup> <a name="vpc" id="@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpc"></a>
+
+```typescript
+public readonly vpc: IVpc;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.IVpc
+
+---
+
+##### `vpcLookup`<sup>Optional</sup> <a name="vpcLookup" id="@condensetech/cdk-constructs.EntrypointFromLookupProps.property.vpcLookup"></a>
+
+```typescript
+public readonly vpcLookup: VpcLookupOptions;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.VpcLookupOptions
 
 ---
 
