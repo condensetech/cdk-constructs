@@ -106,7 +106,6 @@ export interface EntrypointProps {
 abstract class EntrypointBase extends Construct implements IEntrypoint {
   abstract readonly listener: elbv2.IApplicationListener;
   abstract readonly securityGroup: ec2.ISecurityGroup;
-  abstract readonly domainName: string;
   abstract readonly alb: cdk.aws_elasticloadbalancingv2.IApplicationLoadBalancer;
   abstract readonly priorityAllocator: IApplicationListenerPriorityAllocator;
 
@@ -138,7 +137,6 @@ export interface EntrypointFromAttributes {
   readonly loadBalancerArn: string;
   readonly securityGroupId: string;
   readonly listenerArn: string;
-  readonly domainName: string;
   readonly priorityAllocatorServiceToken: string;
 }
 
@@ -163,7 +161,6 @@ export interface EntrypointFromAttributes {
 export class Entrypoint extends EntrypointBase {
   static fromAttributes(scope: Construct, id: string, props: EntrypointFromAttributes): IEntrypoint {
     class Import extends EntrypointBase {
-      readonly domainName: string = props.domainName;
       readonly alb: elbv2.IApplicationLoadBalancer;
       readonly listener: elbv2.IApplicationListener;
       readonly securityGroup: ec2.ISecurityGroup;
@@ -267,6 +264,7 @@ export class Entrypoint extends EntrypointBase {
     });
   }
 
+  // FIXME: This implementation allows the caller to build an instance which will issue multiple certificates for the same hosted zone.
   private createCertificate(props: EntrypointCertificateProps): acm.ICertificate {
     if (props.certificate) {
       if (props.certificateArn) {

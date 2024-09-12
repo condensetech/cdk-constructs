@@ -143,11 +143,6 @@ export interface AllocateApplicationListenerRuleProps {
  */
 export interface IEntrypoint {
   /**
-   * The domain name to which the entrypoint is associated.
-   */
-  readonly domainName: string;
-
-  /**
    * The ALB that serves as the entrypoint.
    */
   readonly alb: elbv2.IApplicationLoadBalancer;

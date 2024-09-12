@@ -21,7 +21,7 @@ export interface EntrypointStackProps extends EntrypointProps, StackProps {
  * It implements the IEntrypoint interface so that it can be used in other constructs and stacks without requiring to access to the underlying construct.
  */
 export class EntrypointStack extends Stack implements IEntrypoint {
-  private readonly construct: IEntrypoint;
+  private readonly construct: Entrypoint;
 
   constructor(scope: Construct, id: string, props: EntrypointStackProps) {
     super(scope, id, props);

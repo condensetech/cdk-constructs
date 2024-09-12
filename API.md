@@ -3492,7 +3492,7 @@ Entrypoint.fromAttributes(scope: Construct, id: string, props: EntrypointFromAtt
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The ALB that serves as the entrypoint. |
-| <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.listener">listener</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationListener</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.priorityAllocator">priorityAllocator</a></code> | <code><a href="#@condensetech/cdk-constructs.IApplicationListenerPriorityAllocator">IApplicationListenerPriorityAllocator</a></code> | The Application Listener priority allocator for the entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.property.securityGroup">securityGroup</a></code> | <code>aws-cdk-lib.aws_ec2.ISecurityGroup</code> | *No description.* |
@@ -3530,8 +3530,6 @@ public readonly domainName: string;
 ```
 
 - *Type:* string
-
-The domain name to which the entrypoint is associated.
 
 ---
 
@@ -4164,7 +4162,7 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.nestedStackResource">nestedStackResource</a></code> | <code>aws-cdk-lib.CfnResource</code> | If this is a nested stack, this represents its `AWS::CloudFormation::Stack` resource. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether termination protection is enabled for this stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The ALB that serves as the entrypoint. |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.property.priorityAllocator">priorityAllocator</a></code> | <code><a href="#@condensetech/cdk-constructs.IApplicationListenerPriorityAllocator">IApplicationListenerPriorityAllocator</a></code> | The Application Listener priority allocator for the entrypoint. |
 
 ---
@@ -4518,8 +4516,6 @@ public readonly domainName: string;
 ```
 
 - *Type:* string
-
-The domain name to which the entrypoint is associated.
 
 ---
 
@@ -8159,21 +8155,10 @@ const entrypointFromAttributes: EntrypointFromAttributes = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.listenerArn">listenerArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.loadBalancerArn">loadBalancerArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.priorityAllocatorServiceToken">priorityAllocatorServiceToken</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointFromAttributes.property.securityGroupId">securityGroupId</a></code> | <code>string</code> | *No description.* |
-
----
-
-##### `domainName`<sup>Required</sup> <a name="domainName" id="@condensetech/cdk-constructs.EntrypointFromAttributes.property.domainName"></a>
-
-```typescript
-public readonly domainName: string;
-```
-
-- *Type:* string
 
 ---
 
@@ -10806,7 +10791,6 @@ Utility method that returns the HTTPS listener of the entrypoint in a cross-stac
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.alb">alb</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The ALB that serves as the entrypoint. |
-| <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.domainName">domainName</a></code> | <code>string</code> | The domain name to which the entrypoint is associated. |
 | <code><a href="#@condensetech/cdk-constructs.IEntrypoint.property.priorityAllocator">priorityAllocator</a></code> | <code><a href="#@condensetech/cdk-constructs.IApplicationListenerPriorityAllocator">IApplicationListenerPriorityAllocator</a></code> | The Application Listener priority allocator for the entrypoint. |
 
 ---
@@ -10820,18 +10804,6 @@ public readonly alb: IApplicationLoadBalancer;
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer
 
 The ALB that serves as the entrypoint.
-
----
-
-##### `domainName`<sup>Required</sup> <a name="domainName" id="@condensetech/cdk-constructs.IEntrypoint.property.domainName"></a>
-
-```typescript
-public readonly domainName: string;
-```
-
-- *Type:* string
-
-The domain name to which the entrypoint is associated.
 
 ---
 
