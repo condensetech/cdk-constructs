@@ -106,6 +106,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
    */
   readonly resource: rds.IDatabaseInstance;
   readonly endpoint: rds.Endpoint;
+  private readonly credentialsSecretName: string;
 
   constructor(scope: Construct, id: string, props: DatabaseInstanceProps) {
     super(scope, id);
@@ -123,8 +124,9 @@ export class DatabaseInstance extends Construct implements IDatabase {
     const instanceType =
       props.instanceType ?? ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL);
 
+    this.credentialsSecretName = props.credentialsSecretName ?? `${this.node.path}/secret`;
     const credentials = rds.Credentials.fromUsername(props.credentialsUsername ?? 'db_user', {
-      secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
+      secretName: this.credentialsSecretName,
     });
 
     const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
@@ -161,6 +163,6 @@ export class DatabaseInstance extends Construct implements IDatabase {
   }
 
   public fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
-    return sm.Secret.fromSecretNameV2(scope, id, `${this.node.path}/secret`);
+    return sm.Secret.fromSecretNameV2(scope, id, this.credentialsSecretName);
   }
 }
