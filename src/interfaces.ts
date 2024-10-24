@@ -143,6 +143,12 @@ export interface AllocateApplicationListenerRuleProps {
  */
 export interface IEntrypoint {
   /**
+   * The load balancer custom domain name.
+   * @default - No domain name is specified, and the load balancer dns name is used.
+   */
+  readonly domainName: string;
+
+  /**
    * The ALB that serves as the entrypoint.
    */
   readonly alb: elbv2.IApplicationLoadBalancer;

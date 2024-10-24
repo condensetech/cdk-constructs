@@ -108,6 +108,7 @@ abstract class EntrypointBase extends Construct implements IEntrypoint {
   abstract readonly securityGroup: ec2.ISecurityGroup;
   abstract readonly alb: cdk.aws_elasticloadbalancingv2.IApplicationLoadBalancer;
   abstract readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+  abstract readonly domainName: string;
 
   referenceListener(scope: Construct, id: string): elbv2.IApplicationListener {
     return elbv2.ApplicationListener.fromApplicationListenerAttributes(scope, id, {
@@ -135,6 +136,12 @@ abstract class EntrypointBase extends Construct implements IEntrypoint {
 
 export interface EntrypointFromAttributes {
   /**
+   * The load balancer custom domain name.
+   * @default - No domain name is specified, and the load balancer dns name will be used.
+   */
+  readonly domainName?: string;
+
+  /**
    * The load balancer ARN.
    */
   readonly loadBalancerArn: string;
@@ -161,6 +168,12 @@ export interface EntrypointFromAttributes {
 }
 
 export interface EntrypointFromLookupProps {
+  /**
+   * The load balancer custom domain name.
+   * @default - No domain name is specified, and the load balancer dns name will be used.
+   */
+  readonly domainName?: string;
+
   /**
    * The entrypoint name to lookup.
    */
@@ -202,6 +215,7 @@ export class Entrypoint extends EntrypointBase {
       readonly listener: elbv2.IApplicationListener;
       readonly securityGroup: ec2.ISecurityGroup;
       readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+      readonly domainName: string;
 
       constructor() {
         super(scope, id);
@@ -218,6 +232,7 @@ export class Entrypoint extends EntrypointBase {
         this.alb = elbv2.ApplicationLoadBalancer.fromLookup(this, 'Alb', {
           loadBalancerTags: { Name: props.entrypointName },
         });
+        this.domainName = props.domainName ?? this.alb.loadBalancerDnsName;
         this.listener = elbv2.ApplicationListener.fromLookup(this, 'Listener', {
           loadBalancerArn: this.alb.loadBalancerArn,
           listenerProtocol: elbv2.ApplicationProtocol.HTTPS,
@@ -241,6 +256,7 @@ export class Entrypoint extends EntrypointBase {
       readonly listener: elbv2.IApplicationListener;
       readonly securityGroup: ec2.ISecurityGroup;
       readonly priorityAllocator: IApplicationListenerPriorityAllocator;
+      readonly domainName: string;
 
       constructor() {
         super(scope, id);
@@ -249,6 +265,7 @@ export class Entrypoint extends EntrypointBase {
           loadBalancerArn: props.loadBalancerArn,
           securityGroupId: props.securityGroupId,
         });
+        this.domainName = props.domainName ?? this.alb.loadBalancerDnsName;
         this.listener = elbv2.ApplicationListener.fromApplicationListenerAttributes(this, 'Listener', {
           listenerArn: props.listenerArn,
           securityGroup: this.securityGroup,
