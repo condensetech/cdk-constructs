@@ -44,12 +44,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'condensetech.cdk-constructs',
     module: 'condensetech.cdk_constructs',
   },
-  publishToMaven: {
-    javaPackage: 'tech.condense.cdkconstructs',
-    mavenGroupId: 'tech.condense',
-    mavenArtifactId: 'cdkconstructs',
-    mavenEndpoint: 'https://s01.oss.sonatype.org',
-  },
+  // TODO: Uncomment when new sonatype is supported
+  // publishToMaven: {
+  //   javaPackage: 'tech.condense.cdkconstructs',
+  //   mavenGroupId: 'tech.condense',
+  //   mavenArtifactId: 'cdkconstructs',
+  //   mavenEndpoint: 'https://s01.oss.sonatype.org',
+  // },
   publishToNuget: {
     packageId: 'CondenseTech.CdkConstructs',
     dotNetNamespace: 'CondenseTech.CdkConstructs',
