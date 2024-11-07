@@ -319,7 +319,7 @@
       },
       "steps": [
         {
-          "exec": "pnpm dlx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-sdk/client-dynamodb,@shelf/jest-dynamodb,@types/aws-lambda,@types/node,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,husky,jsii-diff,jsii-pacmak,merge,prettier,projen,ts-node,typescript"
+          "exec": "pnpm dlx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-sdk/client-dynamodb,@shelf/jest-dynamodb,@types/aws-lambda,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,husky,jsii-diff,jsii-pacmak,merge,prettier,projen,ts-node,typescript"
         },
         {
           "exec": "pnpm i --no-frozen-lockfile"
