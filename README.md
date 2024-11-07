@@ -107,7 +107,7 @@ The [Entrypoint#allocateListenerRule](API.md#@condensetech/cdk-constructs.Entryp
 
 ### Cloudwatch Alarms Topic
 
-The [CloudwatchAlarmsTopicStack](lib/stacks/cloudwatch-alarms-topic-stack.ts) creates an SNS Topic which can be used as a target for Cloudwatch Alarms. In addition to link the topic to HTTPS endpoints, it can also create a Lambda function which can be used to send messages to Discord.
+The [CloudwatchAlarmsTopicStack](lib/stacks/cloudwatch-alarms-topic-stack.ts) creates an SNS Topic which can be used as a target for Cloudwatch Alarms. In addition to link the topic to HTTPS endpoints, it can also create a Lambda function which can be used to send messages to Discord or Slack.
 
 ### Naive BasicAuth Cloudfront Function
 
