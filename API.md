@@ -7221,6 +7221,36 @@ public readonly username: string;
 
 ---
 
+### CloudwatchAlarmsSlackConfig <a name="CloudwatchAlarmsSlackConfig" id="@condensetech/cdk-constructs.CloudwatchAlarmsSlackConfig"></a>
+
+Slack configuration for the Cloudwatch Alarms Topic.
+
+#### Initializer <a name="Initializer" id="@condensetech/cdk-constructs.CloudwatchAlarmsSlackConfig.Initializer"></a>
+
+```typescript
+import { CloudwatchAlarmsSlackConfig } from '@condensetech/cdk-constructs'
+
+const cloudwatchAlarmsSlackConfig: CloudwatchAlarmsSlackConfig = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsSlackConfig.property.webhook">webhook</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `webhook`<sup>Required</sup> <a name="webhook" id="@condensetech/cdk-constructs.CloudwatchAlarmsSlackConfig.property.webhook"></a>
+
+```typescript
+public readonly webhook: string;
+```
+
+- *Type:* string
+
+---
+
 ### CloudwatchAlarmsTopicStackProps <a name="CloudwatchAlarmsTopicStackProps" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps"></a>
 
 Properties for the CloudwatchAlarmsTopicStack.
@@ -7249,6 +7279,7 @@ const cloudwatchAlarmsTopicStackProps: CloudwatchAlarmsTopicStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.terminationProtection">terminationProtection</a></code> | <code>boolean</code> | Whether to enable termination protection for this stack. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.discord">discord</a></code> | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsDiscordConfig">CloudwatchAlarmsDiscordConfig</a></code> | Discord webhook configuration. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.jiraSubscriptionWebhook">jiraSubscriptionWebhook</a></code> | <code>string</code> | Jira subscription webhook. |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.slack">slack</a></code> | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsSlackConfig">CloudwatchAlarmsSlackConfig</a></code> | Slack webhook configuration. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.topicName">topicName</a></code> | <code>string</code> | The name of the alarms topic. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.urlSubscriptionWebhooks">urlSubscriptionWebhooks</a></code> | <code>string[]</code> | Subscription webhooks. |
 
@@ -7491,6 +7522,20 @@ public readonly jiraSubscriptionWebhook: string;
 Jira subscription webhook.
 
 If provided, the alarms will be sent to Jira.
+
+---
+
+##### `slack`<sup>Optional</sup> <a name="slack" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStackProps.property.slack"></a>
+
+```typescript
+public readonly slack: CloudwatchAlarmsSlackConfig;
+```
+
+- *Type:* <a href="#@condensetech/cdk-constructs.CloudwatchAlarmsSlackConfig">CloudwatchAlarmsSlackConfig</a>
+
+Slack webhook configuration.
+
+If provided, the alarms will be sent to the Discord channel.
 
 ---
 

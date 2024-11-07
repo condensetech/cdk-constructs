@@ -16,6 +16,13 @@ export interface CloudwatchAlarmsDiscordConfig {
 }
 
 /**
+ * Slack configuration for the Cloudwatch Alarms Topic.
+ */
+export interface CloudwatchAlarmsSlackConfig {
+  readonly webhook: string;
+}
+
+/**
  * Properties for the CloudwatchAlarmsTopicStack.
  */
 export interface CloudwatchAlarmsTopicStackProps extends cdk.StackProps {
@@ -23,6 +30,11 @@ export interface CloudwatchAlarmsTopicStackProps extends cdk.StackProps {
    * Discord webhook configuration. If provided, the alarms will be sent to the Discord channel.
    */
   readonly discord?: CloudwatchAlarmsDiscordConfig;
+
+  /**
+   * Slack webhook configuration. If provided, the alarms will be sent to the Discord channel.
+   */
+  readonly slack?: CloudwatchAlarmsSlackConfig;
 
   /**
    * Jira subscription webhook. If provided, the alarms will be sent to Jira.
@@ -72,6 +84,15 @@ export class CloudwatchAlarmsTopicStack extends cdk.Stack {
         environment: {
           ...(props.discord.username && { DISCORD_USERNAME: props.discord.username }),
           DISCORD_WEBHOOK: props.discord.webhook,
+        },
+        timeout: cdk.Duration.seconds(10),
+      });
+      fn.addEventSource(new lambdaEventSources.SnsEventSource(topic));
+    }
+    if (props.slack) {
+      const fn = new lambdaNode.NodejsFunction(this, 'SlackDispatcher', {
+        environment: {
+          SLACK_WEBHOOK: props.slack.webhook,
         },
         timeout: cdk.Duration.seconds(10),
       });
