@@ -80,7 +80,7 @@ export class CloudwatchAlarmsTopicStack extends cdk.Stack {
     }
 
     if (props.discord) {
-      const fn = new lambdaNode.NodejsFunction(this, 'AlarmDispatcher', {
+      const fn = new lambdaNode.NodejsFunction(this, 'DiscordDispatcher', {
         environment: {
           ...(props.discord.username && { DISCORD_USERNAME: props.discord.username }),
           DISCORD_WEBHOOK: props.discord.webhook,
