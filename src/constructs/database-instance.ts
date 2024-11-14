@@ -94,6 +94,12 @@ export interface DatabaseInstanceProps {
    * @default logs never expire
    */
   readonly cloudwatchLogsRetention?: logs.RetentionDays;
+
+  /**
+   * The parameters to override in the parameter group.
+   * @default - No parameter is overridden.
+   */
+  readonly parameters?: Record<string, string>;
 }
 
 /**
@@ -131,6 +137,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
         ? removalPolicy
         : cdk.RemovalPolicy.DESTROY,
+      parameters: props.parameters,
     });
 
     const instanceType =
