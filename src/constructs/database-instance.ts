@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds } from 'aws-cdk-lib';
+import { aws_ec2 as ec2, aws_secretsmanager as sm, aws_rds as rds, aws_logs as logs } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { IDatabase, INetworking } from '../interfaces';
 
@@ -82,6 +82,18 @@ export interface DatabaseInstanceProps {
    * @default RemovalPolicy.RETAIN
    */
   readonly removalPolicy?: cdk.RemovalPolicy;
+
+  /**
+   * The list of log types that need to be enabled for exporting to CloudWatch Logs.
+   * @default - No log types are enabled.
+   */
+  readonly cloudwatchLogsExports?: string[];
+
+  /**
+   * The number of days log events are kept in CloudWatch Logs. When updating this property, unsetting it doesn't remove the log retention policy. To remove the retention policy, set the value to Infinity.
+   * @default logs never expire
+   */
+  readonly cloudwatchLogsRetention?: logs.RetentionDays;
 }
 
 /**
@@ -151,6 +163,8 @@ export class DatabaseInstance extends Construct implements IDatabase {
       storageEncrypted: true,
       backupRetention: props.backupRetention,
       removalPolicy,
+      cloudwatchLogsExports: props.cloudwatchLogsExports,
+      cloudwatchLogsRetention: props.cloudwatchLogsRetention,
     });
     if (props.networking.bastionHost) {
       this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);

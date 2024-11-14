@@ -6454,6 +6454,8 @@ const auroraClusterProps: AuroraClusterProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IClusterEngine</code> | The engine of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
@@ -6500,6 +6502,34 @@ public readonly backupRetention: Duration;
 - *Default:* It uses the default applied by [rds.DatabaseClusterProps#backup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseClusterProps.html#backup).
 
 The backup retention period.
+
+---
+
+##### `cloudwatchLogsExports`<sup>Optional</sup> <a name="cloudwatchLogsExports" id="@condensetech/cdk-constructs.AuroraClusterProps.property.cloudwatchLogsExports"></a>
+
+```typescript
+public readonly cloudwatchLogsExports: string[];
+```
+
+- *Type:* string[]
+- *Default:* No log types are enabled.
+
+The list of log types that need to be enabled for exporting to CloudWatch Logs.
+
+---
+
+##### `cloudwatchLogsRetention`<sup>Optional</sup> <a name="cloudwatchLogsRetention" id="@condensetech/cdk-constructs.AuroraClusterProps.property.cloudwatchLogsRetention"></a>
+
+```typescript
+public readonly cloudwatchLogsRetention: RetentionDays;
+```
+
+- *Type:* aws-cdk-lib.aws_logs.RetentionDays
+- *Default:* logs never expire
+
+The number of days log events are kept in CloudWatch Logs.
+
+When updating this property, unsetting it doesn't remove the log retention policy. To remove the retention policy, set the value to Infinity.
 
 ---
 
@@ -6640,6 +6670,8 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IClusterEngine</code> | The engine of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
@@ -6697,6 +6729,34 @@ public readonly backupRetention: Duration;
 - *Default:* It uses the default applied by [rds.DatabaseClusterProps#backup](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseClusterProps.html#backup).
 
 The backup retention period.
+
+---
+
+##### `cloudwatchLogsExports`<sup>Optional</sup> <a name="cloudwatchLogsExports" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.cloudwatchLogsExports"></a>
+
+```typescript
+public readonly cloudwatchLogsExports: string[];
+```
+
+- *Type:* string[]
+- *Default:* No log types are enabled.
+
+The list of log types that need to be enabled for exporting to CloudWatch Logs.
+
+---
+
+##### `cloudwatchLogsRetention`<sup>Optional</sup> <a name="cloudwatchLogsRetention" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.cloudwatchLogsRetention"></a>
+
+```typescript
+public readonly cloudwatchLogsRetention: RetentionDays;
+```
+
+- *Type:* aws-cdk-lib.aws_logs.RetentionDays
+- *Default:* logs never expire
+
+The number of days log events are kept in CloudWatch Logs.
+
+When updating this property, unsetting it doesn't remove the log retention policy. To remove the retention policy, set the value to Infinity.
 
 ---
 
@@ -7587,6 +7647,8 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
@@ -7646,6 +7708,34 @@ public readonly backupRetention: Duration;
 - *Default:* It uses the default applied by [rds.DatabaseInstanceProps#backupRetention]https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseInstanceProps.html#backupretention).
 
 The backup retention period.
+
+---
+
+##### `cloudwatchLogsExports`<sup>Optional</sup> <a name="cloudwatchLogsExports" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.cloudwatchLogsExports"></a>
+
+```typescript
+public readonly cloudwatchLogsExports: string[];
+```
+
+- *Type:* string[]
+- *Default:* No log types are enabled.
+
+The list of log types that need to be enabled for exporting to CloudWatch Logs.
+
+---
+
+##### `cloudwatchLogsRetention`<sup>Optional</sup> <a name="cloudwatchLogsRetention" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.cloudwatchLogsRetention"></a>
+
+```typescript
+public readonly cloudwatchLogsRetention: RetentionDays;
+```
+
+- *Type:* aws-cdk-lib.aws_logs.RetentionDays
+- *Default:* logs never expire
+
+The number of days log events are kept in CloudWatch Logs.
+
+When updating this property, unsetting it doesn't remove the log retention policy. To remove the retention policy, set the value to Infinity.
 
 ---
 
@@ -7786,6 +7876,8 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
@@ -7856,6 +7948,34 @@ public readonly backupRetention: Duration;
 - *Default:* It uses the default applied by [rds.DatabaseInstanceProps#backupRetention]https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseInstanceProps.html#backupretention).
 
 The backup retention period.
+
+---
+
+##### `cloudwatchLogsExports`<sup>Optional</sup> <a name="cloudwatchLogsExports" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.cloudwatchLogsExports"></a>
+
+```typescript
+public readonly cloudwatchLogsExports: string[];
+```
+
+- *Type:* string[]
+- *Default:* No log types are enabled.
+
+The list of log types that need to be enabled for exporting to CloudWatch Logs.
+
+---
+
+##### `cloudwatchLogsRetention`<sup>Optional</sup> <a name="cloudwatchLogsRetention" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.cloudwatchLogsRetention"></a>
+
+```typescript
+public readonly cloudwatchLogsRetention: RetentionDays;
+```
+
+- *Type:* aws-cdk-lib.aws_logs.RetentionDays
+- *Default:* logs never expire
+
+The number of days log events are kept in CloudWatch Logs.
+
+When updating this property, unsetting it doesn't remove the log retention policy. To remove the retention policy, set the value to Infinity.
 
 ---
 
