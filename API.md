@@ -7655,6 +7655,7 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
@@ -7817,6 +7818,19 @@ If the database instance is multi-AZ.
 
 ---
 
+##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.parameters"></a>
+
+```typescript
+public readonly parameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the parameter group.
+
+---
+
 ##### `removalPolicy`<sup>Optional</sup> <a name="removalPolicy" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.removalPolicy"></a>
 
 ```typescript
@@ -7884,6 +7898,7 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.storageType">storageType</a></code> | <code>aws-cdk-lib.aws_rds.StorageType</code> | The storage type of the database instance. |
@@ -8054,6 +8069,19 @@ public readonly multiAz: boolean;
 - *Default:* false
 
 If the database instance is multi-AZ.
+
+---
+
+##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.parameters"></a>
+
+```typescript
+public readonly parameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the parameter group.
 
 ---
 

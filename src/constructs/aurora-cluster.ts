@@ -149,6 +149,14 @@ export class AuroraCluster extends Construct implements IDatabase {
       securityGroupName: props.securityGroupName ?? `${this.node.path.replace(/\//g, '-')}-sg`,
     });
 
+    // TODO: Find a better way to pass the parameter group to the writer and readers.
+    if (props.writer) {
+      (props.writer as any).props.parameterGroup = this.parameterGroup;
+      for (const reader of props.readers ?? []) {
+        (reader as any).props.parameterGroup = this.parameterGroup;
+      }
+    }
+
     this.resource = new rds.DatabaseCluster(this, 'DB', {
       clusterIdentifier: props.clusterIdentifier,
       engine: props.engine,
@@ -157,6 +165,7 @@ export class AuroraCluster extends Construct implements IDatabase {
         props.writer ??
         rds.ClusterInstance.provisioned('ClusterInstance', {
           instanceType: AuroraCluster.minimumInstanceType(props.engine),
+          parameterGroup: this.parameterGroup,
         }),
       readers: props.readers,
       vpc: props.networking.vpc,
