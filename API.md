@@ -7646,6 +7646,7 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IInstanceEngine</code> | The engine of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.allowMajorVersionUpgrade">allowMajorVersionUpgrade</a></code> | <code>boolean</code> | Whether to allow major version upgrades. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
@@ -7696,6 +7697,19 @@ public readonly allocatedStorage: number;
 - *Default:* 20
 
 The allocated storage of the database instance.
+
+---
+
+##### `allowMajorVersionUpgrade`<sup>Optional</sup> <a name="allowMajorVersionUpgrade" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.allowMajorVersionUpgrade"></a>
+
+```typescript
+public readonly allowMajorVersionUpgrade: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether to allow major version upgrades.
 
 ---
 
@@ -7889,6 +7903,7 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.engine">engine</a></code> | <code>aws-cdk-lib.aws_rds.IInstanceEngine</code> | The engine of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.networking">networking</a></code> | <code><a href="#@condensetech/cdk-constructs.INetworking">INetworking</a></code> | The networking configuration for the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allocatedStorage">allocatedStorage</a></code> | <code>number</code> | The allocated storage of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allowMajorVersionUpgrade">allowMajorVersionUpgrade</a></code> | <code>boolean</code> | Whether to allow major version upgrades. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.backupRetention">backupRetention</a></code> | <code>aws-cdk-lib.Duration</code> | The backup retention period. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
@@ -7950,6 +7965,19 @@ public readonly allocatedStorage: number;
 - *Default:* 20
 
 The allocated storage of the database instance.
+
+---
+
+##### `allowMajorVersionUpgrade`<sup>Optional</sup> <a name="allowMajorVersionUpgrade" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.allowMajorVersionUpgrade"></a>
+
+```typescript
+public readonly allowMajorVersionUpgrade: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether to allow major version upgrades.
 
 ---
 

@@ -100,6 +100,12 @@ export interface DatabaseInstanceProps {
    * @default - No parameter is overridden.
    */
   readonly parameters?: Record<string, string>;
+
+  /**
+   * Whether to allow major version upgrades.
+   * @default false
+   */
+  readonly allowMajorVersionUpgrade?: boolean;
 }
 
 /**
@@ -172,6 +178,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       removalPolicy,
       cloudwatchLogsExports: props.cloudwatchLogsExports,
       cloudwatchLogsRetention: props.cloudwatchLogsRetention,
+      allowMajorVersionUpgrade: props.allowMajorVersionUpgrade ?? false,
     });
     if (props.networking.bastionHost) {
       this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);
