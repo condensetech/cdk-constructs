@@ -181,7 +181,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     });
     // https://github.com/aws/aws-cdk/issues/26072
     const cfnCluster = this.resource.node.defaultChild as rds.CfnDBCluster;
-    cfnCluster.dbInstanceParameterGroupName = (this.parameterGroup.node.defaultChild as rds.CfnDBParameterGroup).ref;
+    cfnCluster.dbInstanceParameterGroupName = this.parameterGroup.bindToInstance({}).parameterGroupName;
     if (props.networking.bastionHost) {
       this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);
     }
