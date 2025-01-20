@@ -4964,7 +4964,7 @@ Any object.
 | <code><a href="#@condensetech/cdk-constructs.Networking.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the isolated subnets of the VPC (without access to internet). |
 | <code><a href="#@condensetech/cdk-constructs.Networking.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the public subnets of the VPC. |
 | <code><a href="#@condensetech/cdk-constructs.Networking.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the networking resources are created. |
-| <code><a href="#@condensetech/cdk-constructs.Networking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | Returns the bastion host instance of the VPC, if any. |
+| <code><a href="#@condensetech/cdk-constructs.Networking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.IConnectable</code> | Returns the bastion host instance of the VPC, if any. |
 | <code><a href="#@condensetech/cdk-constructs.Networking.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the private subnets of the VPC (with access to internet through a NAT gateway). |
 
 ---
@@ -5032,10 +5032,10 @@ The VPC where the networking resources are created.
 ##### `bastionHost`<sup>Optional</sup> <a name="bastionHost" id="@condensetech/cdk-constructs.Networking.property.bastionHost"></a>
 
 ```typescript
-public readonly bastionHost: BastionHostLinux;
+public readonly bastionHost: IConnectable;
 ```
 
-- *Type:* aws-cdk-lib.aws_ec2.BastionHostLinux
+- *Type:* aws-cdk-lib.aws_ec2.IConnectable
 
 Returns the bastion host instance of the VPC, if any.
 
@@ -5603,7 +5603,7 @@ The construct to start the search from.
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the isolated subnets of the VPC (without access to internet). |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the public subnets of the VPC. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the networking resources are created. |
-| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | Returns the bastion host instance of the VPC, if any. |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.IConnectable</code> | Returns the bastion host instance of the VPC, if any. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the private subnets of the VPC (with access to internet through a NAT gateway). |
 
 ---
@@ -5989,10 +5989,10 @@ The VPC where the networking resources are created.
 ##### `bastionHost`<sup>Optional</sup> <a name="bastionHost" id="@condensetech/cdk-constructs.NetworkingStack.property.bastionHost"></a>
 
 ```typescript
-public readonly bastionHost: BastionHostLinux;
+public readonly bastionHost: IConnectable;
 ```
 
-- *Type:* aws-cdk-lib.aws_ec2.BastionHostLinux
+- *Type:* aws-cdk-lib.aws_ec2.IConnectable
 
 Returns the bastion host instance of the VPC, if any.
 
@@ -11254,7 +11254,7 @@ In addition, the INetworking interface imposes a set of properties to ease the d
 | <code><a href="#@condensetech/cdk-constructs.INetworking.property.isolatedSubnets">isolatedSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the isolated subnets of the VPC (without access to internet). |
 | <code><a href="#@condensetech/cdk-constructs.INetworking.property.publicSubnets">publicSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the public subnets of the VPC. |
 | <code><a href="#@condensetech/cdk-constructs.INetworking.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC where the networking resources are created. |
-| <code><a href="#@condensetech/cdk-constructs.INetworking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.BastionHostLinux</code> | Returns the bastion host instance of the VPC, if any. |
+| <code><a href="#@condensetech/cdk-constructs.INetworking.property.bastionHost">bastionHost</a></code> | <code>aws-cdk-lib.aws_ec2.IConnectable</code> | Returns the bastion host instance of the VPC, if any. |
 | <code><a href="#@condensetech/cdk-constructs.INetworking.property.privateSubnets">privateSubnets</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | Returns the private subnets of the VPC (with access to internet through a NAT gateway). |
 
 ---
@@ -11310,10 +11310,10 @@ The VPC where the networking resources are created.
 ##### `bastionHost`<sup>Optional</sup> <a name="bastionHost" id="@condensetech/cdk-constructs.INetworking.property.bastionHost"></a>
 
 ```typescript
-public readonly bastionHost: BastionHostLinux;
+public readonly bastionHost: IConnectable;
 ```
 
-- *Type:* aws-cdk-lib.aws_ec2.BastionHostLinux
+- *Type:* aws-cdk-lib.aws_ec2.IConnectable
 
 Returns the bastion host instance of the VPC, if any.
 

@@ -21,7 +21,7 @@ export interface INetworking {
   /**
    * Returns the bastion host instance of the VPC, if any.
    */
-  readonly bastionHost?: ec2.BastionHostLinux;
+  readonly bastionHost?: ec2.IConnectable;
 
   /**
    * Returns if the VPC has private subnets (with access to internet through a NAT gateway)

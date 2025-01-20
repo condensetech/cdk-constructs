@@ -28,7 +28,7 @@ export interface NetworkingProps {
  */
 export class Networking extends Construct implements INetworking {
   readonly vpc: ec2.IVpc;
-  readonly bastionHost?: ec2.BastionHostLinux;
+  readonly bastionHost?: ec2.IConnectable;
   readonly hasPrivateSubnets: boolean;
 
   constructor(scope: Construct, id: string, props: NetworkingProps) {
@@ -37,7 +37,7 @@ export class Networking extends Construct implements INetworking {
     this.hasPrivateSubnets = props.natGateways !== 0;
     this.vpc = this.buildVpc(props);
     if (props.bastionHostEnabled) {
-      this.bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
+      const bastionHost = new ec2.BastionHostLinux(scope, 'Bastion', {
         vpc: this.vpc,
         instanceName: props.bastionName ?? (props.vpcName ? `${props.vpcName}-bastion` : undefined),
         machineImage:
@@ -49,7 +49,8 @@ export class Networking extends Construct implements INetworking {
           props.bastionHostInstanceType ?? ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
         subnetSelection: this.privateSubnets ?? this.publicSubnets,
       });
-      cdk.Tags.of(this.bastionHost.instance).add('Resource', 'Bastion');
+      cdk.Tags.of(bastionHost.instance).add('Resource', 'Bastion');
+      this.bastionHost = bastionHost;
     }
   }
 

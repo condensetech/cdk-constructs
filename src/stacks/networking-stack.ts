@@ -44,7 +44,7 @@ export class NetworkingStack extends cdk.Stack implements INetworking {
     return this.construct.vpc;
   }
 
-  get bastionHost(): ec2.BastionHostLinux | undefined {
+  get bastionHost(): ec2.IConnectable | undefined {
     return this.construct.bastionHost;
   }
 }
