@@ -106,6 +106,12 @@ export interface DatabaseInstanceProps {
    * @default false
    */
   readonly allowMajorVersionUpgrade?: boolean;
+
+  /**
+   * Whether to enable Performance Insights.
+   * @default false
+   */
+  readonly enablePerformanceInsights?: boolean;
 }
 
 /**
@@ -179,6 +185,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       cloudwatchLogsExports: props.cloudwatchLogsExports,
       cloudwatchLogsRetention: props.cloudwatchLogsRetention,
       allowMajorVersionUpgrade: props.allowMajorVersionUpgrade ?? false,
+      enablePerformanceInsights: props.enablePerformanceInsights ?? false,
     });
     if (props.networking.bastionHost) {
       this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);

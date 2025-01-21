@@ -7653,6 +7653,7 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.enablePerformanceInsights">enablePerformanceInsights</a></code> | <code>boolean</code> | Whether to enable Performance Insights. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
@@ -7793,6 +7794,19 @@ The name of the database.
 
 ---
 
+##### `enablePerformanceInsights`<sup>Optional</sup> <a name="enablePerformanceInsights" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.enablePerformanceInsights"></a>
+
+```typescript
+public readonly enablePerformanceInsights: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether to enable Performance Insights.
+
+---
+
 ##### `instanceIdentifier`<sup>Optional</sup> <a name="instanceIdentifier" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier"></a>
 
 ```typescript
@@ -7910,6 +7924,7 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.enablePerformanceInsights">enablePerformanceInsights</a></code> | <code>boolean</code> | Whether to enable Performance Insights. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
@@ -8058,6 +8073,19 @@ public readonly databaseName: string;
 - *Default:* No default database is created.
 
 The name of the database.
+
+---
+
+##### `enablePerformanceInsights`<sup>Optional</sup> <a name="enablePerformanceInsights" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.enablePerformanceInsights"></a>
+
+```typescript
+public readonly enablePerformanceInsights: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether to enable Performance Insights.
 
 ---
 
