@@ -112,6 +112,12 @@ export interface DatabaseInstanceProps {
    * @default false
    */
   readonly enablePerformanceInsights?: boolean;
+
+  /**
+   * The maximum allocated storage of the database instance.
+   * @default - No maximum allocated storage is specified.
+   */
+  readonly maxAllocatedStorage?: number;
 }
 
 /**
@@ -165,7 +171,6 @@ export class DatabaseInstance extends Construct implements IDatabase {
       allowAllOutbound: true,
       securityGroupName: props.securityGroupName ?? `${this.node.path.replace(/\//g, '-')}-sg`,
     });
-
     this.resource = new rds.DatabaseInstance(this, 'DB', {
       instanceIdentifier: props.instanceIdentifier,
       vpc: props.networking.vpc,
@@ -186,6 +191,7 @@ export class DatabaseInstance extends Construct implements IDatabase {
       cloudwatchLogsRetention: props.cloudwatchLogsRetention,
       allowMajorVersionUpgrade: props.allowMajorVersionUpgrade ?? false,
       enablePerformanceInsights: props.enablePerformanceInsights ?? false,
+      maxAllocatedStorage: props.maxAllocatedStorage,
     });
     if (props.networking.bastionHost) {
       this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);

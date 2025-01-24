@@ -7656,6 +7656,7 @@ const databaseInstanceProps: DatabaseInstanceProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.enablePerformanceInsights">enablePerformanceInsights</a></code> | <code>boolean</code> | Whether to enable Performance Insights. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.maxAllocatedStorage">maxAllocatedStorage</a></code> | <code>number</code> | The maximum allocated storage of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
@@ -7833,6 +7834,19 @@ The instance type of the database instance.
 
 ---
 
+##### `maxAllocatedStorage`<sup>Optional</sup> <a name="maxAllocatedStorage" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.maxAllocatedStorage"></a>
+
+```typescript
+public readonly maxAllocatedStorage: number;
+```
+
+- *Type:* number
+- *Default:* No maximum allocated storage is specified.
+
+The maximum allocated storage of the database instance.
+
+---
+
 ##### `multiAz`<sup>Optional</sup> <a name="multiAz" id="@condensetech/cdk-constructs.DatabaseInstanceProps.property.multiAz"></a>
 
 ```typescript
@@ -7927,6 +7941,7 @@ const databaseInstanceStackProps: DatabaseInstanceStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.enablePerformanceInsights">enablePerformanceInsights</a></code> | <code>boolean</code> | Whether to enable Performance Insights. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceIdentifier">instanceIdentifier</a></code> | <code>string</code> | The identifier of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.instanceType">instanceType</a></code> | <code>aws-cdk-lib.aws_ec2.InstanceType</code> | The instance type of the database instance. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.maxAllocatedStorage">maxAllocatedStorage</a></code> | <code>number</code> | The maximum allocated storage of the database instance. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.multiAz">multiAz</a></code> | <code>boolean</code> | If the database instance is multi-AZ. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
@@ -8112,6 +8127,19 @@ public readonly instanceType: InstanceType;
 - *Default:* db.t3.small.
 
 The instance type of the database instance.
+
+---
+
+##### `maxAllocatedStorage`<sup>Optional</sup> <a name="maxAllocatedStorage" id="@condensetech/cdk-constructs.DatabaseInstanceStackProps.property.maxAllocatedStorage"></a>
+
+```typescript
+public readonly maxAllocatedStorage: number;
+```
+
+- *Type:* number
+- *Default:* No maximum allocated storage is specified.
+
+The maximum allocated storage of the database instance.
 
 ---
 
