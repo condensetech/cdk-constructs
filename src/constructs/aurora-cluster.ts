@@ -145,7 +145,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     super(scope, id);
 
     const removalPolicy = props.removalPolicy ?? cdk.RemovalPolicy.RETAIN;
-    this.instanceParameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
+    this.instanceParameterGroup = new rds.ParameterGroup(this, 'InstanceParameterGroup', {
       engine: props.engine,
       description: this.node.path,
       removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
@@ -158,7 +158,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     });
     this.parameterGroup = this.instanceParameterGroup;
 
-    this.clusterParameterGroup = new rds.ParameterGroup(this, 'ClusterParameterGroup', {
+    this.clusterParameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
       engine: props.engine,
       description: this.node.path,
       removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
@@ -184,9 +184,9 @@ export class AuroraCluster extends Construct implements IDatabase {
 
     // TODO: Find a better way to pass the parameter group to the writer and readers.
     if (props.writer) {
-      (props.writer as any).props.parameterGroup = this.parameterGroup;
+      (props.writer as any).props.parameterGroup = this.instanceParameterGroup;
       for (const reader of props.readers ?? []) {
-        (reader as any).props.parameterGroup = this.parameterGroup;
+        (reader as any).props.parameterGroup = this.instanceParameterGroup;
       }
     }
 
@@ -198,7 +198,7 @@ export class AuroraCluster extends Construct implements IDatabase {
         props.writer ??
         rds.ClusterInstance.provisioned('ClusterInstance', {
           instanceType: AuroraCluster.minimumInstanceType(props.engine),
-          parameterGroup: this.parameterGroup,
+          parameterGroup: this.instanceParameterGroup,
         }),
       readers: props.readers,
       vpc: props.networking.vpc,
@@ -214,7 +214,7 @@ export class AuroraCluster extends Construct implements IDatabase {
     });
     // https://github.com/aws/aws-cdk/issues/26072
     const cfnCluster = this.resource.node.defaultChild as rds.CfnDBCluster;
-    cfnCluster.dbInstanceParameterGroupName = this.parameterGroup.bindToInstance({}).parameterGroupName;
+    cfnCluster.dbInstanceParameterGroupName = this.instanceParameterGroup.bindToInstance({}).parameterGroupName;
     if (props.networking.bastionHost) {
       this.resource.connections.allowDefaultPortFrom(props.networking.bastionHost);
     }
