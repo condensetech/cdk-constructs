@@ -71,10 +71,22 @@ export interface AuroraClusterProps {
   readonly removalPolicy?: cdk.RemovalPolicy;
 
   /**
-   * The parameters to override in the parameter group.
+   * The parameters to override in all of the parameter groups.
    * @default - No parameter is overridden.
    */
   readonly parameters?: Record<string, string>;
+
+  /**
+   * The parameters to override in the cluster parameter group.
+   * @default - No parameter is overridden.
+   */
+  readonly clusterParameters?: Record<string, string>;
+
+  /**
+   * The parameters to override in the instance parameter group.
+   * @default - No parameter is overridden.
+   */
+  readonly instanceParameters?: Record<string, string>;
 
   /**
    * The list of log types that need to be enabled for exporting to CloudWatch Logs.
@@ -122,19 +134,40 @@ export class AuroraCluster extends Construct implements IDatabase {
   readonly resource: rds.DatabaseCluster;
 
   readonly endpoint: rds.Endpoint;
+  /**
+   * @deprecated please use instanceParameterGroup.
+   */
   readonly parameterGroup: rds.ParameterGroup;
+  readonly clusterParameterGroup: rds.ParameterGroup;
+  readonly instanceParameterGroup: rds.ParameterGroup;
 
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
 
     const removalPolicy = props.removalPolicy ?? cdk.RemovalPolicy.RETAIN;
-    this.parameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
+    this.instanceParameterGroup = new rds.ParameterGroup(this, 'ParameterGroup', {
       engine: props.engine,
       description: this.node.path,
       removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
         ? removalPolicy
         : cdk.RemovalPolicy.DESTROY,
-      parameters: props.parameters,
+      parameters: {
+        ...props.parameters,
+        ...props.instanceParameters,
+      },
+    });
+    this.parameterGroup = this.instanceParameterGroup;
+
+    this.clusterParameterGroup = new rds.ParameterGroup(this, 'ClusterParameterGroup', {
+      engine: props.engine,
+      description: this.node.path,
+      removalPolicy: [cdk.RemovalPolicy.DESTROY, cdk.RemovalPolicy.RETAIN].includes(removalPolicy)
+        ? removalPolicy
+        : cdk.RemovalPolicy.DESTROY,
+      parameters: {
+        ...props.parameters,
+        ...props.clusterParameters,
+      },
     });
 
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;
@@ -171,7 +204,7 @@ export class AuroraCluster extends Construct implements IDatabase {
       vpc: props.networking.vpc,
       vpcSubnets: props.networking.isolatedSubnets,
       defaultDatabaseName: props.databaseName,
-      parameterGroup: this.parameterGroup,
+      parameterGroup: this.clusterParameterGroup,
       storageEncrypted: true,
       securityGroups: [securityGroup],
       cloudwatchLogsExports: props.cloudwatchLogsExports,

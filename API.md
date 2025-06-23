@@ -327,8 +327,10 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.clusterParameterGroup">clusterParameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.instanceParameterGroup">instanceParameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup">parameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.resource">resource</a></code> | <code>aws-cdk-lib.aws_rds.DatabaseCluster</code> | The underlying database cluster. |
 
@@ -343,6 +345,16 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `clusterParameterGroup`<sup>Required</sup> <a name="clusterParameterGroup" id="@condensetech/cdk-constructs.AuroraCluster.property.clusterParameterGroup"></a>
+
+```typescript
+public readonly clusterParameterGroup: ParameterGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.ParameterGroup
 
 ---
 
@@ -370,7 +382,19 @@ The endpoint of the database.
 
 ---
 
-##### `parameterGroup`<sup>Required</sup> <a name="parameterGroup" id="@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup"></a>
+##### `instanceParameterGroup`<sup>Required</sup> <a name="instanceParameterGroup" id="@condensetech/cdk-constructs.AuroraCluster.property.instanceParameterGroup"></a>
+
+```typescript
+public readonly instanceParameterGroup: ParameterGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_rds.ParameterGroup
+
+---
+
+##### ~~`parameterGroup`~~<sup>Required</sup> <a name="parameterGroup" id="@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup"></a>
+
+- *Deprecated:* please use instanceParameterGroup.
 
 ```typescript
 public readonly parameterGroup: ParameterGroup;
@@ -6457,10 +6481,12 @@ const auroraClusterProps: AuroraClusterProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.clusterParameters">clusterParameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the cluster parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.instanceParameters">instanceParameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the instance parameter group. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in all of the parameter groups. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
@@ -6547,6 +6573,19 @@ If not specified, it relies on the underlying default naming.
 
 ---
 
+##### `clusterParameters`<sup>Optional</sup> <a name="clusterParameters" id="@condensetech/cdk-constructs.AuroraClusterProps.property.clusterParameters"></a>
+
+```typescript
+public readonly clusterParameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the cluster parameter group.
+
+---
+
 ##### `credentialsSecretName`<sup>Optional</sup> <a name="credentialsSecretName" id="@condensetech/cdk-constructs.AuroraClusterProps.property.credentialsSecretName"></a>
 
 ```typescript
@@ -6586,6 +6625,19 @@ The name of the database.
 
 ---
 
+##### `instanceParameters`<sup>Optional</sup> <a name="instanceParameters" id="@condensetech/cdk-constructs.AuroraClusterProps.property.instanceParameters"></a>
+
+```typescript
+public readonly instanceParameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the instance parameter group.
+
+---
+
 ##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.AuroraClusterProps.property.parameters"></a>
 
 ```typescript
@@ -6595,7 +6647,7 @@ public readonly parameters: {[ key: string ]: string};
 - *Type:* {[ key: string ]: string}
 - *Default:* No parameter is overridden.
 
-The parameters to override in the parameter group.
+The parameters to override in all of the parameter groups.
 
 ---
 
@@ -6673,10 +6725,12 @@ const auroraClusterStackProps: AuroraClusterStackProps = { ... }
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.cloudwatchLogsExports">cloudwatchLogsExports</a></code> | <code>string[]</code> | The list of log types that need to be enabled for exporting to CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.cloudwatchLogsRetention">cloudwatchLogsRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | The number of days log events are kept in CloudWatch Logs. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterIdentifier">clusterIdentifier</a></code> | <code>string</code> | The identifier of the cluster. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterParameters">clusterParameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the cluster parameter group. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsUsername">credentialsUsername</a></code> | <code>string</code> | The username of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.databaseName">databaseName</a></code> | <code>string</code> | The name of the database. |
-| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the parameter group. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.instanceParameters">instanceParameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in the instance parameter group. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters">parameters</a></code> | <code>{[ key: string ]: string}</code> | The parameters to override in all of the parameter groups. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_rds.IClusterInstance[]</code> | The reader instances of the Aurora cluster. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | The removal policy to apply when the cluster is removed. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStackProps.property.securityGroupName">securityGroupName</a></code> | <code>string</code> | The name of the security group. |
@@ -6774,6 +6828,19 @@ If not specified, it relies on the underlying default naming.
 
 ---
 
+##### `clusterParameters`<sup>Optional</sup> <a name="clusterParameters" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.clusterParameters"></a>
+
+```typescript
+public readonly clusterParameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the cluster parameter group.
+
+---
+
 ##### `credentialsSecretName`<sup>Optional</sup> <a name="credentialsSecretName" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.credentialsSecretName"></a>
 
 ```typescript
@@ -6813,6 +6880,19 @@ The name of the database.
 
 ---
 
+##### `instanceParameters`<sup>Optional</sup> <a name="instanceParameters" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.instanceParameters"></a>
+
+```typescript
+public readonly instanceParameters: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No parameter is overridden.
+
+The parameters to override in the instance parameter group.
+
+---
+
 ##### `parameters`<sup>Optional</sup> <a name="parameters" id="@condensetech/cdk-constructs.AuroraClusterStackProps.property.parameters"></a>
 
 ```typescript
@@ -6822,7 +6902,7 @@ public readonly parameters: {[ key: string ]: string};
 - *Type:* {[ key: string ]: string}
 - *Default:* No parameter is overridden.
 
-The parameters to override in the parameter group.
+The parameters to override in all of the parameter groups.
 
 ---
 
