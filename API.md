@@ -329,6 +329,7 @@ Any object.
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.clusterParameterGroup">clusterParameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.connections">connections</a></code> | <code>aws-cdk-lib.aws_ec2.Connections</code> | The network connections associated with this resource. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.credentialsSecretName">credentialsSecretName</a></code> | <code>string</code> | The name of the secret that stores the credentials of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.endpoint">endpoint</a></code> | <code>aws-cdk-lib.aws_rds.Endpoint</code> | The endpoint of the database. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.instanceParameterGroup">instanceParameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.property.parameterGroup">parameterGroup</a></code> | <code>aws-cdk-lib.aws_rds.ParameterGroup</code> | *No description.* |
@@ -367,6 +368,18 @@ public readonly connections: Connections;
 - *Type:* aws-cdk-lib.aws_ec2.Connections
 
 The network connections associated with this resource.
+
+---
+
+##### `credentialsSecretName`<sup>Required</sup> <a name="credentialsSecretName" id="@condensetech/cdk-constructs.AuroraCluster.property.credentialsSecretName"></a>
+
+```typescript
+public readonly credentialsSecretName: string;
+```
+
+- *Type:* string
+
+The name of the secret that stores the credentials of the database.
 
 ---
 

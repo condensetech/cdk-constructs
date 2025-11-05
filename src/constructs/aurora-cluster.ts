@@ -141,6 +141,11 @@ export class AuroraCluster extends Construct implements IDatabase {
   readonly clusterParameterGroup: rds.ParameterGroup;
   readonly instanceParameterGroup: rds.ParameterGroup;
 
+  /**
+   * The name of the secret that stores the credentials of the database.
+   */
+  readonly credentialsSecretName: string;
+
   constructor(scope: Construct, id: string, props: AuroraClusterProps) {
     super(scope, id);
 
@@ -172,8 +177,9 @@ export class AuroraCluster extends Construct implements IDatabase {
 
     const backup = props.backupRetention ? { retention: props.backupRetention } : undefined;
 
+    this.credentialsSecretName = props.credentialsSecretName ?? `${this.node.path}/secret`;
     const credentials = rds.Credentials.fromUsername(props.credentialsUsername ?? 'db_user', {
-      secretName: props.credentialsSecretName ?? `${this.node.path}/secret`,
+      secretName: this.credentialsSecretName,
     });
 
     const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
@@ -226,6 +232,6 @@ export class AuroraCluster extends Construct implements IDatabase {
   }
 
   fetchSecret(scope: Construct, id = 'DatabaseSecret'): sm.ISecret {
-    return sm.Secret.fromSecretNameV2(scope, id, `${this.node.path}/secret`);
+    return sm.Secret.fromSecretNameV2(scope, id, this.credentialsSecretName);
   }
 }
