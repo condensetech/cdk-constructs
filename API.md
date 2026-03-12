@@ -51,6 +51,7 @@ new ApplicationListenerPriorityAllocator(scope: Construct, id: string, props: Ap
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority">allocatePriority</a></code> | Allocates the priority of an application listener rule. |
 
 ---
@@ -62,6 +63,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `allocatePriority` <a name="allocatePriority" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.allocatePriority"></a>
 
@@ -103,7 +125,7 @@ The ID of the listener rule to allocate the priority to.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct"></a>
 
 ```typescript
 import { ApplicationListenerPriorityAllocator } from '@condensetech/cdk-constructs'
@@ -112,6 +134,20 @@ ApplicationListenerPriorityAllocator.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.ApplicationListenerPriorityAllocator.isConstruct.parameter.x"></a>
 
@@ -264,6 +300,7 @@ new AuroraCluster(scope: Construct, id: string, props: AuroraClusterProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraCluster.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraCluster.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
@@ -275,6 +312,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.AuroraCluster.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.AuroraCluster.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `fetchSecret` <a name="fetchSecret" id="@condensetech/cdk-constructs.AuroraCluster.fetchSecret"></a>
 
@@ -304,7 +362,7 @@ Utility method that returns the secret with the credentials to access the databa
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.AuroraCluster.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.AuroraCluster.isConstruct"></a>
 
 ```typescript
 import { AuroraCluster } from '@condensetech/cdk-constructs'
@@ -313,6 +371,20 @@ AuroraCluster.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.AuroraCluster.isConstruct.parameter.x"></a>
 
@@ -475,6 +547,7 @@ new AuroraClusterStack(scope: Construct, id: string, props: AuroraClusterStackPr
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@condensetech/cdk-constructs.AuroraClusterStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
@@ -500,6 +573,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.AuroraClusterStack.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.AuroraClusterStack.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `addDependency` <a name="addDependency" id="@condensetech/cdk-constructs.AuroraClusterStack.addDependency"></a>
 
@@ -915,7 +1009,7 @@ Utility method that returns the secret with the credentials to access the databa
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.AuroraClusterStack.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.AuroraClusterStack.isConstruct"></a>
 
 ```typescript
 import { AuroraClusterStack } from '@condensetech/cdk-constructs'
@@ -924,6 +1018,20 @@ AuroraClusterStack.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.AuroraClusterStack.isConstruct.parameter.x"></a>
 
@@ -1414,6 +1522,7 @@ new CloudwatchAlarmsTopicStack(scope: Construct, id: string, props: CloudwatchAl
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
@@ -1438,6 +1547,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `addDependency` <a name="addDependency" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.addDependency"></a>
 
@@ -1833,7 +1963,7 @@ Convert an object, potentially containing tokens, to a YAML string.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.isConstruct"></a>
 
 ```typescript
 import { CloudwatchAlarmsTopicStack } from '@condensetech/cdk-constructs'
@@ -1842,6 +1972,20 @@ CloudwatchAlarmsTopicStack.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.CloudwatchAlarmsTopicStack.isConstruct.parameter.x"></a>
 
@@ -2318,6 +2462,7 @@ new DatabaseInstance(scope: Construct, id: string, props: DatabaseInstanceProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstance.fetchSecret">fetchSecret</a></code> | Utility method that returns the secret with the credentials to access the database in a cross-stack compatible way. |
 
 ---
@@ -2329,6 +2474,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.DatabaseInstance.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.DatabaseInstance.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `fetchSecret` <a name="fetchSecret" id="@condensetech/cdk-constructs.DatabaseInstance.fetchSecret"></a>
 
@@ -2358,7 +2524,7 @@ Utility method that returns the secret with the credentials to access the databa
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.DatabaseInstance.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.DatabaseInstance.isConstruct"></a>
 
 ```typescript
 import { DatabaseInstance } from '@condensetech/cdk-constructs'
@@ -2367,6 +2533,20 @@ DatabaseInstance.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.DatabaseInstance.isConstruct.parameter.x"></a>
 
@@ -2481,6 +2661,7 @@ new DatabaseInstanceStack(scope: Construct, id: string, props: DatabaseInstanceS
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@condensetech/cdk-constructs.DatabaseInstanceStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
@@ -2506,6 +2687,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.DatabaseInstanceStack.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.DatabaseInstanceStack.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `addDependency` <a name="addDependency" id="@condensetech/cdk-constructs.DatabaseInstanceStack.addDependency"></a>
 
@@ -2921,7 +3123,7 @@ Utility method that returns the secret with the credentials to access the databa
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.DatabaseInstanceStack.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.DatabaseInstanceStack.isConstruct"></a>
 
 ```typescript
 import { DatabaseInstanceStack } from '@condensetech/cdk-constructs'
@@ -2930,6 +3132,20 @@ DatabaseInstanceStack.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.DatabaseInstanceStack.isConstruct.parameter.x"></a>
 
@@ -3436,6 +3652,7 @@ new Entrypoint(scope: Construct, id: string, props: EntrypointProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.Entrypoint.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.allocateListenerRule">allocateListenerRule</a></code> | It creates an ApplicationListenerRule for the HTTPS listener of the Entrypoint. |
 | <code><a href="#@condensetech/cdk-constructs.Entrypoint.referenceListener">referenceListener</a></code> | Utility method that returns the HTTPS listener of the entrypoint in a cross-stack compatible way. |
 
@@ -3448,6 +3665,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.Entrypoint.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.Entrypoint.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `allocateListenerRule` <a name="allocateListenerRule" id="@condensetech/cdk-constructs.Entrypoint.allocateListenerRule"></a>
 
@@ -3507,7 +3745,7 @@ Utility method that returns the HTTPS listener of the entrypoint in a cross-stac
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.Entrypoint.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.Entrypoint.isConstruct"></a>
 
 ```typescript
 import { Entrypoint } from '@condensetech/cdk-constructs'
@@ -3516,6 +3754,20 @@ Entrypoint.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.Entrypoint.isConstruct.parameter.x"></a>
 
@@ -3704,6 +3956,7 @@ new EntrypointStack(scope: Construct, id: string, props: EntrypointStackProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.EntrypointStack.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@condensetech/cdk-constructs.EntrypointStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
@@ -3730,6 +3983,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.EntrypointStack.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.EntrypointStack.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `addDependency` <a name="addDependency" id="@condensetech/cdk-constructs.EntrypointStack.addDependency"></a>
 
@@ -4173,7 +4447,7 @@ Utility method that returns the HTTPS listener of the entrypoint in a cross-stac
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.EntrypointStack.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.EntrypointStack.isConstruct"></a>
 
 ```typescript
 import { EntrypointStack } from '@condensetech/cdk-constructs'
@@ -4182,6 +4456,20 @@ EntrypointStack.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.EntrypointStack.isConstruct.parameter.x"></a>
 
@@ -4674,6 +4962,7 @@ new NaiveBasicAuthCloudfrontFunction(scope: Construct, id: string, props: NaiveB
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 
 ---
@@ -4685,6 +4974,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.applyRemovalPolicy"></a>
 
@@ -4719,7 +5029,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.isConstruct"></a>
 
 ```typescript
 import { NaiveBasicAuthCloudfrontFunction } from '@condensetech/cdk-constructs'
@@ -4728,6 +5038,20 @@ NaiveBasicAuthCloudfrontFunction.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.NaiveBasicAuthCloudfrontFunction.isConstruct.parameter.x"></a>
 
@@ -4955,6 +5279,7 @@ new Networking(scope: Construct, id: string, props: NetworkingProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.Networking.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.Networking.with">with</a></code> | Applies one or more mixins to this construct. |
 
 ---
 
@@ -4966,6 +5291,27 @@ public toString(): string
 
 Returns a string representation of this construct.
 
+##### `with` <a name="with" id="@condensetech/cdk-constructs.Networking.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.Networking.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
+
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
 | **Name** | **Description** |
@@ -4974,7 +5320,7 @@ Returns a string representation of this construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.Networking.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.Networking.isConstruct"></a>
 
 ```typescript
 import { Networking } from '@condensetech/cdk-constructs'
@@ -4983,6 +5329,20 @@ Networking.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.Networking.isConstruct.parameter.x"></a>
 
@@ -5136,6 +5496,7 @@ new NetworkingStack(scope: Construct, id: string, props: NetworkingStackProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@condensetech/cdk-constructs.NetworkingStack.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.addDependency">addDependency</a></code> | Add a dependency between this stack and another stack. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.addMetadata">addMetadata</a></code> | Adds an arbitary key-value pair, with information you want to record about the stack. |
 | <code><a href="#@condensetech/cdk-constructs.NetworkingStack.addTransform">addTransform</a></code> | Add a Transform to this stack. A Transform is a macro that AWS CloudFormation uses to process your template. |
@@ -5160,6 +5521,27 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@condensetech/cdk-constructs.NetworkingStack.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@condensetech/cdk-constructs.NetworkingStack.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+The mixins to apply.
+
+---
 
 ##### `addDependency` <a name="addDependency" id="@condensetech/cdk-constructs.NetworkingStack.addDependency"></a>
 
@@ -5555,7 +5937,7 @@ Convert an object, potentially containing tokens, to a YAML string.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@condensetech/cdk-constructs.NetworkingStack.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@condensetech/cdk-constructs.NetworkingStack.isConstruct"></a>
 
 ```typescript
 import { NetworkingStack } from '@condensetech/cdk-constructs'
@@ -5564,6 +5946,20 @@ NetworkingStack.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@condensetech/cdk-constructs.NetworkingStack.isConstruct.parameter.x"></a>
 
